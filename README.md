@@ -151,11 +151,17 @@ Outputs animated text slides with dynamic TTS voiceover. You can request any of 
 The endpoint `POST /api/videos` operates in two distinct modes depending on your payload structure:
 
 #### A. Generate Mode (AI Auto-styling)
-If you only supply a `"prompt"`, OpenAI will dynamically write the script or timeline. You can pass optional **`style` overrides** to guide the AI's aesthetic choices:
+If you only supply a `"prompt"`, OpenAI will dynamically write the script or timeline. You can pass optional **`style` overrides** to guide the AI's aesthetic choices.
+
+Additionally, you can specify a consistent **`voice`** parameter to narrate the entire video. If omitted, the API will randomly pick a single voice and use it consistently for all scenes of that video.
+
+* **Supported Voices**: `"aura-2-thalia-en"`, `"aura-2-andromeda-en"`, `"aura-2-arcas-en"`, `"aura-2-aries-en"`
+
 ```json
 {
   "prompt": "A quote by Steve Jobs about design",
   "videoType": "SocialMedia",
+  "voice": "aura-2-thalia-en",     // Optional premium Aura-2 voice override
   "style": {
     "primaryColor": "#0f172a",    // Guide AI to use slate blue backgrounds
     "textColor": "#38bdf8"       // Guide AI to use light blue text
