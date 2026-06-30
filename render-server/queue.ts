@@ -10,6 +10,7 @@ export interface RenderJob {
   progress: number;
   videoUrl?: string;
   error?: string;
+  webhookUrl?: string;
   createdAt: Date;
   startedAt?: Date;
   completedAt?: Date;
@@ -45,7 +46,12 @@ export function setRenderCallback(callback: RenderCallback) {
 /**
  * Create a new render job and add it to the queue
  */
-export function createJob(videoType: VideoType, script?: VideoScript, timeline?: any): RenderJob {
+export function createJob(
+  videoType: VideoType,
+  script?: VideoScript,
+  timeline?: any,
+  webhookUrl?: string
+): RenderJob {
   const job: RenderJob = {
     id: uuidv4(),
     videoType,
@@ -53,6 +59,7 @@ export function createJob(videoType: VideoType, script?: VideoScript, timeline?:
     timeline,
     status: "queued",
     progress: 0,
+    webhookUrl,
     createdAt: new Date(),
   };
 
@@ -84,8 +91,27 @@ export function updateJobStatus(
 
   Object.assign(job, updates);
 
-  // If job is done (completed or failed), clear current job and process next
+  // If job is done (completed or failed), clear current job, send webhook, and process next
   if (updates.status === "completed" || updates.status === "failed") {
+    if (job.webhookUrl) {
+      console.log(`[Webhook] Triggering callback for job ${job.id} to ${job.webhookUrl}`);
+      fetch(job.webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jobId: job.id,
+          status: job.status,
+          progress: job.progress,
+          videoUrl: job.videoUrl,
+          error: job.error,
+          createdAt: job.createdAt,
+          completedAt: job.completedAt,
+        }),
+      }).catch((webhookErr) => {
+        console.warn(`[Webhook] Failed triggering callback for job ${job.id}:`, webhookErr.message);
+      });
+    }
+
     if (currentJob === jobId) {
       currentJob = null;
     }

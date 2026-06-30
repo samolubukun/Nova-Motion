@@ -62,8 +62,11 @@ Generate a video script with this exact JSON structure:
       "durationSec": 5,
       "text": "Scene content text",
       "bgColor": "${bgColor}",
+      "bgColorTo": "${bgColor}", // Optional gradient end hex (contrasting pair for visual flow)
       "textColor": "${textColor}",
-      "animation": "${animation}"
+      "animation": "${animation}",
+      "transition": "none", // Slide transition: none, fade, slideUp, slideDown, crossfade, wipe
+      "fontFamily": "Inter" // Optional clean font recommendation
     }
   ]
 }
@@ -72,7 +75,8 @@ Scene Guidelines:
 - Each scene should be 3-8 seconds for best pacing
 - Text should be concise (10-30 words per scene)
 - Vary animations between scenes: fadeIn, slideUp, slideDown, slideLeft, slideRight, scale, bounce, typewriter
-- Use contrasting colors for different scenes to maintain visual interest
+- Use contrasting colors and gradients (using bgColor and bgColorTo) to maintain visual interest
+- Specify scene-to-scene transitions using the "transition" field to make changes feel premium
 - The sum of all scene durations should equal the total video duration
 - startSec should increment properly (each scene starts after the previous one ends)
 
@@ -82,11 +86,10 @@ Animation Recommendations by Video Type:
 - SocialMedia: bounce, scale, slideUp (more dynamic)
 - Explainer: fadeIn, slideUp (more professional)
 
-Color Palette Suggestions:
-- Dark modern: #1a1a2e, #16213e, #0f3460, #e94560
-- Light professional: #f8f9fa, #e9ecef, #212529, #495057
-- Vibrant: #7400b8, #6930c3, #5e60ce, #5390d9
-- Warm: #ff6b6b, #feca57, #48dbfb, #1dd1a1
+Color Palette & Gradient Suggestions:
+- Dark modern: #1a1a2e to #0f0c20, #0f3460 to #16213e
+- Vibrant: #7400b8 to #6930c3, #5e60ce to #5390d9
+- Warm: #ff6b6b to #e94560, #feca57 to #ff9f43
 
 Remember: Return ONLY the JSON object, nothing else.`;
 };

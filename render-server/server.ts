@@ -59,9 +59,10 @@ app.post("/render", authenticate, (req: Request, res: Response) => {
     }
 
     const { videoType, script, timeline } = validation.data;
+    const webhookUrl = req.body.webhookUrl;
 
     // Create job and add to queue
-    const job = createJob(videoType, script, timeline);
+    const job = createJob(videoType, script, timeline, webhookUrl);
 
     console.log(`Job created: ${job.id} (${videoType})`);
 

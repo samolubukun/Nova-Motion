@@ -30,11 +30,19 @@ export const SceneSchema = z.object({
   durationSec: z.number().min(0.5).max(120),
   text: z.string().min(1).max(500),
   bgColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).default("#1a1a2e"),
+  bgColorTo: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(), // For gradient background
   textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).default("#ffffff"),
   animation: AnimationType.default("fadeIn"),
+  transition: z.enum(["none", "fade", "slideUp", "slideDown", "crossfade", "wipe"]).default("none").optional(),
+  fontFamily: z.string().optional(),
   fontSize: z.number().min(12).max(500).optional(),
   stepNumber: z.number().min(1).optional(), // For Explainer template
   audioUrl: z.string().optional(),
+  words: z.array(z.object({
+    word: z.string(),
+    start: z.number(),
+    end: z.number(),
+  })).optional(), // For kinetic word alignments
 });
 export type Scene = z.infer<typeof SceneSchema>;
 
@@ -63,6 +71,8 @@ export const GenerateRequestSchema = z.object({
   videoType: VideoType,
   durationSec: z.number().min(5).max(120).default(30),
   topic: z.string().optional(),
+  aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16").optional(),
+  webhookUrl: z.string().url().optional(),
   style: z.object({
     primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
     secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
@@ -117,8 +127,12 @@ export function normalizeVideoScript(script: VideoScript): VideoScript {
       startSec: currentTime,
       durationSec: Math.max(sceneDuration, 0.5),
       bgColor: normalizeColor(scene.bgColor),
+      bgColorTo: scene.bgColorTo ? normalizeColor(scene.bgColorTo) : undefined,
       textColor: normalizeColor(scene.textColor),
       text: scene.text.slice(0, 500),
+      transition: scene.transition || "none",
+      fontFamily: scene.fontFamily,
+      words: scene.words,
     });
 
     currentTime += sceneDuration;

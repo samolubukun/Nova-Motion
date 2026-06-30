@@ -6,9 +6,13 @@ import {
   VideoScript,
   VideoType,
 } from "../../../../shared/video-schema";
+import * as path from "path";
+import * as fs from "fs";
+import { v4 as uuidv4 } from "uuid";
+import { generateSpeechWithTimestamps } from "@/lib/deepgram";
 
 export const runtime = "nodejs";
-export const maxDuration = 120; // Allow up to 2 minutes for script generation + job submission
+export const maxDuration = 180; // Allow up to 3 minutes for script generation + voiceovers + job submission
 
 import { generateAIVideoTimeline } from "@/lib/ai-timeline";
 import { generateStockVideoTimeline } from "@/lib/stock-timeline";
@@ -29,7 +33,8 @@ function getRenderServerConfig() {
 async function submitToRenderServer(
   videoType: VideoType,
   script?: VideoScript,
-  timeline?: any
+  timeline?: any,
+  webhookUrl?: string
 ): Promise<{ jobId: string; status: string; createdAt: string }> {
   const { url, secret } = getRenderServerConfig();
 
@@ -44,7 +49,7 @@ async function submitToRenderServer(
   const response = await fetch(`${url}/render`, {
     method: "POST",
     headers,
-    body: JSON.stringify({ videoType, script, timeline }),
+    body: JSON.stringify({ videoType, script, timeline, webhookUrl }),
   });
 
   if (!response.ok) {
@@ -104,15 +109,30 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const { prompt, videoType: vt, durationSec, style, topic } = validation.data;
+      const { prompt, videoType: vt, durationSec, style, topic, aspectRatio, webhookUrl } = validation.data;
       videoType = vt;
+
+      // Compute aspect ratio dimensions
+      let width = 1080;
+      let height = 1920;
+      if (aspectRatio === "16:9") {
+        width = 1920;
+        height = 1080;
+      } else if (aspectRatio === "1:1") {
+        width = 1080;
+        height = 1080;
+      }
 
       if (videoType === "AIVideo") {
         // Generate AI Storyboard Video Timeline using OpenAI and Deepgram
         timeline = await generateAIVideoTimeline(prompt, topic || "Interesting Facts");
+        timeline.width = width;
+        timeline.height = height;
       } else if (videoType === "StockVideo") {
         // Generate AI Stock Video Timeline using Pexels and Deepgram
         timeline = await generateStockVideoTimeline(prompt, topic || "Interesting Facts");
+        timeline.width = width;
+        timeline.height = height;
       } else {
         // Generate script using Claude/OpenAI
         const result = await generateVideoScript(prompt, videoType, durationSec, style);
@@ -128,6 +148,29 @@ export async function POST(req: NextRequest) {
         }
 
         script = result.script;
+        script.width = width;
+        script.height = height;
+
+        // Generate Deepgram TTS voiceover and kinetic word-level highlights for typography slides
+        const tempDir = path.join(process.cwd(), "public", "assets-temp");
+        if (!fs.existsSync(tempDir)) {
+          fs.mkdirSync(tempDir, { recursive: true });
+        }
+
+        const jobId = uuidv4();
+        for (let i = 0; i < script.scenes.length; i++) {
+          const scene = script.scenes[i];
+          const sceneId = `${jobId}-slide-scene-${i}`;
+          const localAudioPath = path.join(tempDir, `${sceneId}.mp3`);
+
+          try {
+            const wordTimestamps = await generateSpeechWithTimestamps(scene.text, localAudioPath);
+            scene.audioUrl = `/assets-temp/${sceneId}.mp3`;
+            scene.words = wordTimestamps; // Inject word-level captions
+          } catch (audioErr) {
+            console.error(`[API Gateway] Failed to generate voiceover for slide scene ${i}:`, audioErr);
+          }
+        }
       }
     } else {
       return NextResponse.json(
@@ -140,7 +183,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Submit to render server
-    const renderResult = await submitToRenderServer(videoType, script, timeline);
+    const renderResult = await submitToRenderServer(videoType, script, timeline, body.webhookUrl);
 
     return NextResponse.json({
       success: true,

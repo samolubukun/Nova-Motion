@@ -14,6 +14,8 @@ const aiVideoPropsSchema = z.object({
     text: z.array(z.any()),
     audio: z.array(z.any()),
     music: z.array(z.any()).optional(),
+    width: z.number().optional(),
+    height: z.number().optional(),
   }),
 });
 
@@ -35,6 +37,8 @@ export const RemotionRoot: React.FC = () => {
             text: [],
             audio: [],
             music: [],
+            width: 1080,
+            height: 1920,
           },
         }}
         calculateMetadata={({ props }) => {
@@ -48,8 +52,8 @@ export const RemotionRoot: React.FC = () => {
           return {
             durationInFrames: lengthFrames,
             fps: 30,
-            width: 1080,
-            height: 1920,
+            width: timeline.width || 1080,
+            height: timeline.height || 1920,
           };
         }}
       />
@@ -67,6 +71,8 @@ export const RemotionRoot: React.FC = () => {
             elements: [],
             text: [],
             audio: [],
+            width: 1080,
+            height: 1920,
           },
         }}
         calculateMetadata={({ props }) => {
@@ -80,8 +86,8 @@ export const RemotionRoot: React.FC = () => {
           return {
             durationInFrames: lengthFrames,
             fps: 30,
-            width: 1080,
-            height: 1920,
+            width: timeline.width || 1080,
+            height: timeline.height || 1920,
           };
         }}
       />
