@@ -9,7 +9,7 @@ import {
 import * as path from "path";
 import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
-import { generateSpeechWithTimestamps } from "@/lib/deepgram";
+import { generateSpeechWithTimestamps, AURA_VOICES } from "@/lib/deepgram";
 
 export const runtime = "nodejs";
 export const maxDuration = 180; // Allow up to 3 minutes for script generation + voiceovers + job submission
@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const { prompt, videoType: vt, durationSec, style, topic, aspectRatio, webhookUrl } = validation.data;
+      const { prompt, videoType: vt, durationSec, style, topic, aspectRatio, webhookUrl, voice } = validation.data;
       videoType = vt;
 
       // Compute aspect ratio dimensions
@@ -123,14 +123,18 @@ export async function POST(req: NextRequest) {
         height = 1080;
       }
 
+      // Enforce a single voice for the entire video (either request specific or chosen randomly)
+      const selectedVoice = voice || AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
+      console.log(`[API Gateway] Selected voice [${selectedVoice}] for the render job`);
+
       if (videoType === "AIVideo") {
         // Generate AI Storyboard Video Timeline using OpenAI and Deepgram
-        timeline = await generateAIVideoTimeline(prompt, topic || "Interesting Facts");
+        timeline = await generateAIVideoTimeline(prompt, topic || "Interesting Facts", selectedVoice);
         timeline.width = width;
         timeline.height = height;
       } else if (videoType === "StockVideo") {
         // Generate AI Stock Video Timeline using Pexels and Deepgram
-        timeline = await generateStockVideoTimeline(prompt, topic || "Interesting Facts");
+        timeline = await generateStockVideoTimeline(prompt, topic || "Interesting Facts", selectedVoice);
         timeline.width = width;
         timeline.height = height;
       } else {
@@ -164,7 +168,7 @@ export async function POST(req: NextRequest) {
           const localAudioPath = path.join(tempDir, `${sceneId}.mp3`);
 
           try {
-            const wordTimestamps = await generateSpeechWithTimestamps(scene.text, localAudioPath);
+            const wordTimestamps = await generateSpeechWithTimestamps(scene.text, localAudioPath, selectedVoice);
             scene.audioUrl = `/assets-temp/${sceneId}.mp3`;
             scene.words = wordTimestamps; // Inject word-level captions
           } catch (audioErr) {

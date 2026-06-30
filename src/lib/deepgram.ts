@@ -28,7 +28,7 @@ async function fetchWithRetry(
   throw new Error(`Failed to fetch ${url} after ${retries} retries`);
 }
 
-const AURA_VOICES = [
+export const AURA_VOICES = [
   "aura-2-thalia-en",
   "aura-2-andromeda-en",
   "aura-2-arcas-en",
@@ -40,15 +40,16 @@ const AURA_VOICES = [
  */
 export async function generateSpeechWithTimestamps(
   text: string,
-  outputPath: string
+  outputPath: string,
+  voice?: string
 ): Promise<Array<{ word: string; start: number; end: number }>> {
   const deepgramKey = process.env.DEEPGRAM_API_KEY;
   if (!deepgramKey) {
     throw new Error("DEEPGRAM_API_KEY environment variable is not set");
   }
 
-  // Pick a random premium Aura-2 voice for natural variety
-  const selectedVoice = AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
+  // Use the passed voice, or fall back to picking a random one if not set
+  const selectedVoice = voice || AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
   console.log(`[Deepgram] Generating TTS using voice [${selectedVoice}] for text: "${text.substring(0, 60)}..."`);
 
   // 1. Generate speech via TTS

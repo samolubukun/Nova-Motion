@@ -73,6 +73,7 @@ export const GenerateRequestSchema = z.object({
   topic: z.string().optional(),
   aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16").optional(),
   webhookUrl: z.string().url().optional(),
+  voice: z.string().optional(),
   style: z.object({
     primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
     secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),

@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 import * as path from "path";
-import { generateSpeechWithTimestamps } from "./lib/deepgram";
+import { generateSpeechWithTimestamps, AURA_VOICES } from "./lib/deepgram";
 import { generateStockVideoTimeline } from "./lib/stock-timeline";
 import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
@@ -243,13 +243,16 @@ async function run() {
 
       let durationMs = 0;
 
+      const selectedVoice = AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
+      console.log(`[Test Client] Selected voice [${selectedVoice}] for AIVideo test`);
+
       for (let i = 0; i < mockAIScenes.length; i++) {
         const scene = mockAIScenes[i];
         const sceneId = `${jobId}-ai-scene-${i}`;
 
         // A. Generate Deepgram TTS voiceover and get timestamps
         const localAudioPath = path.join(tempDir, `${sceneId}.mp3`);
-        const wordTimestamps = await generateSpeechWithTimestamps(scene.text, localAudioPath);
+        const wordTimestamps = await generateSpeechWithTimestamps(scene.text, localAudioPath, selectedVoice);
 
         const audioBuffer = fs.readFileSync(localAudioPath);
         const audioUrl = await uploadAsset(audioBuffer, `${sceneId}.mp3`, "audio/mpeg");
@@ -328,13 +331,16 @@ async function run() {
       }
 
       const jobId = uuidv4();
+      const selectedVoice = AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
+      console.log(`[Test Client] Selected voice [${selectedVoice}] for typographic slide test`);
+
       for (let i = 0; i < mockSocialMediaScript.scenes.length; i++) {
         const scene: any = mockSocialMediaScript.scenes[i];
         const sceneId = `${jobId}-social-scene-${i}`;
 
         // Generate Deepgram TTS voiceover
         const localAudioPath = path.join(tempDir, `${sceneId}.mp3`);
-        await generateSpeechWithTimestamps(scene.text, localAudioPath);
+        await generateSpeechWithTimestamps(scene.text, localAudioPath, selectedVoice);
 
         const audioBuffer = fs.readFileSync(localAudioPath);
         const audioUrl = await uploadAsset(audioBuffer, `${sceneId}.mp3`, "audio/mpeg");

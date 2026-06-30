@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
 import path from "path";
-import { generateSpeechWithTimestamps } from "./deepgram";
+import { generateSpeechWithTimestamps, AURA_VOICES } from "./deepgram";
 import { findStockVideo } from "./pexels";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
@@ -132,10 +132,12 @@ export interface StockTimelineAsset {
  */
 export async function generateStockVideoTimeline(
   prompt: string,
-  topic: string
+  topic: string,
+  voice?: string
 ): Promise<StockTimelineAsset> {
   const jobId = uuidv4();
-  console.log(`[Stock Pipeline] Starting generation for topic [${topic}] with prompt [${prompt}]`);
+  const selectedVoice = voice || AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
+  console.log(`[Stock Pipeline] Starting generation for topic [${topic}] using voice [${selectedVoice}] with prompt [${prompt}]`);
 
   // 1. Generate Story
   const storyPrompt = `Write a short story with title [${prompt}] (its topic is [${topic}]).
@@ -206,7 +208,7 @@ ${storyText}
 
     // A. Generate voice narration and timestamps
     const localAudioPath = path.join(tempDir, `${sceneId}.mp3`);
-    const wordTimestamps = await generateSpeechWithTimestamps(scene.text, localAudioPath);
+    const wordTimestamps = await generateSpeechWithTimestamps(scene.text, localAudioPath, selectedVoice);
 
     // B. Upload audio to storage
     const audioBuffer = fs.readFileSync(localAudioPath);
