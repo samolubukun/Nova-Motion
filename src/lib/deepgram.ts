@@ -28,6 +28,12 @@ async function fetchWithRetry(
   throw new Error(`Failed to fetch ${url} after ${retries} retries`);
 }
 
+const AURA_VOICES = [
+  "aura-2-thalia-en",
+  "aura-2-andromeda-en",
+  "aura-2-arcas-en",
+];
+
 /**
  * Generates speech using Deepgram Aura TTS and retrieves word alignment timestamps using Deepgram STT.
  */
@@ -40,11 +46,13 @@ export async function generateSpeechWithTimestamps(
     throw new Error("DEEPGRAM_API_KEY environment variable is not set");
   }
 
-  console.log(`[Deepgram] Generating TTS for text: "${text.substring(0, 60)}..."`);
+  // Pick a random premium Aura-2 voice for natural variety
+  const selectedVoice = AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
+  console.log(`[Deepgram] Generating TTS using voice [${selectedVoice}] for text: "${text.substring(0, 60)}..."`);
 
   // 1. Generate speech via TTS
   const ttsResponse = await fetchWithRetry(
-    "https://api.deepgram.com/v1/speak?model=aura-asteria-en",
+    `https://api.deepgram.com/v1/speak?model=${selectedVoice}`,
     {
       method: "POST",
       headers: {
