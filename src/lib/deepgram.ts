@@ -32,6 +32,7 @@ const AURA_VOICES = [
   "aura-2-thalia-en",
   "aura-2-andromeda-en",
   "aura-2-arcas-en",
+  "aura-2-aries-en",
 ];
 
 /**
