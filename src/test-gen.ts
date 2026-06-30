@@ -98,25 +98,25 @@ async function callOpenAI(endpoint: string, payload: any): Promise<any> {
 }
 
 /**
- * Generation of DALL-E 3 image with Picsum mockup fallback on credential restrictions
+ * Generation of gpt-image-2 image with Picsum mockup fallback on credential restrictions
  */
 async function generateDalleImage(prompt: string, filename: string): Promise<string> {
   let response;
   try {
-    console.log(`[DALL-E] Generating vertical image for: "${prompt.substring(0, 50)}..."`);
+    console.log(`[gpt-image-2] Generating vertical image for: "${prompt.substring(0, 50)}..."`);
     response = await callOpenAI("images/generations", {
       model: "gpt-image-2",
       prompt: `${prompt}, 3d animation style, vertical aspect ratio 9:16, high quality, vibrant colors`,
       n: 1,
       size: "1024x1792", // Vertical format
     });
-    console.log(`[DALL-E] Image generated as base64. Uploading...`);
+    console.log(`[gpt-image-2] Image generated as base64. Uploading...`);
     const b64Data = response.data[0].b64_json;
     const buffer = Buffer.from(b64Data, "base64");
     return uploadAsset(buffer, filename, "image/png");
   } catch (err) {
-    console.warn(`[DALL-E] DALL-E failed. Error detail:`, err);
-    console.warn(`[DALL-E] Falling back to Picsum mockup image...`);
+    console.warn(`[gpt-image-2] Generation failed. Error detail:`, err);
+    console.warn(`[gpt-image-2] Falling back to Picsum mockup image...`);
     return `https://picsum.photos/seed/${encodeURIComponent(prompt.substring(0,10))}/1080/1920`;
   }
 }
@@ -227,7 +227,7 @@ async function run() {
 
   try {
     if (mode === "AIVideo") {
-      // 1. Test Endpoint A: AIVideo (DALL-E 3 image generation + Deepgram TTS/STT)
+      // 1. Test Endpoint A: AIVideo (gpt-image-2 image generation + Deepgram TTS/STT)
       const jobId = uuidv4();
       const timeline: any = {
         shortTitle: "Legend of Wisdom",
@@ -257,7 +257,7 @@ async function run() {
         const lastWord = wordTimestamps[wordTimestamps.length - 1];
         const sceneDurationMs = Math.ceil((lastWord ? lastWord.end : 6) * 1000);
 
-        // B. Generate Image via DALL-E 3 (Credits only spent on images as requested!)
+        // B. Generate Image via gpt-image-2 (Credits only spent on images as requested!)
         const imageUrl = await generateDalleImage(scene.imagePrompt, `${sceneId}.png`);
 
         timeline.elements.push({

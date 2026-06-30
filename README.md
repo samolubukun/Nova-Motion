@@ -9,9 +9,9 @@ All assets (voiceovers, background images, and final rendered videos) are automa
 ## Video Generation Models (Compositions)
 
 ### 1. AI Storyboard Video (`videoType: "AIVideo"`)
-Produces highly engaging vertical story videos (9:16) using DALL-E 3 image generation.
+Produces highly engaging vertical story videos (9:16) using gpt-image-2 image generation.
 * **GPT-4o-mini**: Writes a narrative story script and detailed visual scene descriptions.
-* **DALL-E 3**: Generates high-resolution vertical portrait illustrations for each scene.
+* **gpt-image-2**: Generates high-resolution vertical portrait illustrations for each scene.
 * **Deepgram Aura TTS & Nova-2 STT**: Synthesizes natural narration and transcribes word-level offsets for kinetic subtitle alignments.
 
 ### 2. Stock Video Short (`videoType: "StockVideo"`)
@@ -30,7 +30,7 @@ Clean layouts using modern typographic animations and styles.
 
 ## Tech Stack
 * **Framework**: Next.js 14, TypeScript, Tailwind CSS, shadcn/ui
-* **AI Engines**: OpenAI (GPT-4o-mini, DALL-E 3), Deepgram (Aura TTS, Nova-2 STT)
+* **AI Engines**: OpenAI (GPT-4o-mini, gpt-image-2), Deepgram (Aura TTS, Nova-2 STT)
 * **Stock Sourcing**: Pexels Video API
 * **Rendering**: Remotion Core, Express.js (render queue server)
 * **Cloud Storage**: DigitalOcean Spaces / Cloudflare R2 (S3-compatible)

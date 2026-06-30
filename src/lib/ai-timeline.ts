@@ -132,7 +132,7 @@ async function callOpenAI(endpoint: string, payload: any): Promise<any> {
 }
 
 /**
- * Generate DALL-E 3 image and upload it to S3/DO Spaces.
+ * Generate gpt-image-2 image and upload it to S3/DO Spaces.
  */
 async function generateAndUploadImage(prompt: string, assetName: string): Promise<string> {
   console.log(`[gpt-image-2] Generating image for: "${prompt.substring(0, 60)}..."`);
