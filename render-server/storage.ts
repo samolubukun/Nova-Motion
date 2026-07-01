@@ -5,44 +5,49 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 // Base directory for rendered videos
 const VIDEOS_DIR = path.join(process.cwd(), "rendered-videos");
 
-// R2 configuration (optional - set via environment variables)
-const R2_ENABLED = Boolean(
-  process.env.R2_ACCOUNT_ID &&
-  process.env.R2_ACCESS_KEY_ID &&
-  process.env.R2_SECRET_ACCESS_KEY &&
-  process.env.R2_BUCKET_NAME
-);
+// Lazy getters — evaluated at call-time so that dotenv has already
+// populated process.env regardless of ESM/CJS import hoisting order.
+function isSpacesEnabled(): boolean {
+  return Boolean(
+    process.env.SPACES_ENDPOINT &&
+    process.env.SPACES_KEY &&
+    process.env.SPACES_SECRET &&
+    process.env.SPACES_BUCKET_NAME
+  );
+}
 
-// DO Spaces configuration (optional)
-const SPACES_ENABLED = Boolean(
-  process.env.SPACES_ENDPOINT &&
-  process.env.SPACES_KEY &&
-  process.env.SPACES_SECRET &&
-  process.env.SPACES_BUCKET_NAME
-);
+function isR2ConfigEnabled(): boolean {
+  return Boolean(
+    process.env.R2_ACCOUNT_ID &&
+    process.env.R2_ACCESS_KEY_ID &&
+    process.env.R2_SECRET_ACCESS_KEY &&
+    process.env.R2_BUCKET_NAME
+  );
+}
 
-// Initialize S3 client for R2 or DO Spaces
-let s3Client: S3Client | null = null;
-if (SPACES_ENABLED) {
-  s3Client = new S3Client({
-    endpoint: process.env.SPACES_ENDPOINT,
-    region: "us-east-1", // DO Spaces requires a region parameter, us-east-1 acts as standard
-    credentials: {
-      accessKeyId: process.env.SPACES_KEY!,
-      secretAccessKey: process.env.SPACES_SECRET!,
-    },
-  });
-  console.log("DigitalOcean Spaces storage enabled");
-} else if (R2_ENABLED) {
-  s3Client = new S3Client({
-    region: "auto",
-    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-    credentials: {
-      accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-    },
-  });
-  console.log("R2 storage enabled");
+// Build an S3Client on-demand so credentials are always fresh
+function getS3Client(): S3Client | null {
+  if (isSpacesEnabled()) {
+    return new S3Client({
+      endpoint: process.env.SPACES_ENDPOINT,
+      region: "us-east-1",
+      credentials: {
+        accessKeyId: process.env.SPACES_KEY!,
+        secretAccessKey: process.env.SPACES_SECRET!,
+      },
+    });
+  }
+  if (isR2ConfigEnabled()) {
+    return new S3Client({
+      region: "auto",
+      endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      credentials: {
+        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+      },
+    });
+  }
+  return null;
 }
 
 // Ensure videos directory exists
@@ -148,7 +153,7 @@ export function cleanupOldVideos(maxAgeHours: number = 24): number {
  * Check if R2 or Spaces upload is enabled
  */
 export function isR2Enabled(): boolean {
-  return R2_ENABLED || SPACES_ENABLED;
+  return isR2ConfigEnabled() || isSpacesEnabled();
 }
 
 /**
@@ -156,7 +161,12 @@ export function isR2Enabled(): boolean {
  * Returns the public URL if successful, null otherwise
  */
 export async function uploadToStorage(filename: string): Promise<string | null> {
-  if (!s3Client || (!R2_ENABLED && !SPACES_ENABLED)) {
+  const spacesEnabled = isSpacesEnabled();
+  const r2Enabled = isR2ConfigEnabled();
+  const s3Client = getS3Client();
+
+  if (!s3Client || (!r2Enabled && !spacesEnabled)) {
+    console.warn("[Storage] No cloud storage configured — skipping upload. Check SPACES_* env vars.");
     return null;
   }
 
@@ -167,8 +177,11 @@ export async function uploadToStorage(filename: string): Promise<string | null> 
   }
 
   try {
+    if (spacesEnabled) console.log("[Storage] Uploading to DigitalOcean Spaces...");
+    else console.log("[Storage] Uploading to Cloudflare R2...");
+
     const fileBuffer = fs.readFileSync(filePath);
-    const bucketName = SPACES_ENABLED ? process.env.SPACES_BUCKET_NAME! : process.env.R2_BUCKET_NAME!;
+    const bucketName = spacesEnabled ? process.env.SPACES_BUCKET_NAME! : process.env.R2_BUCKET_NAME!;
 
     await s3Client.send(
       new PutObjectCommand({
@@ -176,12 +189,12 @@ export async function uploadToStorage(filename: string): Promise<string | null> 
         Key: `videos/${filename}`,
         Body: fileBuffer,
         ContentType: "video/mp4",
-        ACL: SPACES_ENABLED ? "public-read" : undefined,
+        ACL: spacesEnabled ? "public-read" : undefined,
       })
     );
 
     // If DO Spaces
-    if (SPACES_ENABLED) {
+    if (spacesEnabled) {
       const publicUrl = process.env.SPACES_PUBLIC_URL;
       if (publicUrl) {
         return `${publicUrl}/videos/${filename}`;
@@ -220,7 +233,7 @@ export async function getVideoUrlWithR2Fallback(
   localBaseUrl: string
 ): Promise<string> {
   // Try storage upload first if enabled
-  if (R2_ENABLED || SPACES_ENABLED) {
+  if (isR2ConfigEnabled() || isSpacesEnabled()) {
     const uploadUrl = await uploadToStorage(filename);
     if (uploadUrl) {
       console.log(`Video uploaded to S3: ${uploadUrl}`);
