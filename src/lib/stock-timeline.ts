@@ -133,7 +133,8 @@ export interface StockTimelineAsset {
 export async function generateStockVideoTimeline(
   prompt: string,
   topic: string,
-  voice?: string
+  voice?: string,
+  aspectRatio = "9:16"
 ): Promise<StockTimelineAsset> {
   const jobId = uuidv4();
   const selectedVoice = voice || AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
@@ -222,7 +223,8 @@ ${storyText}
     const stockAsset = await findStockVideo(
       scene.searchTerms || ["abstract"],
       sceneDurationSec,
-      excludeVideoIds
+      excludeVideoIds,
+      aspectRatio
     );
     excludeVideoIds.push(stockAsset.id);
 

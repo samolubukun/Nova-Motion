@@ -6,7 +6,7 @@ import Subtitle from "./components/Subtitle";
 
 const { fontFamily } = loadFont();
 const FPS = 30;
-const INTRO_DURATION = 30; // 1 second intro
+const INTRO_DURATION = 0; // No intro
 
 export interface TimelineData {
   shortTitle: string;
@@ -42,36 +42,6 @@ export const AIVideo: React.FC<{ timeline: TimelineData }> = ({ timeline }) => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: "white" }}>
-      <Sequence durationInFrames={INTRO_DURATION}>
-        <AbsoluteFill
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            textAlign: "center",
-            display: "flex",
-            zIndex: 10,
-            backgroundColor: "white",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 80,
-              lineHeight: "90px",
-              width: "87%",
-              color: "black",
-              fontFamily,
-              textTransform: "uppercase",
-              backgroundColor: "yellow",
-              paddingTop: 20,
-              paddingBottom: 20,
-              border: "10px solid black",
-            }}
-          >
-            {timeline.shortTitle}
-          </div>
-        </AbsoluteFill>
-      </Sequence>
-
       {timeline.elements.map((element, index) => {
         const { startFrame, duration } = calculateFrameTiming(
           element.startMs,

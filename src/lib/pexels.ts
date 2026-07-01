@@ -43,11 +43,23 @@ async function fetchWithRetry(
 export async function findStockVideo(
   searchTerms: string[],
   minDurationSeconds: number,
-  excludeIds: string[] = []
+  excludeIds: string[] = [],
+  aspectRatio = "9:16"
 ): Promise<StockVideoAsset> {
   const pexelsKey = process.env.PEXELS_API_KEY;
   if (!pexelsKey) {
     throw new Error("PEXELS_API_KEY environment variable is not set");
+  }
+
+  // Map aspect ratio to Pexels search params
+  let orientation = "portrait";
+  let minWidth = 720;
+  if (aspectRatio === "16:9") {
+    orientation = "landscape";
+    minWidth = 1280;
+  } else if (aspectRatio === "1:1") {
+    orientation = "square";
+    minWidth = 720;
   }
 
   // Shuffle terms to randomize and get fresh videos
@@ -57,13 +69,13 @@ export async function findStockVideo(
 
   for (const term of allTerms) {
     try {
-      console.log(`[Pexels] Searching for term: "${term}" (minDuration: ${minDurationSeconds}s)`);
+      console.log(`[Pexels] Searching for term: "${term}" (minDuration: ${minDurationSeconds}s, orientation: ${orientation})`);
       const headers = new Headers();
       headers.append("Authorization", pexelsKey);
 
-      // Search medium portrait (vertical) videos on Pexels
+      // Search videos on Pexels with selected orientation
       const res = await fetchWithRetry(
-        `https://api.pexels.com/videos/search?orientation=portrait&size=medium&per_page=40&query=${encodeURIComponent(
+        `https://api.pexels.com/videos/search?orientation=${orientation}&size=medium&per_page=40&query=${encodeURIComponent(
           term
         )}`,
         {
@@ -94,11 +106,11 @@ export async function findStockVideo(
           const duration = fps < 25 ? video.duration * (fps / 25) : video.duration;
 
           if (duration >= minDurationSeconds + durationBufferSeconds) {
-            // Find portrait files. We look for width around 720 or 1080
+            // Find files matching quality and orientation requirements
             for (const file of video.video_files) {
               if (
                 file.quality === "hd" ||
-                file.width >= 720
+                file.width >= minWidth
               ) {
                 return {
                   id: String(video.id),

@@ -84,19 +84,27 @@ async function fetchWithRetry(
   url: string,
   options: RequestInit,
   retries = 3,
-  delay = 2000
+  delay = 2000,
+  timeoutMs = 25000
 ): Promise<Response> {
   for (let i = 0; i < retries; i++) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const response = await fetch(url, options);
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
       if (response.ok) return response;
       if (response.status === 408 || response.status === 429 || response.status >= 500) {
         console.warn(`[Network] Retryable status ${response.status} on ${url}. Retrying in ${delay}ms...`);
       } else {
         return response;
       }
-    } catch (err) {
-      console.warn(`[Network] Connection failed to ${url} (Attempt ${i + 1}/${retries}). Error: ${err}. Retrying in ${delay}ms...`);
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      console.warn(`[Network] Connection failed to ${url} (Attempt ${i + 1}/${retries}). Error: ${err.message || err}. Retrying in ${delay}ms...`);
       if (i === retries - 1) throw err;
     }
     await new Promise((resolve) => setTimeout(resolve, delay));
@@ -108,7 +116,7 @@ async function fetchWithRetry(
 /**
  * Call OpenAI API using simple fetch.
  */
-async function callOpenAI(endpoint: string, payload: any): Promise<any> {
+async function callOpenAI(endpoint: string, payload: any, retries = 3, timeoutMs = 25000): Promise<any> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error("OPENAI_API_KEY environment variable is not set");
@@ -121,7 +129,7 @@ async function callOpenAI(endpoint: string, payload: any): Promise<any> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
-  });
+  }, retries, 2000, timeoutMs);
 
   if (!res.ok) {
     const errText = await res.text();
@@ -134,17 +142,28 @@ async function callOpenAI(endpoint: string, payload: any): Promise<any> {
 /**
  * Generate gpt-image-2 image and upload it to S3/DO Spaces.
  */
-async function generateAndUploadImage(prompt: string, assetName: string): Promise<string> {
+async function generateAndUploadImage(prompt: string, assetName: string, aspectRatio = "9:16"): Promise<string> {
   console.log(`[gpt-image-2] Generating image for: "${prompt.substring(0, 60)}..."`);
+  
+  let orientationPrompt = "vertical 9:16 format";
+  let size = "1024x1792";
+  if (aspectRatio === "16:9") {
+    orientationPrompt = "landscape 16:9 format";
+    size = "1792x1024";
+  } else if (aspectRatio === "1:1") {
+    orientationPrompt = "square 1:1 format";
+    size = "1024x1024";
+  }
+
   const response = await callOpenAI("images/generations", {
     model: "gpt-image-2",
-    prompt: `vertical 9:16 format, high resolution digital art: ${prompt}`,
-    size: "1024x1792",
-  });
+    prompt: `${orientationPrompt}, high resolution digital art: ${prompt}`,
+    size,
+  }, 3, 60000); // 3 attempts, 60s timeout, no try/catch fallback!
 
   const b64Data = response.data[0].b64_json;
   const buffer = Buffer.from(b64Data, "base64");
-  return uploadAsset(buffer, `${assetName}.png`, "image/png");
+  return await uploadAsset(buffer, `${assetName}.png`, "image/png");
 }
 
 export interface TimelineAsset {
@@ -176,7 +195,8 @@ export interface TimelineAsset {
 export async function generateAIVideoTimeline(
   prompt: string,
   topic: string,
-  voice?: string
+  voice?: string,
+  aspectRatio = "9:16"
 ): Promise<TimelineAsset> {
   const jobId = uuidv4();
   const selectedVoice = voice || AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
@@ -205,13 +225,20 @@ Return their description as a JSON array with story sentences matched to images.
 Story sentences must be in the same order as in the story and their content must be preserved.
 Each image must match 1-2 sentences from the story.
 Images must show story content in a way that is visually appealing and engaging.
-Give output in strict JSON format:
-[
-  {
-    "text": "....",
-    "imageDescription": "..."
-  }
-]
+
+IMPORTANT SAFETY INSTRUCTIONS FOR IMAGE GENERATION:
+- Image descriptions MUST be completely safe, professional, brand-friendly, and free from any potentially controversial or sensitive content.
+- Do NOT include any descriptions of weapons, violence, political figures, trademarked brands, illegal activities, suggestive content, or anything else that might trigger automated DALL-E / OpenAI content safety moderation filters.
+- Focus on corporate, professional, artistic, abstract, or metaphorical visual descriptions.
+Give output in strict JSON format under a "scenes" key:
+{
+  "scenes": [
+    {
+      "text": "....",
+      "imageDescription": "..."
+    }
+  ]
+}
 
 <story>
 ${storyText}
@@ -225,8 +252,16 @@ ${storyText}
   });
 
   const parsedDesc = JSON.parse(descResponse.choices[0].message.content);
-  const scenes = Array.isArray(parsedDesc) ? parsedDesc : parsedDesc.result || parsedDesc.scenes || [];
+  let scenes = Array.isArray(parsedDesc) ? parsedDesc : parsedDesc.scenes || parsedDesc.result || parsedDesc.imageDescriptions || [];
+  if (!scenes.length && typeof parsedDesc === "object" && parsedDesc !== null) {
+    const foundArray = Object.values(parsedDesc).find((val) => Array.isArray(val));
+    if (foundArray) {
+      scenes = foundArray as any[];
+    }
+  }
+
   if (!scenes.length) {
+    console.error("[AI Pipeline] Invalid response shape from OpenAI:", parsedDesc);
     throw new Error("Failed to parse image descriptions from OpenAI response");
   }
 
@@ -251,7 +286,7 @@ ${storyText}
     const sceneId = `${jobId}-scene-${i}`;
 
     // A. Generate and upload image
-    const imageUrl = await generateAndUploadImage(scene.imageDescription, sceneId);
+    const imageUrl = await generateAndUploadImage(scene.imageDescription, sceneId, aspectRatio);
 
     // B. Generate audio local temp path, run Deepgram TTS/STT
     const localAudioPath = path.join(tempDir, `${sceneId}.mp3`);

@@ -1,4 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import dns from "dns";
+
+// Force IPv4 preference and use public DNS resolvers to avoid getaddrinfo lookup failures on Windows
+dns.setDefaultResultOrder("ipv4first");
+try {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+} catch (e) {
+  console.warn("Could not set custom DNS servers:", e);
+}
+
 import { generateVideoScript } from "@/lib/openai";
 import {
   GenerateRequestSchema,
@@ -129,14 +139,56 @@ export async function POST(req: NextRequest) {
 
       if (videoType === "AIVideo") {
         // Generate AI Storyboard Video Timeline using OpenAI and Deepgram
-        timeline = await generateAIVideoTimeline(prompt, topic || "Interesting Facts", selectedVoice);
+        timeline = await generateAIVideoTimeline(prompt, topic || "Interesting Facts", selectedVoice, aspectRatio);
         timeline.width = width;
         timeline.height = height;
+
+        // Convert relative URLs to absolute URLs
+        if (timeline.audio) {
+          timeline.audio = timeline.audio.map((a: any) => ({
+            ...a,
+            audioUrl: a.audioUrl.startsWith("/") ? `${req.nextUrl.origin}${a.audioUrl}` : a.audioUrl,
+          }));
+        }
+        if (timeline.music) {
+          timeline.music = timeline.music.map((m: any) => ({
+            ...m,
+            audioUrl: m.audioUrl.startsWith("/") ? `${req.nextUrl.origin}${m.audioUrl}` : m.audioUrl,
+          }));
+        }
+        if (timeline.elements) {
+          timeline.elements = timeline.elements.map((el: any) => ({
+            ...el,
+            imageUrl: el.imageUrl && el.imageUrl.startsWith("/") ? `${req.nextUrl.origin}${el.imageUrl}` : el.imageUrl,
+            videoUrl: el.videoUrl && el.videoUrl.startsWith("/") ? `${req.nextUrl.origin}${el.videoUrl}` : el.videoUrl,
+          }));
+        }
       } else if (videoType === "StockVideo") {
         // Generate AI Stock Video Timeline using Pexels and Deepgram
-        timeline = await generateStockVideoTimeline(prompt, topic || "Interesting Facts", selectedVoice);
+        timeline = await generateStockVideoTimeline(prompt, topic || "Interesting Facts", selectedVoice, aspectRatio);
         timeline.width = width;
         timeline.height = height;
+
+        // Convert relative URLs to absolute URLs
+        if (timeline.audio) {
+          timeline.audio = timeline.audio.map((a: any) => ({
+            ...a,
+            audioUrl: a.audioUrl.startsWith("/") ? `${req.nextUrl.origin}${a.audioUrl}` : a.audioUrl,
+          }));
+        }
+        if (timeline.music) {
+          timeline.music = timeline.music.map((m: any) => ({
+            ...m,
+            audioUrl: m.audioUrl.startsWith("/") ? `${req.nextUrl.origin}${m.audioUrl}` : m.audioUrl,
+          }));
+        }
+        if (timeline.elements) {
+          timeline.elements = timeline.elements.map((el: any) => ({
+            ...el,
+            imageUrl: el.imageUrl && el.imageUrl.startsWith("/") ? `${req.nextUrl.origin}${el.imageUrl}` : el.imageUrl,
+            videoUrl: el.videoUrl && el.videoUrl.startsWith("/") ? `${req.nextUrl.origin}${el.videoUrl}` : el.videoUrl,
+          }));
+        }
       } else {
         // Generate script using Claude/OpenAI
         const result = await generateVideoScript(prompt, videoType, durationSec, style);
@@ -162,6 +214,7 @@ export async function POST(req: NextRequest) {
         }
 
         const jobId = uuidv4();
+        let currentStartSec = 0;
         for (let i = 0; i < script.scenes.length; i++) {
           const scene = script.scenes[i];
           const sceneId = `${jobId}-slide-scene-${i}`;
@@ -169,12 +222,25 @@ export async function POST(req: NextRequest) {
 
           try {
             const wordTimestamps = await generateSpeechWithTimestamps(scene.text, localAudioPath, selectedVoice);
-            scene.audioUrl = `/assets-temp/${sceneId}.mp3`;
+            scene.audioUrl = `${req.nextUrl.origin}/assets-temp/${sceneId}.mp3`;
             scene.words = wordTimestamps; // Inject word-level captions
+
+            // Calculate actual duration from audio timestamps + minor buffer for natural flow
+            const lastWord = wordTimestamps[wordTimestamps.length - 1];
+            const audioDuration = lastWord ? lastWord.end : 3;
+            const actualDurationSec = parseFloat((audioDuration + 0.5).toFixed(2));
+
+            scene.startSec = currentStartSec;
+            scene.durationSec = actualDurationSec;
+            currentStartSec += actualDurationSec;
           } catch (audioErr) {
             console.error(`[API Gateway] Failed to generate voiceover for slide scene ${i}:`, audioErr);
+            scene.startSec = currentStartSec;
+            currentStartSec += scene.durationSec;
           }
         }
+        // Update the script duration to match the adjusted scenes duration sum
+        script.durationSec = parseFloat(currentStartSec.toFixed(2));
       }
     } else {
       return NextResponse.json(
@@ -187,7 +253,19 @@ export async function POST(req: NextRequest) {
     }
 
     // Submit to render server
-    const renderResult = await submitToRenderServer(videoType, script, timeline, body.webhookUrl);
+    let renderResult;
+    try {
+      renderResult = await submitToRenderServer(videoType, script, timeline, body.webhookUrl);
+    } catch (renderErr: any) {
+      console.error("[API Gateway] Render server connection failed:", renderErr);
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Unable to connect to render server. Please try again later.",
+        },
+        { status: 503 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
@@ -199,17 +277,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error("Videos API error:", err);
-
-    // Check if it's a connection error to render server
-    if (err instanceof Error && err.message.includes("fetch")) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Unable to connect to render server. Please try again later.",
-        },
-        { status: 503 }
-      );
-    }
 
     return NextResponse.json(
       {

@@ -83,56 +83,155 @@ npm run dev
 ### 1. Generate Video (`POST /api/videos`)
 Submits a prompt to generate and render a new video.
 
+#### Request Parameters
+All endpoints support the following root payload fields:
+* **`prompt`** (string, required): The core instruction, script, topic, or concept to generate.
+* **`videoType`** (string, required): The video template mode. Must be one of:
+  * `"AIVideo"`: AI Storyboard mode (gpt-image-2 images + voiceover).
+  * `"StockVideo"`: Pexels stock footage mode (stock video loops + voiceover).
+  * `"SocialMedia"`: Kinetic typographic slide style (quotes/shorts).
+  * `"Explainer"`: Multi-step layout slides supporting step numbers.
+  * `"General"`: Simple slide layout transitions.
+  * `"TextAnimation"`: Words with active highlighting animations.
+* **`aspectRatio`** (string, optional): Target video layout format. Must be one of:
+  * `"9:16"`: Portrait (mobile vertical) - defaults to `1080x1920`.
+  * `"16:9"`: Landscape (widescreen desktop) - defaults to `1920x1080`.
+  * `"1:1"`: Square (social feed block) - defaults to `1080x1080`.
+* **`durationSec`** (number, optional): Target video duration (under 45 seconds is recommended).
+* **`topic`** (string, optional): Context topic used to direct scriptwriting style.
+* **`voice`** (string, optional): Deepgram voice key to customize narrator voice (e.g., `"aura-2-aries-en"`, `"aura-2-arcas-en"`, `"aura-2-luna-en"`).
+* **`style`** (object, optional): Global branding override parameters:
+  * `primaryColor` (string): Background or primary element hex code (e.g. `"#020617"`).
+  * `secondaryColor` (string): Accent highlight hex code (e.g. `"#38bdf8"`).
+  * `textColor` (string): Slide foreground text hex code (e.g. `"#ffffff"`).
+
+---
+
 #### Endpoint A: AI Storyboard Video (`videoType: "AIVideo"`)
-Produces animated vertical shorts using **`gpt-image-2`** base64 illustration generation and Deepgram TTS voiceover.
-* **Payload**:
+Produces animated vertical or landscape shorts using **`gpt-image-2`** base64 illustration generation and Deepgram TTS voiceover.
+* **Example Payload**:
   ```json
   {
     "prompt": "The mystery of the Oak Island money pit",
     "videoType": "AIVideo",
-    "topic": "History"
+    "topic": "History",
+    "aspectRatio": "16:9",
+    "voice": "aura-2-aries-en"
   }
   ```
 
 #### Endpoint B: Stock Video Short (`videoType: "StockVideo"`)
-Produces vertical shorts using matching Pexels stock video footage, Deepgram TTS voiceover, and randomized background music overlays (resolved locally to avoid CORS).
-* **Payload**:
+Produces shorts using context-matched Pexels stock video footage, Deepgram TTS voiceover, and background music overlays.
+* **Example Payload**:
   ```json
   {
     "prompt": "Top 3 healthy habits for programmers",
     "videoType": "StockVideo",
-    "topic": "Health"
+    "topic": "Health",
+    "aspectRatio": "16:9",
+    "voice": "aura-2-arcas-en"
   }
   ```
-* **Configuration (Optional Background Music)**:
-  * To disable the background music overlay, simply omit the `music` array from the generated timeline payload submitted to the render server. Remotion will bypass the audio overlay automatically.
 
-#### Endpoint C: Typographic Slide Videos
-Outputs animated text slides with dynamic TTS voiceover. You can request any of the following 4 distinct layouts:
-* **`videoType` Options**:
-  * `"SocialMedia"`: Mobile/Social optimized quotes.
-  * `"Explainer"`: Multi-step layout slides supporting step-numbers.
-  * `"General"`: Simple, clean slide transitions.
-  * `"TextAnimation"`: Highly animated active kinetic word highlights.
-* **Payload**:
+#### Endpoint C: Typographic Slide Videos (`videoType` Options: `"SocialMedia" | "Explainer" | "General" | "TextAnimation"`)
+Outputs animated text slides with dynamic TTS voiceover. Layout automatically adapts font dimensions to the target aspect ratio.
+* **Example Payload**:
   ```json
   {
     "prompt": "A quote by Steve Jobs about design",
     "videoType": "SocialMedia",
-    "durationSec": 15
+    "durationSec": 15,
+    "aspectRatio": "1:1",
+    "style": {
+      "primaryColor": "#0f172a",
+      "textColor": "#38bdf8"
+    }
   }
   ```
-* **Infused Styling & Elements (Optional)**:
-  * You can customize each scene inside the script payload to infuse custom colors, animations, and typography styles:
-    ```json
-    {
-      "text": "Design is how it works.",
-      "bgColor": "#020617",       // Hex color code
-      "textColor": "#38bdf8",     // Hex color code
-      "fontSize": 48,             // Custom font sizing
-      "animation": "bounce"       // Transitions: fadeIn, slideUp, slideDown, slideLeft, slideRight, scale, bounce, typewriter
-    }
-    ```
+
+---
+
+### Exact JSON Request Payloads for All Video Modes
+All requests must be sent as `POST` requests to:
+`http://localhost:3000/api/videos`
+
+#### 1. AI Storyboard Video (`AIVideo`)
+```json
+{
+  "prompt": "Explain how black holes are formed in space",
+  "videoType": "AIVideo",
+  "topic": "Space Science",
+  "aspectRatio": "16:9",
+  "voice": "aura-2-aries-en"
+}
+```
+
+#### 2. Stock Footage Video (`StockVideo`)
+```json
+{
+  "prompt": "Why drinking water in the morning improves focus",
+  "videoType": "StockVideo",
+  "topic": "Wellness & Health",
+  "aspectRatio": "16:9",
+  "voice": "aura-2-arcas-en"
+}
+```
+
+#### 3. Social Media Typography Slide (`SocialMedia`)
+```json
+{
+  "prompt": "A short piece of advice about starting a business today",
+  "videoType": "SocialMedia",
+  "aspectRatio": "9:16",
+  "durationSec": 15,
+  "style": {
+    "primaryColor": "#020617",
+    "textColor": "#38bdf8"
+  }
+}
+```
+
+#### 4. Explainer Presentation Slide (`Explainer`)
+```json
+{
+  "prompt": "3 steps to write clean code",
+  "videoType": "Explainer",
+  "aspectRatio": "16:9",
+  "durationSec": 20,
+  "style": {
+    "primaryColor": "#1e1b4b",
+    "textColor": "#818cf8"
+  }
+}
+```
+
+#### 5. General Slide Layout (`General`)
+```json
+{
+  "prompt": "A description of the scale of the solar system",
+  "videoType": "General",
+  "aspectRatio": "1:1",
+  "durationSec": 15,
+  "style": {
+    "primaryColor": "#172554",
+    "textColor": "#f8fafc"
+  }
+}
+```
+
+#### 6. Text Animation / Kinetic Highlight (`TextAnimation`)
+```json
+{
+  "prompt": "A high energy quote about doing your best work",
+  "videoType": "TextAnimation",
+  "aspectRatio": "9:16",
+  "durationSec": 12,
+  "style": {
+    "primaryColor": "#000000",
+    "textColor": "#ffffff"
+  }
+}
+```
 
 * **Response**:
   ```json
@@ -140,7 +239,7 @@ Outputs animated text slides with dynamic TTS voiceover. You can request any of 
     "success": true,
     "jobId": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
     "status": "queued",
-    "createdAt": "2026-06-30T04:30:00.000Z"
+    "createdAt": "2026-07-01T18:00:00.000Z"
   }
   ```
 

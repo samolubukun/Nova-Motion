@@ -5,7 +5,7 @@ import Subtitle from "./components/Subtitle";
 
 const { fontFamily } = loadFont();
 const FPS = 30;
-const INTRO_DURATION = 30; // 1 second intro
+const INTRO_DURATION = 0; // Removed intro
 
 export interface StockTimelineData {
   shortTitle: string;
@@ -51,37 +51,6 @@ export const StockVideo: React.FC<{ timeline: StockTimelineData }> = ({ timeline
 
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
-      {/* 1. Intro Screen */}
-      <Sequence durationInFrames={INTRO_DURATION}>
-        <AbsoluteFill
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            textAlign: "center",
-            display: "flex",
-            zIndex: 10,
-            backgroundColor: "black",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 80,
-              lineHeight: "90px",
-              width: "87%",
-              color: "black",
-              fontFamily,
-              textTransform: "uppercase",
-              backgroundColor: "yellow",
-              paddingTop: 20,
-              paddingBottom: 20,
-              border: "10px solid black",
-            }}
-          >
-            {timeline.shortTitle}
-          </div>
-        </AbsoluteFill>
-      </Sequence>
-
       {/* 2. Video Background Elements */}
       {timeline.elements.map((element, index) => {
         const { startFrame, duration } = calculateFrameTiming(

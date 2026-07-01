@@ -165,41 +165,52 @@ const KineticScene: React.FC<SceneProps & { durationInFrames: number }> = ({
           transform: `translateY(${translateY}px)`,
         }}
       >
-        {finalWords.map((w, idx) => {
-          const wordProgress = interpolate(currentTimeSec - w.start, [0, 0.4], [0, 1], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
+        {(() => {
+          let capitalizedFirst = false;
+          return finalWords.map((w, idx) => {
+            const wordProgress = interpolate(currentTimeSec - w.start, [0, 0.4], [0, 1], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            });
+
+            const wordY = interpolate(wordProgress, [0, 1], [40, 0], {
+              easing: Easing.out(Easing.cubic),
+            });
+
+            const wordOpacity = interpolate(wordProgress, [0, 0.5], [0, 1], {
+              extrapolateRight: "clamp",
+            });
+
+            const isActive = currentTimeSec >= w.start && currentTimeSec <= w.end;
+            let displayWord = w.word;
+            if (!capitalizedFirst && /[a-zA-Z]/.test(displayWord)) {
+              const firstLetterIdx = displayWord.search(/[a-zA-Z]/);
+              if (firstLetterIdx !== -1) {
+                displayWord = displayWord.slice(0, firstLetterIdx) + displayWord.charAt(firstLetterIdx).toUpperCase() + displayWord.slice(firstLetterIdx + 1);
+                capitalizedFirst = true;
+              }
+            }
+
+            return (
+              <span
+                key={idx}
+                style={{
+                  color: isActive ? "#facc15" : textColor,
+                  fontSize: actualFontSize,
+                  fontWeight: "bold",
+                  fontFamily: fontFamily || "Outfit, Inter, system-ui, sans-serif",
+                  opacity: wordOpacity,
+                  transform: `translateY(${wordY}px) scale(${isActive ? 1.12 : 1.0})`,
+                  transition: "all 0.12s cubic-bezier(0.16, 1, 0.3, 1)",
+                  display: "inline-block",
+                  textShadow: textShadowStyle,
+                }}
+              >
+                {displayWord}
+              </span>
+            );
           });
-
-          const wordY = interpolate(wordProgress, [0, 1], [40, 0], {
-            easing: Easing.out(Easing.cubic),
-          });
-
-          const wordOpacity = interpolate(wordProgress, [0, 0.5], [0, 1], {
-            extrapolateRight: "clamp",
-          });
-
-          const isActive = currentTimeSec >= w.start && currentTimeSec <= w.end;
-
-          return (
-            <span
-              key={idx}
-              style={{
-                color: isActive ? "#facc15" : textColor,
-                fontSize: actualFontSize,
-                fontWeight: "bold",
-                fontFamily: fontFamily || "Outfit, Inter, system-ui, sans-serif",
-                opacity: wordOpacity,
-                transform: `translateY(${wordY}px) scale(${isActive ? 1.12 : 1.0})`,
-                transition: "all 0.12s cubic-bezier(0.16, 1, 0.3, 1)",
-                display: "inline-block",
-                textShadow: textShadowStyle,
-              }}
-            >
-              {w.word}
-            </span>
-          );
-        })}
+        })()}
       </div>
     </AbsoluteFill>
   );

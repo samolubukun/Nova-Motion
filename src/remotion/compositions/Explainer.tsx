@@ -222,25 +222,38 @@ const ExplainerScene: React.FC<SceneProps & { durationInFrames: number; sceneInd
         >
           {words && words.length > 0 ? (
             <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px 14px" }}>
-              {words.map((w, i) => {
-                const isActive = currentTimeSec >= w.start && currentTimeSec <= w.end;
-                return (
-                  <span
-                    key={i}
-                    style={{
-                      color: isActive ? "#4361ee" : textColor,
-                      transform: isActive ? "scale(1.12)" : "scale(1.0)",
-                      transition: "all 0.12s cubic-bezier(0.16, 1, 0.3, 1)",
-                      display: "inline-block",
-                    }}
-                  >
-                    {w.word}
-                  </span>
-                );
-              })}
+              {(() => {
+                let capitalizedFirst = false;
+                return words.map((w, i) => {
+                  const isActive = currentTimeSec >= w.start && currentTimeSec <= w.end;
+                  let displayWord = w.word;
+                  if (!capitalizedFirst && /[a-zA-Z]/.test(displayWord)) {
+                    const firstLetterIdx = displayWord.search(/[a-zA-Z]/);
+                    if (firstLetterIdx !== -1) {
+                      displayWord = displayWord.slice(0, firstLetterIdx) + displayWord.charAt(firstLetterIdx).toUpperCase() + displayWord.slice(firstLetterIdx + 1);
+                      capitalizedFirst = true;
+                    }
+                  }
+                  return (
+                    <span
+                      key={i}
+                      style={{
+                        color: isActive ? "#4361ee" : textColor,
+                        transform: isActive ? "scale(1.12)" : "scale(1.0)",
+                        transition: "all 0.12s cubic-bezier(0.16, 1, 0.3, 1)",
+                        display: "inline-block",
+                      }}
+                    >
+                      {displayWord}
+                    </span>
+                  );
+                });
+              })()}
             </div>
           ) : (
-            text
+            text.search(/[a-zA-Z]/) !== -1 
+              ? text.slice(0, text.search(/[a-zA-Z]/)) + text.charAt(text.search(/[a-zA-Z]/)).toUpperCase() + text.slice(text.search(/[a-zA-Z]/) + 1)
+              : text
           )}
         </div>
       </div>
