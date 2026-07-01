@@ -4,7 +4,7 @@ import * as path from "path";
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, "../.env.local") });
 
-const API_BASE_URL = "http://localhost:3000/api/videos";
+const API_BASE_URL = "http://localhost:3005/api/videos";
 
 async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
