@@ -96,7 +96,6 @@ export const AIVideo: React.FC<{ timeline: TimelineData }> = ({ timeline }) => {
             key={`audio-${index}`}
             from={startFrame}
             durationInFrames={duration}
-            premountFor={3 * FPS}
           >
             <Audio src={resolvedAudioSrc} />
           </Sequence>

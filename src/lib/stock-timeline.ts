@@ -301,7 +301,7 @@ ${storyText}
     timeline.music = [
       {
         audioUrl: `/assets-temp/${musicFilename}`,
-        volume: 0.12,
+        volume: 0.08,
       },
     ];
   } catch (err) {
@@ -309,7 +309,7 @@ ${storyText}
     timeline.music = [
       {
         audioUrl: selectedTrack,
-        volume: 0.12,
+        volume: 0.08,
       },
     ];
   }

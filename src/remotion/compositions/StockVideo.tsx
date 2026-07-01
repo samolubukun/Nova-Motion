@@ -116,7 +116,6 @@ export const StockVideo: React.FC<{ timeline: StockTimelineData }> = ({ timeline
             key={`stock-audio-${index}`}
             from={startFrame}
             durationInFrames={duration}
-            premountFor={3 * FPS}
           >
             <Audio src={resolvedAudioSrc} />
           </Sequence>
@@ -130,7 +129,7 @@ export const StockVideo: React.FC<{ timeline: StockTimelineData }> = ({ timeline
             <Audio
               key={`stock-music-${index}`}
               src={track.audioUrl}
-              volume={track.volume || 0.15}
+              volume={track.volume || 0.08}
             />
           );
         })}

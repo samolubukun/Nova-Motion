@@ -275,7 +275,7 @@ export const General: React.FC<GeneralProps> = ({ script }) => {
       currentTimeSec >= scene.startSec &&
       currentTimeSec <= scene.startSec + scene.durationSec
   );
-  const musicVolume = isSpeaking ? 0.03 : 0.14;
+  const musicVolume = isSpeaking ? 0.02 : 0.08;
 
   return (
     <AbsoluteFill>

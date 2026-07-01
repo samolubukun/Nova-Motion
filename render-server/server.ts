@@ -1,14 +1,15 @@
-import express, { Request, Response, NextFunction } from "express";
-import cors from "cors";
 import * as path from "path";
 import * as dotenv from "dotenv";
+
+// Load environment variables immediately before any local module imports
+dotenv.config({ path: path.join(process.cwd(), ".env.local") });
+
+import express, { Request, Response, NextFunction } from "express";
+import cors from "cors";
 import { createJob, getJob, setRenderCallback, getQueueStats } from "./queue";
 import { renderVideo } from "./renderer";
 import { getVideosDirectory, cleanupOldVideos, ensureVideosDir } from "./storage";
 import { RenderRequestSchema } from "../shared/video-schema";
-
-// Load environment variables
-dotenv.config({ path: path.join(process.cwd(), ".env.local") });
 
 const app = express();
 const PORT = process.env.RENDER_SERVER_PORT || 3001;
