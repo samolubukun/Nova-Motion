@@ -68,7 +68,7 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
     updateJobStatus(job.id, { progress: 10 });
 
     // Prepare input props
-    const inputProps = (job.videoType === "AIVideo" || job.videoType === "StockVideo") ? {
+    const inputProps = (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage") ? {
       timeline: job.timeline,
     } : {
       script: job.script,
