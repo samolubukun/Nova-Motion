@@ -58,6 +58,40 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
       <Composition
+        id="StockImage"
+        component={AIVideo}
+        durationInFrames={300}
+        fps={30}
+        width={1080}
+        height={1920}
+        schema={aiVideoPropsSchema}
+        defaultProps={{
+          timeline: {
+            shortTitle: "Default Stock Image Title",
+            elements: [],
+            text: [],
+            audio: [],
+            width: 1080,
+            height: 1920,
+          },
+        }}
+        calculateMetadata={({ props }) => {
+          const { timeline } = props;
+          if (!timeline || !timeline.elements.length) {
+            return { durationInFrames: 150 };
+          }
+          const lastElement = timeline.elements[timeline.elements.length - 1];
+          const lengthMs = lastElement.endMs || 0;
+          const lengthFrames = Math.floor((lengthMs * 30) / 1000) + 30; // duration + 30 frames intro
+          return {
+            durationInFrames: lengthFrames,
+            fps: 30,
+            width: timeline.width || 1080,
+            height: timeline.height || 1920,
+          };
+        }}
+      />
+      <Composition
         id="AIVideo"
         component={AIVideo}
         durationInFrames={300}
