@@ -2,6 +2,7 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 import { generateSpeechWithTimestamps, AURA_VOICES } from "./lib/deepgram";
 import { generateStockVideoTimeline } from "./lib/stock-timeline";
+import { generateStockImageTimeline } from "./lib/stock-image-timeline";
 import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
@@ -320,6 +321,15 @@ async function run() {
       console.log(`[Test Client] Generating StockVideo timeline for prompt: [${prompt}]...`);
       const timeline = await generateStockVideoTimeline(prompt, topic);
       const serverJobId = await submitJob("StockVideo", { timeline });
+      await pollJobStatus(serverJobId);
+
+    } else if (mode === "StockImage") {
+      // Test Endpoint D: Stock Image (Pixabay images + Deepgram TTS)
+      const prompt = process.argv[3] || "Calm Ocean Sunset";
+      const topic = process.argv[4] || "Ocean Sunset";
+      console.log(`[Test Client] Generating StockImage timeline for prompt: [${prompt}]...`);
+      const timeline = await generateStockImageTimeline(prompt, topic);
+      const serverJobId = await submitJob("StockImage", { timeline });
       await pollJobStatus(serverJobId);
 
     } else {
