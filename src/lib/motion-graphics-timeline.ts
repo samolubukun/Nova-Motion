@@ -148,7 +148,7 @@ You have access to the following scene components:
 
 Guidelines:
 - Choose the best components matching the prompt context. If the prompt contains stats/comparisons, use a "DataBarChart".
-- Keep scenes to a total duration between 10-30 seconds (300 to 900 frames total).
+- Generate up to 10 scenes to show variety and detail the topic extensively. Total scenes can be between 5 to 10 scenes.
 - Design a premium dark theme.
 - Generate optional narration scripts for each scene if the user wants voiceover.
 

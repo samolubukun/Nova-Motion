@@ -5,7 +5,30 @@ import { AbsoluteFill, Sequence, Audio, staticFile } from "remotion";
 import { TextGlitch } from "../scenes/TextAnimations/TextGlitch";
 import { TextKinetic } from "../scenes/TextAnimations/TextKinetic";
 import { TextTypewriter } from "../scenes/TextAnimations/TextTypewriter";
+import { TextNeon } from "../scenes/TextAnimations/TextNeon";
+import { TextWave } from "../scenes/TextAnimations/TextWave";
+import { TextGradient } from "../scenes/TextAnimations/TextGradient";
+import { TextScramble } from "../scenes/TextAnimations/TextScramble";
+
 import { DataBarChart } from "../scenes/DataAnimations/DataBarChart";
+import { DataPieChart } from "../scenes/DataAnimations/DataPieChart";
+import { DataLineChart } from "../scenes/DataAnimations/DataLineChart";
+import { DataStatsCards } from "../scenes/DataAnimations/DataStatsCards";
+import { DataProgressBars } from "../scenes/DataAnimations/DataProgressBars";
+import { DataTimeline } from "../scenes/DataAnimations/DataTimeline";
+import { DataRanking } from "../scenes/DataAnimations/DataRanking";
+import { DataGauge } from "../scenes/DataAnimations/DataGauge";
+
+import { UIButton } from "../scenes/UIAnimations/UIButton";
+import { UICard } from "../scenes/UIAnimations/UICard";
+import { UIModal } from "../scenes/UIAnimations/UIModal";
+import { UIToast } from "../scenes/UIAnimations/UIToast";
+import { UINavigation } from "../scenes/UIAnimations/UINavigation";
+import { UIDropdown } from "../scenes/UIAnimations/UIDropdown";
+import { UIToggle } from "../scenes/UIAnimations/UIToggle";
+import { UILoading } from "../scenes/UIAnimations/UILoading";
+import { UITabs } from "../scenes/UIAnimations/UITabs";
+import { UIForm } from "../scenes/UIAnimations/UIForm";
 
 export interface MotionGraphicsScene {
   type: string;
@@ -27,27 +50,47 @@ export interface MotionGraphicsStoryboard {
   }>;
 }
 
+const componentsRegistry: Record<string, React.ComponentType<any>> = {
+  TextGlitch,
+  TextKinetic,
+  TextTypewriter,
+  TextNeon,
+  TextWave,
+  TextGradient,
+  TextScramble,
+  DataBarChart,
+  DataPieChart,
+  DataLineChart,
+  DataStatsCards,
+  DataProgressBars,
+  DataTimeline,
+  DataRanking,
+  DataGauge,
+  UIButton,
+  UICard,
+  UIModal,
+  UIToast,
+  UINavigation,
+  UIDropdown,
+  UIToggle,
+  UILoading,
+  UITabs,
+  UIForm
+};
+
 // Map scene type string to the actual React component
-const SceneResolver: React.FC<{ type: string; props: any }> = ({ type, props }) => {
-  switch (type) {
-    case "TextGlitch":
-      return <TextGlitch {...props} />;
-    case "TextKinetic":
-      return <TextKinetic {...props} />;
-    case "TextTypewriter":
-      return <TextTypewriter {...props} />;
-    case "DataBarChart":
-      return <DataBarChart {...props} />;
-    default:
-      // Fallback screen if type not found or matched
-      return (
-        <AbsoluteFill style={{ backgroundColor: "#09090b", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <div style={{ color: "white", fontSize: 32, fontFamily: "sans-serif" }}>
-            Scene: {type}
-          </div>
-        </AbsoluteFill>
-      );
+const SceneResolver: React.FC<{ type: string; props: any; durationFrames: number }> = ({ type, props, durationFrames }) => {
+  const Component = componentsRegistry[type];
+  if (!Component) {
+    return (
+      <AbsoluteFill style={{ backgroundColor: "#09090b", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div style={{ color: "white", fontSize: 32, fontFamily: "sans-serif" }}>
+          Scene: {type}
+        </div>
+      </AbsoluteFill>
+    );
   }
+  return <Component {...props} durationFrames={durationFrames} />;
 };
 
 export const MotionGraphics: React.FC<{ storyboard: MotionGraphicsStoryboard }> = ({ storyboard }) => {
@@ -70,7 +113,7 @@ export const MotionGraphics: React.FC<{ storyboard: MotionGraphicsStoryboard }> 
             from={startFrame}
             durationInFrames={scene.durationFrames}
           >
-            <SceneResolver type={scene.type} props={scene.props} />
+            <SceneResolver type={scene.type} props={scene.props} durationFrames={scene.durationFrames} />
           </Sequence>
         );
       })}

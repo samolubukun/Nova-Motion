@@ -5,14 +5,22 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const TextTypewriter = ({ text = "TYPING EFFECT...", startDelay = 0 }: {
+export const TextTypewriter = ({
+  text = "TYPING EFFECT...",
+  startDelay = 0,
+  durationFrames = 90
+}: {
   text?: string;
   startDelay?: number;
+  durationFrames?: number;
 }) => {
   const frame = useCurrentFrame();
 
+  // Finish typing at least 20 frames before the scene ends so it is readable
+  const endFrame = Math.max(startDelay + 15, durationFrames - 20);
+
   const charsToShow = Math.floor(
-    lerp(frame, [startDelay, startDelay + text.length * 3], [0, text.length])
+    lerp(frame, [startDelay, endFrame], [0, text.length])
   );
 
   const displayText = text.slice(0, charsToShow);
