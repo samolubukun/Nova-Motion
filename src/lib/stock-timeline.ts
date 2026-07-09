@@ -294,7 +294,7 @@ ${storyText}
   const musicLocalPath = path.join(tempDir, musicFilename);
   try {
     console.log(`[Stock Pipeline] Downloading background track: ${selectedTrack}`);
-    const musicRes = await fetch(selectedTrack);
+    const musicRes = await fetch(selectedTrack, { signal: AbortSignal.timeout(10000) });
     const musicBuffer = Buffer.from(await musicRes.arrayBuffer());
     fs.writeFileSync(musicLocalPath, musicBuffer);
     

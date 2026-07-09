@@ -22,6 +22,10 @@ export interface TimelineData {
     endMs: number;
     audioUrl: string;
   }>;
+  music?: Array<{
+    audioUrl: string;
+    volume?: number;
+  }>;
 }
 
 export const AIVideo: React.FC<{ timeline: TimelineData }> = ({ timeline }) => {
@@ -101,6 +105,17 @@ export const AIVideo: React.FC<{ timeline: TimelineData }> = ({ timeline }) => {
           </Sequence>
         );
       })}
+
+      {timeline.music &&
+        timeline.music.map((track, index) => {
+          return (
+            <Audio
+              key={`ai-music-${index}`}
+              src={track.audioUrl}
+              volume={track.volume || 0.08}
+            />
+          );
+        })}
     </AbsoluteFill>
   );
 };

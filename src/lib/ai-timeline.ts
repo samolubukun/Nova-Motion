@@ -187,6 +187,10 @@ export interface TimelineAsset {
     endMs: number;
     audioUrl: string;
   }>;
+  music?: Array<{
+    audioUrl: string;
+    volume?: number;
+  }>;
 }
 
 /**
@@ -358,6 +362,39 @@ ${storyText}
     }
 
     durationMs += sceneDurationMs;
+  }
+
+  // 4. Overlay background music
+  const backgroundTracks = [
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+  ];
+  const selectedTrack = backgroundTracks[Math.floor(Math.random() * backgroundTracks.length)];
+
+  // Download selected music track locally
+  const musicFilename = `music-${Math.floor(Math.random() * 1000000)}.mp3`;
+  const musicLocalPath = path.join(tempDir, musicFilename);
+  try {
+    console.log(`[AI Pipeline] Downloading background track: ${selectedTrack}`);
+    const musicRes = await fetch(selectedTrack, { signal: AbortSignal.timeout(10000) });
+    const musicBuffer = Buffer.from(await musicRes.arrayBuffer());
+    fs.writeFileSync(musicLocalPath, musicBuffer);
+    
+    timeline.music = [
+      {
+        audioUrl: `/assets-temp/${musicFilename}`,
+        volume: 0.08,
+      },
+    ];
+  } catch (err) {
+    console.warn(`[AI Pipeline] Failed to download music track locally:`, err);
+    timeline.music = [
+      {
+        audioUrl: selectedTrack,
+        volume: 0.08,
+      },
+    ];
   }
 
   return timeline;
