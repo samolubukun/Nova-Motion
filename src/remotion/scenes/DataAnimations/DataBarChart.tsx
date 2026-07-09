@@ -79,7 +79,8 @@ export const DataBarChart = ({
             config: { damping: 15, stiffness: 100 },
           });
 
-          const barHeight = (item.value / 100) * 280 * progress;
+          const maxVal = Math.max(...data.map((d) => d.value), 1);
+          const barHeight = (item.value / maxVal) * 280 * progress;
 
           return (
             <div

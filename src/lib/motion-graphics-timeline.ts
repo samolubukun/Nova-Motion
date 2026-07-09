@@ -133,23 +133,41 @@ export async function generateMotionGraphicsTimeline(
   const selectedVoice = voice || AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
   console.log(`[MotionGraphics Pipeline] Starting generation for topic [${topic}]`);
 
-  const systemPrompt = `You are a motion graphics designer and director.
-Generate a dynamic, stylized storyboard in JSON format based on the user's prompt.
-You have access to the following scene components:
-1. "TextGlitch": Glitchy digital reveal text.
-   - Props schema: { "text": string }
-2. "TextKinetic": Rapid typography.
-   - Props schema: { "text": string }
-3. "TextTypewriter": Classic typing cursor text.
-   - Props schema: { "text": string }
-4. "DataBarChart": Animated data bar chart display.
-   - Props schema: { "title": string, "subtitle": string, "data": Array<{ "label": string, "value": number, "color": string }> }
-     (Colors should match the theme, e.g., "#00ffd2", "#ff007f")
+  const systemPrompt = `You are an expert motion graphics director.
+Generate a dynamic, premium, highly engaging storyboard in JSON format based on the user's prompt.
+You have access to the following 25 scene components. DO NOT repeat the same component consecutively. Vary your selections to make the video feel active and professional.
+
+Supported Scene Components:
+1. "TextGlitch": Glitchy cyber reveal text. Props: { "text": string }
+2. "TextKinetic": Fast kinetic word-by-word typography. Props: { "text": string }
+3. "TextTypewriter": Monospace typing terminal simulation. Props: { "text": string }
+4. "TextNeon": Glowing neon text against dark background. Props: { "text": string }
+5. "TextWave": Bouncing sine-wave text. Props: { "text": string }
+6. "TextGradient": Gradient colored stylish layout. Props: { "text": string }
+7. "TextScramble": Scrambling matrix/hacker text. Props: { "text": string }
+8. "DataBarChart": Animated comparison bar chart. Props: { "title": string, "subtitle": string, "data": Array<{ "label": string, "value": number, "color": string }> }
+9. "DataPieChart": Dynamic pie/donut visualization. Props: { "title": string, "subtitle": string, "data": Array<{ "label": string, "value": number, "color": string }> }
+10. "DataLineChart": Growth line chart. Props: { "title": string, "subtitle": string, "data": Array<{ "label": string, "value": number, "color": string }> }
+11. "DataStatsCards": Multiple key-value stats counters grid. Props: { "title": string, "subtitle": string }
+12. "DataProgressBars": Side-by-side horizontal loader bars. Props: { "title": string }
+13. "DataTimeline": Animated process timeline milestone list. Props: { "title": string }
+14. "DataRanking": High-to-low ranked list of items. Props: { "title": string }
+15. "DataGauge": Radial/speedometer visualizer. Props: { "title": string }
+16. "UIButton": Dynamic glassmorphic button click simulation. Props: {}
+17. "UICard": Sliding product card details. Props: {}
+18. "UIModal": Pop-up overlay card. Props: {}
+19. "UIToast": Slide-in alert toast notification. Props: {}
+20. "UINavigation": Topbar navigation sliding links animation. Props: {}
+21. "UIDropdown": Interactive list dropdown expansion. Props: {}
+22. "UIToggle": Modern switcher toggle animation. Props: {}
+23. "UILoading": High-tech dashboard loader spinner. Props: {}
+24. "UITabs": Switching tabs animation with layout change. Props: {}
+25. "UIForm": Modern input fields autocomplete simulation. Props: {}
 
 Guidelines:
-- Choose the best components matching the prompt context. If the prompt contains stats/comparisons, use a "DataBarChart".
-- Generate up to 10 scenes to show variety and detail the topic extensively. Total scenes can be between 5 to 10 scenes.
-- Design a premium dark theme.
+- Choose the best components matching the prompt context. Vary your choices! Do not repeat the same component twice in a row.
+- Total scenes: between 5 to 10 scenes. Make the storyboard complete and narrative-driven.
+- Keep the visual tone premium (use colors like cyan "#00ffd2", magenta "#ff007f", electric blue, purple, dark gray background).
 - Generate optional narration scripts for each scene if the user wants voiceover.
 
 Give output in strict JSON format:
