@@ -68,11 +68,14 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
     updateJobStatus(job.id, { progress: 10 });
 
     // Prepare input props
-    const inputProps = (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage") ? {
-      timeline: job.timeline,
-    } : {
-      script: job.script,
-    };
+    let inputProps: any = {};
+    if (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage") {
+      inputProps = { timeline: job.timeline };
+    } else if (job.videoType === "MotionGraphics") {
+      inputProps = { storyboard: job.timeline };
+    } else {
+      inputProps = { script: job.script };
+    }
 
     // Select the composition
     console.log(`Selecting composition: ${job.videoType}`);
