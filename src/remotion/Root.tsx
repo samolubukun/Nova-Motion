@@ -5,7 +5,19 @@ import { SocialMedia, socialMediaSchema } from "./compositions/SocialMedia";
 import { Explainer, explainerSchema } from "./compositions/Explainer";
 import { AIVideo } from "./compositions/AIVideo";
 import { StockVideo } from "./compositions/StockVideo";
+import { MotionGraphics } from "./compositions/MotionGraphics";
 import { z } from "zod";
+
+const motionGraphicsSchema = z.object({
+  storyboard: z.object({
+    shortTitle: z.string(),
+    scenes: z.array(z.any()),
+    audio: z.array(z.any()).optional(),
+    music: z.array(z.any()).optional(),
+    width: z.number().optional(),
+    height: z.number().optional(),
+  }),
+});
 
 const aiVideoPropsSchema = z.object({
   timeline: z.object({
@@ -278,6 +290,41 @@ export const RemotionRoot: React.FC = () => {
             fps: script.fps,
             width: script.width,
             height: script.height,
+          };
+        }}
+      />
+      <Composition
+        id="MotionGraphics"
+        component={MotionGraphics}
+        durationInFrames={300}
+        fps={30}
+        width={1080}
+        height={1920}
+        schema={motionGraphicsSchema}
+        defaultProps={{
+          storyboard: {
+            shortTitle: "Default Motion Graphics",
+            scenes: [],
+            audio: [],
+            music: [],
+            width: 1080,
+            height: 1920,
+          },
+        }}
+        calculateMetadata={({ props }) => {
+          const { storyboard } = props;
+          if (!storyboard || !storyboard.scenes || !storyboard.scenes.length) {
+            return { durationInFrames: 150 };
+          }
+          let totalFrames = 0;
+          for (const scene of storyboard.scenes) {
+            totalFrames += scene.durationFrames || 90;
+          }
+          return {
+            durationInFrames: totalFrames,
+            fps: 30,
+            width: storyboard.width || 1080,
+            height: storyboard.height || 1920,
           };
         }}
       />

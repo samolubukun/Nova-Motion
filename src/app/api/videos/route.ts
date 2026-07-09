@@ -27,6 +27,7 @@ export const maxDuration = 180; // Allow up to 3 minutes for script generation +
 import { generateAIVideoTimeline } from "@/lib/ai-timeline";
 import { generateStockVideoTimeline } from "@/lib/stock-timeline";
 import { generateStockImageTimeline } from "@/lib/stock-image-timeline";
+import { generateMotionGraphicsTimeline } from "@/lib/motion-graphics-timeline";
 
 // Get render server configuration
 function getRenderServerConfig() {
@@ -214,6 +215,25 @@ export async function POST(req: NextRequest) {
             ...el,
             imageUrl: el.imageUrl && el.imageUrl.startsWith("/") ? `${req.nextUrl.origin}${el.imageUrl}` : el.imageUrl,
             videoUrl: el.videoUrl && el.videoUrl.startsWith("/") ? `${req.nextUrl.origin}${el.videoUrl}` : el.videoUrl,
+          }));
+        }
+      } else if (videoType === "MotionGraphics") {
+        // Generate Motion Graphics Timeline using OpenAI and Deepgram
+        timeline = await generateMotionGraphicsTimeline(prompt, topic || "Interesting Facts", selectedVoice, aspectRatio);
+        timeline.width = width;
+        timeline.height = height;
+
+        // Convert relative URLs to absolute URLs
+        if (timeline.audio) {
+          timeline.audio = timeline.audio.map((a: any) => ({
+            ...a,
+            audioUrl: a.audioUrl.startsWith("/") ? `${req.nextUrl.origin}${a.audioUrl}` : a.audioUrl,
+          }));
+        }
+        if (timeline.music) {
+          timeline.music = timeline.music.map((m: any) => ({
+            ...m,
+            audioUrl: m.audioUrl.startsWith("/") ? `${req.nextUrl.origin}${m.audioUrl}` : m.audioUrl,
           }));
         }
       } else {

@@ -22,6 +22,7 @@ export const VideoType = z.enum([
   "AIVideo",
   "StockVideo",
   "StockImage",
+  "MotionGraphics",
 ]);
 export type VideoType = z.infer<typeof VideoType>;
 
