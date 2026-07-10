@@ -26,6 +26,11 @@ Clean layouts using modern typographic animations and styles.
 * **Claude/OpenAI**: Writes structured JSON scripts defining slide colors, text, and timing.
 * **Deepgram**: Overlays audio voiceovers.
 
+### 4. Motion Graphics & Data Visualizations (`videoType: "MotionGraphics"`)
+Produces premium, highly animated visual components such as charts, hacker text, neon typography, and mock UI interactions.
+* **OpenAI (GPT-4o-mini)**: Generates a complete storyboard containing glitch/neon/wave text, bar/pie/line charts, growth metrics, and simulated UI interactions (buttons, tabs, forms, modals).
+* **Deepgram & Background Music**: Synthesizes custom TTS narration for each scene and overlays background audio tracks.
+
 ---
 
 ## Tech Stack
@@ -93,6 +98,7 @@ All endpoints support the following root payload fields:
   * `"Explainer"`: Multi-step layout slides supporting step numbers.
   * `"General"`: Simple slide layout transitions.
   * `"TextAnimation"`: Words with active highlighting animations.
+  * `"MotionGraphics"`: Dynamic motion graphics, charts, and interactive UI component simulations.
 * **`aspectRatio`** (string, optional): Target video layout format. Must be one of:
   * `"9:16"`: Portrait (mobile vertical) - defaults to `1080x1920`.
   * `"16:9"`: Landscape (widescreen desktop) - defaults to `1920x1080`.
@@ -146,6 +152,19 @@ Outputs animated text slides with dynamic TTS voiceover. Layout automatically ad
       "primaryColor": "#0f172a",
       "textColor": "#38bdf8"
     }
+  }
+  ```
+
+#### Endpoint D: Motion Graphics & Data Visualizations (`videoType: "MotionGraphics"`)
+Generates highly animated technical slides with data visualization layouts (bar charts, pie charts, line charts, gauge progress charts, process timelines, ranking lists) and simulated UI components (buttons, tabs, inputs, toggle switches, toast messages).
+* **Example Payload**:
+  ```json
+  {
+    "prompt": "Show a comparison of the top 3 programming languages in 2026",
+    "videoType": "MotionGraphics",
+    "topic": "Programming",
+    "aspectRatio": "9:16",
+    "voice": "aura-2-aries-en"
   }
   ```
 
@@ -230,6 +249,17 @@ All requests must be sent as `POST` requests to:
     "primaryColor": "#000000",
     "textColor": "#ffffff"
   }
+}
+```
+
+#### 7. Motion Graphics Video (`MotionGraphics`)
+```json
+{
+  "prompt": "Show a comparison of the top 3 programming languages in 2026",
+  "videoType": "MotionGraphics",
+  "topic": "Programming",
+  "aspectRatio": "9:16",
+  "voice": "aura-2-aries-en"
 }
 ```
 
