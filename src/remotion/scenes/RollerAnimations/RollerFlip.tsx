@@ -11,15 +11,18 @@ const C = {
   gray: { 600: "#666666", 400: "#999999" },
 };
 
-export const RollerFlip = ({ startDelay = 0 }: {
+export const RollerFlip = ({ startDelay = 0, items = ["Ideas", "Dreams", "Goals", "Reality"], prefix = "Turn your", suffix = "into success" }: {
   startDelay?: number;
+  items?: string[];
+  prefix?: string;
+  suffix?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const words = ["Ideas", "Dreams", "Goals", "Reality"];
+
   const cycleDuration = 30;
-  const finalIndex = words.length - 1;
+  const finalIndex = items.length - 1;
 
   const t = frame - startDelay;
   const currentIndex = Math.min(Math.floor(t / cycleDuration), finalIndex);
@@ -35,8 +38,8 @@ export const RollerFlip = ({ startDelay = 0 }: {
   const rotation = currentIndex >= finalIndex ? 0 : flipProgress * 180;
   const showNext = rotation > 90;
   const displayWord = currentIndex >= finalIndex
-    ? words[finalIndex]
-    : showNext ? words[nextIndex] : words[currentIndex];
+    ? items[finalIndex]
+    : showNext ? items[nextIndex] : items[currentIndex];
 
   return (
     <AbsoluteFill style={{ background: C.light }}>

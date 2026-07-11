@@ -5,15 +5,17 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const RollerFadeSlide = ({ startDelay = 0 }: {
+export const RollerFadeSlide = ({ startDelay = 0, items = ["Faster", "Smarter", "Better", "Stronger"], title = "Work" }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const words = ["Faster", "Smarter", "Better", "Stronger"];
+
   const cycleDuration = 28;
-  const finalIndex = words.length - 1;
+  const finalIndex = items.length - 1;
 
   const t = frame - startDelay;
   const currentIndex = Math.min(Math.floor(t / cycleDuration), finalIndex);
@@ -70,11 +72,11 @@ export const RollerFadeSlide = ({ startDelay = 0 }: {
               opacity: progress * (1 - exitProgress),
             }}
           >
-            {words[currentIndex]}
+            {items[currentIndex]}
           </div>
         </div>
 
-        {/* アンダーライン */}
+        {/* Underline */}
         <div
           style={{
             width: 100,

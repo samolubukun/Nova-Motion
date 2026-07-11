@@ -5,23 +5,19 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, Easing } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const RollerDramaticStop = ({ startDelay = 0 }: {
+export const RollerDramaticStop = ({ startDelay = 0, items = ["Good", "Better", "Great", "Amazing", "LEGENDARY"], title = "Not just good, but..." }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const words = [
-    "Good",
-    "Better",
-    "Great",
-    "Amazing",
-    "LEGENDARY", // 最終
-  ];
+
 
   const wordHeight = 100;
   const t = frame - startDelay;
-  const finalIndex = words.length - 1;
+  const finalIndex = items.length - 1;
   const totalScrollDistance = finalIndex * wordHeight;
 
   // ドラマチックなイージング：
@@ -55,7 +51,7 @@ export const RollerDramaticStop = ({ startDelay = 0 }: {
   const easedProgress = dramaticEasing(progress);
   let scrollY = easedProgress * totalScrollDistance;
 
-  // 最終停止時のバウンス効果
+  // 最終停止時のバウンスEffect
   const isStopping = t >= duration - 10;
   if (isStopping) {
     const bounceProgress = spring({
@@ -170,7 +166,7 @@ export const RollerDramaticStop = ({ startDelay = 0 }: {
                   : "none",
               }}
             >
-              {words[displayIndex]}
+              {items[displayIndex]}
             </div>
 
             {/* 次のワード */}
@@ -187,7 +183,7 @@ export const RollerDramaticStop = ({ startDelay = 0 }: {
                   justifyContent: "center",
                 }}
               >
-                {words[nextIndex]}
+                {items[nextIndex]}
               </div>
             )}
           </div>

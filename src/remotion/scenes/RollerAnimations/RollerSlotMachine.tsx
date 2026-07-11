@@ -12,8 +12,10 @@ const C = {
   gray: { 600: "#666666" },
 };
 
-export const RollerSlotMachine = ({ startDelay = 0 }: {
+export const RollerSlotMachine = ({ startDelay = 0, items = ["Feature", "Product", "Design", "Future"], title = "New" }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -29,7 +31,7 @@ export const RollerSlotMachine = ({ startDelay = 0 }: {
   const currentIndex = Math.min(Math.floor(rawIndex), finalIndex);
   const nextIndex = Math.min(currentIndex + 1, finalIndex);
 
-  // 最後のワードに完全に到達したらアニメーション停止
+  // 最後のワードに完全に到達したらAnimation停止
   const cycleT = currentIndex >= finalIndex ? cycleDuration : t % cycleDuration;
 
   const spinProgress = spring({

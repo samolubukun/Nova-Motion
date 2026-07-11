@@ -5,20 +5,21 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, font } from "../../common";
 
-export const RollerGlitch = ({ startDelay = 0 }: {
+export const RollerGlitch = ({ startDelay = 0, items = ["HACK", "CODE", "SHIP", "WIN"], title = "READY TO" }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
-  const words = ["HACK", "CODE", "SHIP", "WIN"];
   const cycleDuration = 30;
-  const finalIndex = words.length - 1;
+  const finalIndex = items.length - 1;
 
   const t = frame - startDelay;
   const currentIndex = Math.min(Math.floor(t / cycleDuration), finalIndex);
   const cycleT = currentIndex >= finalIndex ? cycleDuration : t % cycleDuration;
 
-  // グリッチ効果（切り替え時のみ、最終状態では無効）
+  // グリッチEffect（切り替え時のみ、最終状態では無効）
   const isGlitching = currentIndex < finalIndex && cycleT < 8;
   const glitchIntensity = isGlitching ? Math.sin(cycleT * 2) * 5 : 0;
 
@@ -61,7 +62,7 @@ export const RollerGlitch = ({ startDelay = 0 }: {
                 clipPath: "inset(0 0 50% 0)",
               }}
             >
-              {words[currentIndex]}
+              {items[currentIndex]}
             </div>
           )}
           {/* マゼンタレイヤー */}
@@ -78,7 +79,7 @@ export const RollerGlitch = ({ startDelay = 0 }: {
                 clipPath: "inset(50% 0 0 0)",
               }}
             >
-              {words[currentIndex]}
+              {items[currentIndex]}
             </div>
           )}
           {/* メインテキスト */}
@@ -90,7 +91,7 @@ export const RollerGlitch = ({ startDelay = 0 }: {
               color: C.white,
             }}
           >
-            {words[currentIndex]}
+            {items[currentIndex]}
           </div>
         </div>
       </div>

@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, Easing } from "remotion";
 import { C, font } from "../../common";
 
-export const RollerOutlineHighlight = ({ startDelay = 0 }: {
+export const RollerOutlineHighlight = ({ startDelay = 0, title = "Introducing" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();

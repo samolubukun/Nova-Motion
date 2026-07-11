@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const RollerPerspectiveStripes = ({ startDelay = 0 }: {
+export const RollerPerspectiveStripes = ({ startDelay = 0, items = [{ text: "Create your", color: "#ffffff" }, { text: "own video", color: "#22c55e" }] }: {
   startDelay?: number;
+  items?: Array<{ text: string; color: string }>;
 }) => {
   const frame = useCurrentFrame();
 

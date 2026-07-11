@@ -5,18 +5,19 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, font } from "../../common";
 
-export const RollerTypewriter = ({ startDelay = 0 }: {
+export const RollerTypewriter = ({ startDelay = 0, items = ["amazing", "stunning", "powerful", "seamless"], title = "Create something " }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
-  const words = ["amazing", "stunning", "powerful", "seamless"];
   const cycleDuration = 35;
-  const finalIndex = words.length - 1;
+  const finalIndex = items.length - 1;
 
   const t = frame - startDelay;
   const currentIndex = Math.min(Math.floor(t / cycleDuration), finalIndex);
-  const currentWord = words[currentIndex];
+  const currentWord = items[currentIndex];
   const cycleT = currentIndex >= finalIndex ? cycleDuration : t % cycleDuration;
 
   const deleteEnd = 12;
@@ -30,7 +31,7 @@ export const RollerTypewriter = ({ startDelay = 0 }: {
     displayText = currentWord;
     showCursor = Math.floor(frame / 15) % 2 === 0;
   } else if (cycleT < deleteEnd) {
-    const prevWord = words[Math.max(0, currentIndex - 1)];
+    const prevWord = items[Math.max(0, currentIndex - 1)];
     const charsToShow = Math.max(0, prevWord.length - Math.floor(cycleT * 1.2));
     displayText = prevWord.slice(0, charsToShow);
   } else if (cycleT >= typeStart) {

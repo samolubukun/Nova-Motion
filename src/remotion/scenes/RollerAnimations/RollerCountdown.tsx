@@ -5,14 +5,16 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const RollerCountdown = ({ startDelay = 0 }: {
+export const RollerCountdown = ({ startDelay = 0, items = ["5", "4", "3", "2", "1"], title = "LAUNCH", subtitle = "YOUR JOURNEY BEGINS" }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
+  subtitle?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const numbers = ["5", "4", "3", "2", "1"];
-  const finalWord = "LAUNCH";
+
   const wordHeight = 180;
   const t = frame - startDelay;
 
@@ -34,7 +36,7 @@ export const RollerCountdown = ({ startDelay = 0 }: {
 
   if (isCountdown) {
     // 各数字を順番に表示（スロット風に上から落ちてくる）
-    const framePerNumber = countdownDuration / numbers.length;
+    const framePerNumber = countdownDuration / items.length;
     displayIndex = Math.floor(t / framePerNumber);
     const localT = t % framePerNumber;
 
@@ -51,16 +53,16 @@ export const RollerCountdown = ({ startDelay = 0 }: {
     const spinT = t - countdownDuration;
     // 加速しながら回転
     const speed = 15 + spinT * 2;
-    scrollY = numbers.length * wordHeight + spinT * speed;
+    scrollY = items.length * wordHeight + spinT * speed;
   } else {
     // 停止フェーズ：LAUNCHで止まる
     showFinal = true;
   }
 
   // 緊迫感演出：カウントダウンが進むにつれて
-  const urgency = isCountdown ? displayIndex / (numbers.length - 1) : 1;
+  const urgency = isCountdown ? displayIndex / (items.length - 1) : 1;
 
-  // 背景色の変化
+  // Background色の変化
   const bgRed = Math.floor(10 + urgency * 20);
   const bgColor = isCountdown
     ? `rgb(${bgRed}, 10, 20)`
@@ -68,7 +70,7 @@ export const RollerCountdown = ({ startDelay = 0 }: {
       ? "#1a0a0a"
       : C.black;
 
-  // パルス効果（カウントダウン中）
+  // パルスEffect（カウントダウン中）
   const pulseScale = isCountdown
     ? 1 + 0.02 * Math.sin(t * 0.5) * (1 + urgency)
     : 1;
@@ -94,7 +96,7 @@ export const RollerCountdown = ({ startDelay = 0 }: {
         transform: `scale(${pulseScale})`,
       }}
     >
-      {/* ビネット効果（緊迫感） */}
+      {/* ビネットEffect（緊迫感） */}
       {isCountdown && (
         <AbsoluteFill
           style={{
@@ -126,7 +128,7 @@ export const RollerCountdown = ({ startDelay = 0 }: {
               textShadow: `0 0 ${50 * launchProgress}px rgba(255, 107, 107, 0.8)`,
             }}
           >
-            {finalWord}
+            {items[items.length - 1]}
           </div>
         ) : (
           // カウントダウン/回転表示
@@ -183,9 +185,9 @@ export const RollerCountdown = ({ startDelay = 0 }: {
                       transform: `translateY(${-(scrollY % wordHeight)}px)`,
                     }}
                   >
-                    {numbers[Math.min(displayIndex, numbers.length - 1)]}
+                    {items[Math.min(displayIndex, items.length - 1)]}
                   </div>
-                  {displayIndex < numbers.length - 1 && (
+                  {displayIndex < items.length - 1 && (
                     <div
                       style={{
                         fontFamily: font,
@@ -199,7 +201,7 @@ export const RollerCountdown = ({ startDelay = 0 }: {
                         transform: `translateY(${-(scrollY % wordHeight)}px)`,
                       }}
                     >
-                      {numbers[displayIndex + 1]}
+                      {items[displayIndex + 1]}
                     </div>
                   )}
                 </>
@@ -217,7 +219,7 @@ export const RollerCountdown = ({ startDelay = 0 }: {
                     justifyContent: "center",
                   }}
                 >
-                  {numbers[Math.floor(scrollY / wordHeight) % numbers.length]}
+                  {items[Math.floor(scrollY / wordHeight) % items.length]}
                 </div>
               )}
             </div>

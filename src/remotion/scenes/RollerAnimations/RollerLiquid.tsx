@@ -5,14 +5,15 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const RollerLiquid = ({ startDelay = 0 }: {
+export const RollerLiquid = ({ startDelay = 0, items = ["FLOW", "FORM", "FLUX", "FUSE"], title = "IN CONSTANT" }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
-  const words = ["FLOW", "FORM", "FLUX", "FUSE"];
   const cycleDuration = 32;
-  const finalIndex = words.length - 1;
+  const finalIndex = items.length - 1;
 
   const t = frame - startDelay;
   const currentIndex = Math.min(Math.floor(t / cycleDuration), finalIndex);
@@ -86,7 +87,7 @@ export const RollerLiquid = ({ startDelay = 0 }: {
             opacity: 1 - morphProgress * 0.5,
           }}
         >
-          {words[currentIndex]}
+          {items[currentIndex]}
         </div>
 
         {/* 次のテキスト（フェードイン） */}
@@ -104,7 +105,7 @@ export const RollerLiquid = ({ startDelay = 0 }: {
               opacity: morphProgress,
             }}
           >
-            {words[nextIndex]}
+            {items[nextIndex]}
           </div>
         )}
       </div>

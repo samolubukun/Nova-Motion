@@ -5,18 +5,19 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, Easing } from "remotion";
 import { C, font } from "../../common";
 
-export const Roller3DCarousel = ({ startDelay = 0 }: {
+export const Roller3DCarousel = ({ startDelay = 0, items = ["Innovation", "Creation", "Evolution", "Revolution", "Transformation", "INSPIRATION"], title = "3D CAROUSEL" }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const words = ["Innovation", "Creation", "Evolution", "Revolution", "Transformation", "INSPIRATION"];
   const t = frame - startDelay;
-  const finalIndex = words.length - 1;
+  const finalIndex = items.length - 1;
 
   // 回転角度の計算
-  const anglePerItem = 360 / words.length;
+  const anglePerItem = 360 / items.length;
   const duration = 90;
   const progress = Math.min(t / duration, 1);
 
@@ -68,7 +69,7 @@ export const Roller3DCarousel = ({ startDelay = 0 }: {
             position: "relative",
           }}
         >
-          {words.map((word, i) => {
+          {items.map((word, i) => {
             const itemAngle = i * anglePerItem;
             const isActive = Math.abs((rotation % 360) - itemAngle) < anglePerItem / 2 ||
                            Math.abs((rotation % 360) - itemAngle - 360) < anglePerItem / 2;

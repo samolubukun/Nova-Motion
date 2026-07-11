@@ -5,21 +5,21 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const RollerGradientWave = ({ startDelay = 0 }: {
+export const RollerGradientWave = ({ startDelay = 0, items = ["Dream", "Design", "Develop", "Deliver", "DOMINATE"] }: {
   startDelay?: number;
+  items?: string[];
 }) => {
   const frame = useCurrentFrame();
 
-  const words = ["Dream", "Design", "Develop", "Deliver", "DOMINATE"];
   const t = frame - startDelay;
 
   const wordDuration = 25;
   const currentIndex = Math.min(
     Math.floor(t / wordDuration),
-    words.length - 1
+    items.length - 1
   );
-  const currentWord = words[currentIndex];
-  const isFinal = currentIndex === words.length - 1;
+  const currentWord = items[currentIndex];
+  const isFinal = currentIndex === items.length - 1;
 
   const cycleFrame = t % wordDuration;
 
@@ -32,7 +32,7 @@ export const RollerGradientWave = ({ startDelay = 0 }: {
         background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)",
       }}
     >
-      {/* 背景のグラデーション波 */}
+      {/* Backgroundのグラデーション波 */}
       <div
         style={{
           position: "absolute",
@@ -67,7 +67,7 @@ export const RollerGradientWave = ({ startDelay = 0 }: {
             const hue = isFinal ? 45 : 250 + charWave * 20; // 最終は金色
             const lightness = 50 + charWave * 10;
 
-            // 入場アニメーション
+            // 入場Animation
             const enterDelay = pos * 2;
             const enterProgress = lerp(cycleFrame - enterDelay, [0, 8], [0, 1], EASE.out);
 
@@ -108,7 +108,7 @@ export const RollerGradientWave = ({ startDelay = 0 }: {
         >
           <div
             style={{
-              width: `${((currentIndex + 1) / words.length) * 100}%`,
+              width: `${((currentIndex + 1) / items.length) * 100}%`,
               height: "100%",
               background: isFinal
                 ? `linear-gradient(90deg, ${C.warning}, ${C.gold})`

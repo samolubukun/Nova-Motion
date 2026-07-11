@@ -5,16 +5,17 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const RollerVerticalList = ({ startDelay = 0 }: {
+export const RollerVerticalList = ({ startDelay = 0, items = ["Speed", "Quality", "Value", "Trust"], title = "We deliver" }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const words = ["Speed", "Quality", "Value", "Trust"];
   const itemHeight = 70;
   const cycleDuration = 25;
-  const finalIndex = words.length - 1;
+  const finalIndex = items.length - 1;
 
   const t = frame - startDelay;
   const scrollProgress = spring({ frame: t, fps, config: { damping: 20, stiffness: 80 } });
@@ -91,7 +92,7 @@ export const RollerVerticalList = ({ startDelay = 0 }: {
               transform: `translateY(-${scrollY}px)`,
             }}
           >
-            {[...words, ...words, ...words].map((word, i) => (
+            {[...items, ...items, ...items].map((word, i) => (
               <div
                 key={`list-${i}-${word}`}
                 style={{

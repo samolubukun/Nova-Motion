@@ -5,8 +5,10 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const RollerSlotReveal = ({ startDelay = 0 }: {
+export const RollerSlotReveal = ({ startDelay = 0, items = ["Feature", "Product", "Design", "Service", "Solution", "Platform", "Experience", "Vision", "Future", "Beginning"], title = "New" }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();

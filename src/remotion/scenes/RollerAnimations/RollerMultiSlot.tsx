@@ -5,8 +5,11 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, Easing } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const RollerMultiSlot = ({ startDelay = 0 }: {
+export const RollerMultiSlot = ({ startDelay = 0, slot1 = ["Make", "Build", "Create", "Design", "Craft", "CREATE"], slot2 = ["the", "a", "your", "our", "THE"], slot3 = ["magic", "future", "dream", "vision", "FUTURE"] }: {
   startDelay?: number;
+  slot1?: string[];
+  slot2?: string[];
+  slot3?: string[];
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();

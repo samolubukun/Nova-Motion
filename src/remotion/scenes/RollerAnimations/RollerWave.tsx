@@ -5,18 +5,19 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const RollerWave = ({ startDelay = 0 }: {
+export const RollerWave = ({ startDelay = 0, items = ["Design", "Develop", "Deploy", "Delight"], title = "We" }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
-  const words = ["Design", "Develop", "Deploy", "Delight"];
   const cycleDuration = 28;
-  const finalIndex = words.length - 1;
+  const finalIndex = items.length - 1;
 
   const t = frame - startDelay;
   const currentIndex = Math.min(Math.floor(t / cycleDuration), finalIndex);
-  const currentWord = words[currentIndex];
+  const currentWord = items[currentIndex];
   const cycleT = currentIndex >= finalIndex ? cycleDuration : t % cycleDuration;
 
   return (

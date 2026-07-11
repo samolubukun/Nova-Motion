@@ -5,8 +5,11 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const RollerSplitFlap = ({ startDelay = 0 }: {
+export const RollerSplitFlap = ({ startDelay = 0, items = ["PARIS", "LONDON", "TOKYO", "NEW YORK", "SYDNEY", "BERLIN"], title = "WELCOME", subtitle = "DESTINATION" }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
+  subtitle?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -29,7 +32,7 @@ export const RollerSplitFlap = ({ startDelay = 0 }: {
   const currentWord = allWords[currentWordIndex].padEnd(maxLength, " ");
   const isFinal = currentWordIndex === allWords.length - 1;
 
-  // 単語切り替え時のフラップアニメーション
+  // 単語切り替え時のフラップAnimation
   const wordProgress = (t % wordDuration) / wordDuration;
   const flapProgress = spring({
     frame: Math.floor(wordProgress * 15),
@@ -123,7 +126,7 @@ export const RollerSplitFlap = ({ startDelay = 0 }: {
           })}
         </div>
 
-        {/* ステータス */}
+        {/* Status */}
         <div
           style={{
             marginTop: 30,

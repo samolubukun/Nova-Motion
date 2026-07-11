@@ -5,15 +5,16 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const RollerScaleBounce = ({ startDelay = 0 }: {
+export const RollerScaleBounce = ({ startDelay = 0, items = ["Build", "Ship", "Scale", "Grow"], title = "Let's" }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const words = ["Build", "Ship", "Scale", "Grow"];
   const cycleDuration = 25;
-  const finalIndex = words.length - 1;
+  const finalIndex = items.length - 1;
 
   const t = frame - startDelay;
   const currentIndex = Math.min(Math.floor(t / cycleDuration), finalIndex);
@@ -66,7 +67,7 @@ export const RollerScaleBounce = ({ startDelay = 0 }: {
             transformOrigin: "left bottom",
           }}
         >
-          {words[currentIndex]}
+          {items[currentIndex]}
         </div>
       </div>
     </AbsoluteFill>

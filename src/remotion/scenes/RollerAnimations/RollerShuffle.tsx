@@ -5,8 +5,10 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const RollerShuffle = ({ startDelay = 0 }: {
+export const RollerShuffle = ({ startDelay = 0, title = "DECODING", subtitle = "REVEALED" }: {
   startDelay?: number;
+  title?: string;
+  subtitle?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -69,7 +71,7 @@ export const RollerShuffle = ({ startDelay = 0 }: {
               displayChar = shuffleChars[randomIdx];
             }
 
-            // 確定時のアニメーション
+            // 確定時のAnimation
             const confirmFrame = pos / charsPerFrame / 1.5;
             const confirmProgress = isConfirmed
               ? spring({
@@ -104,7 +106,7 @@ export const RollerShuffle = ({ startDelay = 0 }: {
           })}
         </div>
 
-        {/* プログレスバー */}
+        {/* Progress Bar */}
         <div
           style={{
             width: 300,

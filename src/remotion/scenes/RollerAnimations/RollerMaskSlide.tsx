@@ -5,14 +5,15 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const RollerMaskSlide = ({ startDelay = 0 }: {
+export const RollerMaskSlide = ({ startDelay = 0, items = ["INSPIRE", "IMAGINE", "INNOVATE", "IMPACT"], title = "TIME TO" }: {
   startDelay?: number;
+  items?: string[];
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
-  const words = ["INSPIRE", "IMAGINE", "INNOVATE", "IMPACT"];
   const cycleDuration = 30;
-  const finalIndex = words.length - 1;
+  const finalIndex = items.length - 1;
 
   const t = frame - startDelay;
   const currentIndex = Math.min(Math.floor(t / cycleDuration), finalIndex);
@@ -60,7 +61,7 @@ export const RollerMaskSlide = ({ startDelay = 0 }: {
                 : "none",
             }}
           >
-            {words[currentIndex]}
+            {items[currentIndex]}
           </div>
 
           {/* 次のテキスト（マスクで徐々に表示） */}
@@ -77,12 +78,12 @@ export const RollerMaskSlide = ({ startDelay = 0 }: {
                 clipPath: `inset(0 0 0 ${100 - maskProgress}%)`,
               }}
             >
-              {words[nextIndex]}
+              {items[nextIndex]}
             </div>
           )}
         </div>
 
-        {/* プログレスバー */}
+        {/* Progress Bar */}
         <div
           style={{
             width: 200,
