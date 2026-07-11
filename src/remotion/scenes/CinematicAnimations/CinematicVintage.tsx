@@ -1,11 +1,13 @@
 /**
- * CinematicVintage - ヴィンテージ風
+ * CinematicVintage - Vintage Style
  */
 
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { lerp, font } from "../../common";
 
-export const CinematicVintage = ({ startDelay = 0 }: {
+export const CinematicVintage = ({ title = "Memories", subtitle = "1952", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -81,7 +83,7 @@ export const CinematicVintage = ({ startDelay = 0 }: {
             opacity: titleOpacity * flicker,
           }}
         >
-          Memories
+          {title}
         </div>
         <div
           style={{
@@ -93,7 +95,7 @@ export const CinematicVintage = ({ startDelay = 0 }: {
             opacity: lerp(frame, [startDelay + 50, startDelay + 70], [0, 1]),
           }}
         >
-          — 1952 —
+          — {subtitle} —
         </div>
       </div>
 

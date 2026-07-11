@@ -1,11 +1,12 @@
 /**
- * LogoLightTrail - ロゴライトトレイル
+ * LogoLightTrail - Logoライトトレイル
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LogoLightTrail = ({ startDelay = 0 }: {
+export const LogoLightTrail = ({ text = "LIGHT", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -38,7 +39,7 @@ export const LogoLightTrail = ({ startDelay = 0 }: {
         );
       })}
 
-      {/* ロゴ */}
+      {/* Logo */}
       <div
         style={{
           position: "absolute",

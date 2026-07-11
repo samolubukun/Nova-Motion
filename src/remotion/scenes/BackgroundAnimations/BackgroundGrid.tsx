@@ -1,11 +1,12 @@
 /**
- * BackgroundGrid - グリッドアニメーション
+ * BackgroundGrid - Grid Animation
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const BackgroundGrid = ({ startDelay = 0 }: {
+export const BackgroundGrid = ({ text = "GRID", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -16,7 +17,7 @@ export const BackgroundGrid = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* アニメーショングリッド */}
+      {/* Animationグリッド */}
       {Array.from({ length: rows * cols }).map((_, i) => {
         const row = Math.floor(i / cols);
         const col = i % cols;
@@ -58,7 +59,7 @@ export const BackgroundGrid = ({ startDelay = 0 }: {
           textShadow: "0 0 40px rgba(0,0,0,0.8)",
         }}
       >
-        GRID
+        {text}
       </div>
     </AbsoluteFill>
   );

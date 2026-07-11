@@ -1,18 +1,19 @@
 /**
- * LogoMorph - ロゴモーフィング
+ * LogoMorph - Logoモーフィング
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LogoMorph = ({ startDelay = 0 }: {
+export const LogoMorph = ({ text = "MORPH", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
 
   // 文字変形
-  const letters = ["L", "O", "G", "O"];
-  const targetLetters = ["B", "R", "N", "D"];
+  const letters = "LOGO".split("");
+  const targetLetters = text.substring(0, 4).padEnd(4, " ").toUpperCase().split("");
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>
@@ -58,7 +59,7 @@ export const LogoMorph = ({ startDelay = 0 }: {
         })}
       </div>
 
-      {/* アンダーライン */}
+      {/* Underline */}
       <div
         style={{
           position: "absolute",

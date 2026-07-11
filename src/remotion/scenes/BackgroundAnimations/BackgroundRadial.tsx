@@ -1,11 +1,12 @@
 /**
- * BackgroundRadial - 放射状パターン
+ * BackgroundRadial - Radial Pattern
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const BackgroundRadial = ({ startDelay = 0 }: {
+export const BackgroundRadial = ({ text = "RADIAL", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -71,7 +72,7 @@ export const BackgroundRadial = ({ startDelay = 0 }: {
             color: C.white,
           }}
         >
-          RADIAL
+          {text}
         </div>
       </div>
     </AbsoluteFill>

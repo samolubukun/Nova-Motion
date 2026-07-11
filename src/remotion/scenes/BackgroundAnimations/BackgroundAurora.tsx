@@ -1,11 +1,12 @@
 /**
- * BackgroundAurora - オーロラ効果
+ * BackgroundAurora - Aurora Effect
  */
 
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const BackgroundAurora = ({ startDelay = 0 }: {
+export const BackgroundAurora = ({ text = "AURORA", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -16,7 +17,7 @@ export const BackgroundAurora = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#0a0a20" }}>
-      {/* オーロラレイヤー1 */}
+      {/* Aurora Layer1 */}
       <div
         style={{
           position: "absolute",
@@ -30,7 +31,7 @@ export const BackgroundAurora = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* オーロラレイヤー2 */}
+      {/* Aurora Layer2 */}
       <div
         style={{
           position: "absolute",
@@ -44,7 +45,7 @@ export const BackgroundAurora = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* オーロラレイヤー3 */}
+      {/* Aurora Layer3 */}
       <div
         style={{
           position: "absolute",
@@ -93,7 +94,7 @@ export const BackgroundAurora = ({ startDelay = 0 }: {
           textShadow: `0 0 40px ${C.accent}`,
         }}
       >
-        AURORA
+        {text}
       </div>
     </AbsoluteFill>
   );

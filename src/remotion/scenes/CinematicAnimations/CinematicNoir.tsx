@@ -1,11 +1,13 @@
 /**
- * CinematicNoir - ノワール風
+ * CinematicNoir - Noir Style
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const CinematicNoir = ({ startDelay = 0 }: {
+export const CinematicNoir = ({ title = "Shadows", subtitle = "A NOIR THRILLER", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -15,7 +17,7 @@ export const CinematicNoir = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* ブラインドの光 */}
+      {/* Blindsの光 */}
       {Array.from({ length: 8 }).map((_, i) => (
         <div
           key={`blind-${i}`}
@@ -65,7 +67,7 @@ export const CinematicNoir = ({ startDelay = 0 }: {
             opacity: titleOpacity,
           }}
         >
-          Shadows
+          {title}
         </div>
         <div
           style={{
@@ -77,7 +79,7 @@ export const CinematicNoir = ({ startDelay = 0 }: {
             opacity: lerp(frame, [startDelay + 50, startDelay + 70], [0, 1]),
           }}
         >
-          A NOIR THRILLER
+          {subtitle}
         </div>
       </div>
 

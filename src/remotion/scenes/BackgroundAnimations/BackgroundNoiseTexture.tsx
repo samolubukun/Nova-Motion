@@ -1,11 +1,12 @@
 /**
- * BackgroundNoiseTexture - ノイズテクスチャ
+ * BackgroundNoiseTexture - Noise Texture
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const BackgroundNoiseTexture = ({ startDelay = 0 }: {
+export const BackgroundNoiseTexture = ({ text = "TEXTURE", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -55,7 +56,7 @@ export const BackgroundNoiseTexture = ({ startDelay = 0 }: {
           textShadow: "0 4px 20px rgba(0,0,0,0.3)",
         }}
       >
-        TEXTURE
+        {text}
       </div>
     </AbsoluteFill>
   );

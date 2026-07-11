@@ -1,11 +1,13 @@
 /**
- * CinematicEpic - エピックタイトル - 大作映画風
+ * CinematicEpic - Epic Title - Blockbuster Movie Style
  */
 
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const CinematicEpic = ({ startDelay = 0 }: {
+export const CinematicEpic = ({ title = "EPIC", subtitle = "A CINEMATIC EXPERIENCE", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -16,7 +18,7 @@ export const CinematicEpic = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* パーティクル背景 */}
+      {/* パーティクルBackground */}
       {Array.from({ length: 50 }).map((_, i) => {
         const x = random(`epic-x-${i}`) * 100;
         const y = random(`epic-y-${i}`) * 100;
@@ -67,9 +69,7 @@ export const CinematicEpic = ({ startDelay = 0 }: {
             textShadow: `0 0 60px ${C.gold}60`,
             opacity: titleOpacity,
           }}
-        >
-          EPIC
-        </div>
+        >{title}</div>
         <div
           style={{
             fontFamily: font,
@@ -80,9 +80,7 @@ export const CinematicEpic = ({ startDelay = 0 }: {
             marginTop: 30,
             opacity: subtitleOpacity,
           }}
-        >
-          A CINEMATIC EXPERIENCE
-        </div>
+        >{subtitle}</div>
       </div>
 
       {/* レターボックス */}

@@ -1,11 +1,12 @@
 /**
- * LogoSplitScreen - ロゴスプリットスクリーン
+ * LogoSplitScreen - Logoスプリットスクリーン
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LogoSplitScreen = ({ startDelay = 0 }: {
+export const LogoSplitScreen = ({ text = "SPLIT", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -41,7 +42,7 @@ export const LogoSplitScreen = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* ロゴ */}
+      {/* Logo */}
       <div
         style={{
           position: "absolute",

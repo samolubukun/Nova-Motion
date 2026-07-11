@@ -1,12 +1,13 @@
 /**
- * BackgroundBokeh - ボケ効果
+ * BackgroundBokeh - Bokeh Effect
  */
 
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const BackgroundBokeh = ({ startDelay = 0 }: {
+export const BackgroundBokeh = ({ text = "BOKEH", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -63,7 +64,7 @@ export const BackgroundBokeh = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 20, startDelay + 50], [0, 1]),
         }}
       >
-        BOKEH
+        {text}
       </div>
     </AbsoluteFill>
   );

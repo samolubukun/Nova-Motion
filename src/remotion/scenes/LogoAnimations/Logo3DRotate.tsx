@@ -1,11 +1,12 @@
 /**
- * Logo3DRotate - ロゴ3D回転
+ * Logo3DRotate - Logo3D回転
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
 import { C, font } from "../../common";
 
-export const Logo3DRotate = ({ startDelay = 0 }: {
+export const Logo3DRotate = ({ text = "BRAND", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -39,9 +40,7 @@ export const Logo3DRotate = ({ startDelay = 0 }: {
             color: C.white,
             textShadow: `0 0 60px ${C.accent}`,
           }}
-        >
-          BRAND
-        </div>
+        >{text}</div>
       </div>
 
       {/* 反射 */}
@@ -63,9 +62,7 @@ export const Logo3DRotate = ({ startDelay = 0 }: {
             fontWeight: 900,
             color: C.white,
           }}
-        >
-          BRAND
-        </div>
+        >{text}</div>
       </div>
     </AbsoluteFill>
   );

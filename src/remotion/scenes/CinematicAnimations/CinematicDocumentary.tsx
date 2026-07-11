@@ -1,11 +1,13 @@
 /**
- * CinematicDocumentary - ドキュメンタリー風
+ * CinematicDocumentary - Documentary Style
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const CinematicDocumentary = ({ startDelay = 0 }: {
+export const CinematicDocumentary = ({ title = "The Story", subtitle = "A Documentary Film", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -53,7 +55,7 @@ export const CinematicDocumentary = ({ startDelay = 0 }: {
           opacity: titleOpacity,
         }}
       >
-        The Story
+        {title}
       </div>
 
       {/* サブタイトル */}
@@ -71,7 +73,7 @@ export const CinematicDocumentary = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 30, startDelay + 50], [0, 1]),
         }}
       >
-        A Documentary Film
+        {subtitle}
       </div>
 
       {/* 年号 */}

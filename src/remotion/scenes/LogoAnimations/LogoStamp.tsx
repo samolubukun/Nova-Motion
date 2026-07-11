@@ -1,11 +1,12 @@
 /**
- * LogoStamp - ロゴスタンプ
+ * LogoStamp - Logoスタンプ
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate, random } from "remotion";
 import { C, font } from "../../common";
 
-export const LogoStamp = ({ startDelay = 0 }: {
+export const LogoStamp = ({ text = "STAMP", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();

@@ -1,11 +1,12 @@
 /**
- * BackgroundPerspectiveGrid - パースペクティブグリッド
+ * BackgroundPerspectiveGrid - Perspective Grid
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const BackgroundPerspectiveGrid = ({ startDelay = 0 }: {
+export const BackgroundPerspectiveGrid = ({ text = "RETRO GRID", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -75,7 +76,7 @@ export const BackgroundPerspectiveGrid = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 30], [0, 1]),
         }}
       >
-        RETRO GRID
+        {text}
       </div>
     </AbsoluteFill>
   );

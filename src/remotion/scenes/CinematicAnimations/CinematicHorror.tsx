@@ -1,11 +1,13 @@
 /**
- * CinematicHorror - ホラータイトル
+ * CinematicHorror - Horror Title
  */
 
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const CinematicHorror = ({ startDelay = 0 }: {
+export const CinematicHorror = ({ title = "FEAR", subtitle = "COMING SOON", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -55,7 +57,7 @@ export const CinematicHorror = ({ startDelay = 0 }: {
           opacity: titleOpacity * flicker,
         }}
       >
-        FEAR
+        {title}
       </div>
 
       {/* サブテキスト */}
@@ -72,7 +74,7 @@ export const CinematicHorror = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 40, startDelay + 60], [0, flicker]),
         }}
       >
-        COMING SOON
+        {subtitle}
       </div>
 
       {/* ノイズオーバーレイ */}

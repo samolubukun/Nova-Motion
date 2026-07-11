@@ -1,11 +1,13 @@
 /**
- * CinematicAnime - アニメ風タイトル
+ * CinematicAnime - Anime Style Title
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const CinematicAnime = ({ startDelay = 0 }: {
+export const CinematicAnime = ({ title = "HERO", subtitle = "THE BEGINNING", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -69,7 +71,7 @@ export const CinematicAnime = ({ startDelay = 0 }: {
             textShadow: `4px 4px 0 ${C.secondary}, 8px 8px 0 ${C.accent}`,
           }}
         >
-          HERO
+          {title}
         </div>
       </div>
 
@@ -87,7 +89,7 @@ export const CinematicAnime = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 40, startDelay + 60], [0, 1]),
         }}
       >
-        THE BEGINNING
+        {subtitle}
       </div>
 
       {/* 装飾ライン */}

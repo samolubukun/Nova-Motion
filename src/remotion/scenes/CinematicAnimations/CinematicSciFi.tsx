@@ -1,11 +1,13 @@
 /**
- * CinematicSciFi - SF/テック風
+ * CinematicSciFi - Sci-Fi / Tech Style
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const CinematicSciFi = ({ startDelay = 0 }: {
+export const CinematicSciFi = ({ title = "NEXUS", subtitle = "SYSTEM ONLINE", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -101,7 +103,7 @@ export const CinematicSciFi = ({ startDelay = 0 }: {
             opacity: titleOpacity,
           }}
         >
-          NEXUS
+          {title}
         </div>
         <div
           style={{
@@ -112,7 +114,7 @@ export const CinematicSciFi = ({ startDelay = 0 }: {
             opacity: lerp(frame, [startDelay + 50, startDelay + 70], [0, 1]),
           }}
         >
-          [ SYSTEM ONLINE ]
+          [{subtitle}]
         </div>
       </div>
     </AbsoluteFill>

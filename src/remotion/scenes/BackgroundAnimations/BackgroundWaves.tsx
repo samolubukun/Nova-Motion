@@ -1,11 +1,12 @@
 /**
- * BackgroundWaves - 波形背景
+ * BackgroundWaves - Wave Background
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const BackgroundWaves = ({ startDelay = 0 }: {
+export const BackgroundWaves = ({ text = "WAVES", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -63,7 +64,7 @@ export const BackgroundWaves = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 30], [0, 1]),
         }}
       >
-        WAVES
+        {text}
       </div>
     </AbsoluteFill>
   );

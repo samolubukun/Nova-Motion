@@ -1,11 +1,12 @@
 /**
- * LogoNeonSign - ロゴネオンサイン
+ * LogoNeonSign - Logoネオンサイン
  */
 
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const LogoNeonSign = ({ startDelay = 0 }: {
+export const LogoNeonSign = ({ text = "NEON", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -13,7 +14,7 @@ export const LogoNeonSign = ({ startDelay = 0 }: {
   const flickerSeed = Math.floor(frame / 4);
   const flicker = random(`neon-${flickerSeed}`) > 0.1 ? 1 : 0.3;
 
-  const letters = "NEON".split("");
+  const letters = text.toUpperCase().split("");
 
   return (
     <AbsoluteFill style={{ background: "#0a0a15" }}>

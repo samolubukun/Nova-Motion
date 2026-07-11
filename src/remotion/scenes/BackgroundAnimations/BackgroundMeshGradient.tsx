@@ -1,11 +1,12 @@
 /**
- * BackgroundMeshGradient - メッシュグラデーション
+ * BackgroundMeshGradient - Mesh Gradient
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const BackgroundMeshGradient = ({ startDelay = 0 }: {
+export const BackgroundMeshGradient = ({ text = "MESH", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -81,7 +82,7 @@ export const BackgroundMeshGradient = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 30], [0, 1]),
         }}
       >
-        MESH
+        {text}
       </div>
     </AbsoluteFill>
   );

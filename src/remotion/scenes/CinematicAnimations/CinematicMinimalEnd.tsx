@@ -1,11 +1,13 @@
 /**
- * CinematicMinimalEnd - ミニマリストエンディング
+ * CinematicMinimalEnd - Minimalist Ending
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const CinematicMinimalEnd = ({ startDelay = 0 }: {
+export const CinematicMinimalEnd = ({ title = "The End", subtitle = "END", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -108,7 +110,19 @@ export const CinematicMinimalEnd = ({ startDelay = 0 }: {
             color: C.white,
           }}
         >
-          The End
+          {title}
+        </div>
+        <div
+          style={{
+            fontFamily: font,
+            fontSize: 20,
+            fontWeight: 300,
+            color: C.gray[500],
+            letterSpacing: 4,
+            marginTop: 10,
+          }}
+        >
+          {subtitle}
         </div>
       </div>
     </AbsoluteFill>

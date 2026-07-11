@@ -1,11 +1,12 @@
 /**
- * LogoMaskReveal - ロゴマスクリビール
+ * LogoMaskReveal - Logoマスクリビール
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LogoMaskReveal = ({ startDelay = 0 }: {
+export const LogoMaskReveal = ({ text = "MASK", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -14,7 +15,7 @@ export const LogoMaskReveal = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>
-      {/* 背景パターン */}
+      {/* Backgroundパターン */}
       <AbsoluteFill
         style={{
           backgroundImage: `
@@ -26,7 +27,7 @@ export const LogoMaskReveal = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* マスクされたロゴ */}
+      {/* マスクされたLogo */}
       <div
         style={{
           position: "absolute",

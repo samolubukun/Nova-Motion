@@ -1,11 +1,13 @@
 /**
- * CinematicRomance - ロマンスタイトル
+ * CinematicRomance - Romance Title
  */
 
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const CinematicRomance = ({ startDelay = 0 }: {
+export const CinematicRomance = ({ title = "Forever", subtitle = "A LOVE STORY", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -19,7 +21,7 @@ export const CinematicRomance = ({ startDelay = 0 }: {
         background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
       }}
     >
-      {/* ボケ効果 */}
+      {/* Bokeh Effect */}
       {Array.from({ length: 20 }).map((_, i) => {
         const x = random(`romance-x-${i}`) * 100;
         const y = random(`romance-y-${i}`) * 100;
@@ -78,7 +80,7 @@ export const CinematicRomance = ({ startDelay = 0 }: {
             opacity: titleOpacity,
           }}
         >
-          Forever
+          {title}
         </div>
         <div
           style={{
@@ -89,9 +91,7 @@ export const CinematicRomance = ({ startDelay = 0 }: {
             marginTop: 20,
             opacity: lerp(frame, [startDelay + 50, startDelay + 70], [0, 1]),
           }}
-        >
-          A LOVE STORY
-        </div>
+        >{subtitle}</div>
       </div>
     </AbsoluteFill>
   );

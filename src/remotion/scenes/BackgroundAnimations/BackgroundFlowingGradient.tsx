@@ -1,11 +1,12 @@
 /**
- * BackgroundFlowingGradient - 流れるグラデーション
+ * BackgroundFlowingGradient - Flowing Gradient
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const BackgroundFlowingGradient = ({ startDelay = 0 }: {
+export const BackgroundFlowingGradient = ({ text = "FLOW", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -42,7 +43,7 @@ export const BackgroundFlowingGradient = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 30], [0, 0.5]),
         }}
       >
-        FLOW
+        {text}
       </div>
     </AbsoluteFill>
   );

@@ -1,11 +1,13 @@
 /**
- * CinematicAction - アクションタイトル
+ * CinematicAction - Action Title
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const CinematicAction = ({ startDelay = 0 }: {
+export const CinematicAction = ({ title = "IMPACT", subtitle = "ACTION TITLE", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -73,7 +75,7 @@ export const CinematicAction = ({ startDelay = 0 }: {
           textShadow: `0 0 40px ${C.accent}`,
         }}
       >
-        IMPACT
+        {title}
       </div>
 
       {/* 飛び散るデブリ */}

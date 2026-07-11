@@ -1,11 +1,12 @@
 /**
- * LogoGlitch - ロゴグリッチ
+ * LogoGlitch - Logoグリッチ
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "remotion";
 import { C, font } from "../../common";
 
-export const LogoGlitch = ({ startDelay = 0 }: {
+export const LogoGlitch = ({ text = "GLITCH", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -37,9 +38,7 @@ export const LogoGlitch = ({ startDelay = 0 }: {
           mixBlendMode: "screen",
           opacity: glitchActive ? 1 : 0,
         }}
-      >
-        GLITCH
-      </div>
+      >{text}</div>
 
       {/* シアンチャンネル */}
       <div
@@ -55,11 +54,9 @@ export const LogoGlitch = ({ startDelay = 0 }: {
           mixBlendMode: "screen",
           opacity: glitchActive ? 1 : 0,
         }}
-      >
-        GLITCH
-      </div>
+      >{text}</div>
 
-      {/* メインロゴ */}
+      {/* メインLogo */}
       <div
         style={{
           position: "absolute",
@@ -71,9 +68,7 @@ export const LogoGlitch = ({ startDelay = 0 }: {
           fontWeight: 900,
           color: C.white,
         }}
-      >
-        GLITCH
-      </div>
+      >{text}</div>
 
       {/* スキャンライン */}
       {glitchActive && (

@@ -1,12 +1,13 @@
 /**
- * BackgroundGeometric - ジオメトリックパターン
+ * BackgroundGeometric - Geometric Pattern
  */
 
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const BackgroundGeometric = ({ startDelay = 0 }: {
+export const BackgroundGeometric = ({ text = "GEOMETRIC", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -63,7 +64,7 @@ export const BackgroundGeometric = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 20, startDelay + 50], [0, 1]),
         }}
       >
-        GEOMETRIC
+        {text}
       </div>
     </AbsoluteFill>
   );

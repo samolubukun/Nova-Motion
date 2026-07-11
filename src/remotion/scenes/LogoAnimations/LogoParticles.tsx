@@ -1,12 +1,13 @@
 /**
- * LogoParticles - ロゴパーティクル集合
+ * LogoParticles - Logoパーティクル集合
  */
 
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate, random } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const LogoParticles = ({ startDelay = 0 }: {
+export const LogoParticles = ({ text = "PARTICLES", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -64,7 +65,7 @@ export const LogoParticles = ({ startDelay = 0 }: {
         );
       })}
 
-      {/* ロゴ */}
+      {/* Logo */}
       <div
         style={{
           position: "absolute",

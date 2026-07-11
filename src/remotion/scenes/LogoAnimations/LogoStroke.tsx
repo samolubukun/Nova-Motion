@@ -1,11 +1,12 @@
 /**
- * LogoStroke - ロゴストロークアニメーション
+ * LogoStroke - LogoストロークAnimation
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LogoStroke = ({ startDelay = 0 }: {
+export const LogoStroke = ({ text = "STROKE", startDelay = 0 }: {
+  text?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -24,7 +25,7 @@ export const LogoStroke = ({ startDelay = 0 }: {
         }}
       >
         <svg width="300" height="100" viewBox="0 0 300 100" aria-hidden="true">
-          {/* ロゴパス */}
+          {/* Logoパス */}
           <text
             x="150"
             y="70"
