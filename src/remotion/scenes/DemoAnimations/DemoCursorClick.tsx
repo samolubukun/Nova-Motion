@@ -1,5 +1,5 @@
 /**
- * DemoCursorClick - マウスカーソル移動 + クリック
+ * DemoCursorClick - Mouse Cursor Movement + Click
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
@@ -7,8 +7,9 @@ import { C, EASE, lerp, font } from "../../common";
 import { Cursor } from "./shared/Cursor";
 import { ClickRipple } from "./shared/ClickRipple";
 
-export const DemoCursorClick = ({ startDelay = 0 }: {
+export const DemoCursorClick = ({ startDelay = 0, title = "Cursor Click Interaction" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -16,7 +17,7 @@ export const DemoCursorClick = ({ startDelay = 0 }: {
   const cursorX = lerp(frame, [startDelay, startDelay + 40], [200, 640], EASE.smooth);
   const cursorY = lerp(frame, [startDelay, startDelay + 40], [400, 300], EASE.smooth);
 
-  // クリックタイミング
+  // Clickタイミング
   const clickFrame = startDelay + 50;
   const isClicking = frame >= clickFrame && frame < clickFrame + 10;
   const clickProgress = lerp(frame, [clickFrame, clickFrame + 20], [0, 1]);
@@ -67,7 +68,7 @@ export const DemoCursorClick = ({ startDelay = 0 }: {
           </div>
         </div>
 
-        {/* ボタンエリア */}
+        {/* Buttonエリア */}
         <div style={{ display: "flex", gap: 20 }}>
           <button
             type="button"
@@ -102,7 +103,7 @@ export const DemoCursorClick = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* クリックリップル */}
+      {/* Clickリップル */}
       {frame >= clickFrame && (
         <ClickRipple x={640} y={300} progress={clickProgress} />
       )}
@@ -122,7 +123,7 @@ export const DemoCursorClick = ({ startDelay = 0 }: {
           letterSpacing: 2,
         }}
       >
-        CURSOR CLICK INTERACTION
+        {title}
       </div>
     </AbsoluteFill>
   );

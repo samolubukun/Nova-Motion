@@ -1,11 +1,12 @@
 /**
- * TransitionBoxReveal - ボックスリビール - グリッド状に表示
+ * TransitionBoxReveal - Box Reveal - Display in Grid
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const TransitionBoxReveal = ({ startDelay = 0, gridSize = 6 }: {
+export const TransitionBoxReveal = ({ title = "GRID", startDelay = 0, gridSize = 6 }: {
+  title?: string;
   startDelay?: number;
   gridSize?: number;
 }) => {
@@ -24,7 +25,7 @@ export const TransitionBoxReveal = ({ startDelay = 0, gridSize = 6 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* 背景コンテンツ */}
+      {/* Background Content */}
       <AbsoluteFill
         style={{
           display: "flex",
@@ -33,11 +34,11 @@ export const TransitionBoxReveal = ({ startDelay = 0, gridSize = 6 }: {
         }}
       >
         <div style={{ fontFamily: font, fontSize: 100, fontWeight: 800, color: C.white }}>
-          GRID
+          {title}
         </div>
       </AbsoluteFill>
 
-      {/* ボックスマスク */}
+      {/* Box Mask */}
       {boxes.map((box) => {
         const progress = spring({
           frame: frame - startDelay - box.delay,

@@ -1,5 +1,5 @@
 /**
- * ClickRipple - クリックリップルエフェクト
+ * ClickRipple - Click Ripple Effect
  */
 
 import { C } from "../../../common";

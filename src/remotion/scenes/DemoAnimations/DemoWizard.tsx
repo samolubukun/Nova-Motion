@@ -1,5 +1,5 @@
 /**
- * DemoWizard - ステップウィザードデモ
+ * DemoWizard - Step Wizard Demo
  */
 
 import React from "react";
@@ -7,8 +7,9 @@ import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion"
 import { C, EASE, lerp, font } from "../../common";
 import { Cursor } from "./shared/Cursor";
 
-export const DemoWizard = ({ startDelay = 0 }: {
+export const DemoWizard = ({ startDelay = 0, title = "Step Wizard" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -25,7 +26,7 @@ export const DemoWizard = ({ startDelay = 0 }: {
     { number: 3, label: "Complete", completed: false },
   ];
 
-  // ボタンクリック
+  // ButtonClick
   const click1 = step1End - 5;
   const click2 = step2End - 5;
 
@@ -179,7 +180,7 @@ export const DemoWizard = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* ナビゲーションボタン */}
+      {/* ナビゲーションButton */}
       <div
         style={{
           position: "absolute",

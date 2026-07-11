@@ -1,11 +1,12 @@
 /**
- * UINavigation - ナビゲーションメニュー
+ * UINavigation - Navigation Menu
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const UINavigation = ({ startDelay = 0 }: {
+export const UINavigation = ({ title = "BRAND", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -16,7 +17,7 @@ export const UINavigation = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* ナビゲーションバー */}
+      {/* Navigation Bar */}
       <div
         style={{
           position: "absolute",
@@ -32,7 +33,7 @@ export const UINavigation = ({ startDelay = 0 }: {
           justifyContent: "space-between",
         }}
       >
-        {/* ロゴ */}
+        {/* Logo */}
         <div
           style={{
             fontFamily: font,
@@ -41,10 +42,10 @@ export const UINavigation = ({ startDelay = 0 }: {
             color: C.white,
           }}
         >
-          BRAND
+          {title}
         </div>
 
-        {/* メニュー */}
+        {/* Menu */}
         <div style={{ display: "flex", gap: 40 }}>
           {menuItems.map((item, i) => {
             const isActive = i === activeIndex;
@@ -67,7 +68,7 @@ export const UINavigation = ({ startDelay = 0 }: {
                 }}
               >
                 {item}
-                {/* アンダーライン */}
+                {/* Underline */}
                 <div
                   style={{
                     position: "absolute",
@@ -103,7 +104,7 @@ export const UINavigation = ({ startDelay = 0 }: {
         </button>
       </div>
 
-      {/* コンテンツエリア */}
+      {/* Content Area */}
       <div
         style={{
           position: "absolute",

@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const ShapeSpinningRings = ({ startDelay = 0 }: {
+export const ShapeSpinningRings = ({ startDelay = 0, title = "LOADING" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -102,7 +103,7 @@ export const ShapeSpinningRings = ({ startDelay = 0 }: {
           opacity: entryProgress,
         }}
       >
-        LOADING
+        {title}
       </div>
     </AbsoluteFill>
   );

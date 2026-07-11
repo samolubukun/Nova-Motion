@@ -1,17 +1,18 @@
 /**
- * UIForm - 入力フォーム
+ * UIForm - Input Form
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const UIForm = ({ startDelay = 0 }: {
+export const UIForm = ({ title = "Configure Brand Voice", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
 
   const typingStart = startDelay + 30;
-  const typedText = "john@example.com";
+  const typedText = "A lifestyle tech brand creating reels and tutorials...";
   const charsToShow = Math.floor(
     lerp(frame, [typingStart, typingStart + typedText.length * 3], [0, typedText.length])
   );
@@ -41,10 +42,10 @@ export const UIForm = ({ startDelay = 0 }: {
             opacity: lerp(frame, [startDelay, startDelay + 20], [0, 1]),
           }}
         >
-          Sign In
+          {title}
         </div>
 
-        {/* Email入力 */}
+        {/* Brand Description Input */}
         <div style={{ marginBottom: 20 }}>
           <label
             style={{
@@ -90,7 +91,7 @@ export const UIForm = ({ startDelay = 0 }: {
           </div>
         </div>
 
-        {/* Password入力 */}
+        {/* Password Input */}
         <div style={{ marginBottom: 30 }}>
           <label
             style={{
@@ -117,7 +118,7 @@ export const UIForm = ({ startDelay = 0 }: {
           </div>
         </div>
 
-        {/* ボタン */}
+        {/* Button */}
         <button
           type="button"
           style={{
@@ -137,7 +138,7 @@ export const UIForm = ({ startDelay = 0 }: {
           Sign In
         </button>
 
-        {/* リンク */}
+        {/* Link */}
         <div
           style={{
             textAlign: "center",

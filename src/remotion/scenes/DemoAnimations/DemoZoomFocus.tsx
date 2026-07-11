@@ -1,18 +1,19 @@
 /**
- * DemoZoomFocus - ズームイン/フォーカスデモ
+ * DemoZoomFocus - Zoom-In / Focus Demo
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 import { Highlight } from "./shared/Highlight";
 
-export const DemoZoomFocus = ({ startDelay = 0 }: {
+export const DemoZoomFocus = ({ startDelay = 0, title = "Zoom Focus" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // ズームアニメーション
+  // ズームAnimation
   const zoomProgress = spring({
     frame: frame - startDelay - 20,
     fps,

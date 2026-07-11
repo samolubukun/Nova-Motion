@@ -1,11 +1,12 @@
 /**
- * UIDropdown - ドロップダウンメニュー
+ * UIDropdown - Dropdown Menu
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const UIDropdown = ({ startDelay = 0 }: {
+export const UIDropdown = ({ title = "DROPDOWN MENU", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -26,7 +27,7 @@ export const UIDropdown = ({ startDelay = 0 }: {
           transform: "translateX(-50%)",
         }}
       >
-        {/* トリガー */}
+        {/* Trigger */}
         <div
           style={{
             width: 300,
@@ -54,7 +55,7 @@ export const UIDropdown = ({ startDelay = 0 }: {
           </span>
         </div>
 
-        {/* ドロップダウンメニュー */}
+        {/* Dropdown Menu */}
         {isOpen && (
           <div
             style={{
@@ -108,7 +109,7 @@ export const UIDropdown = ({ startDelay = 0 }: {
           letterSpacing: 2,
         }}
       >
-        DROPDOWN MENU
+        {title}
       </div>
     </AbsoluteFill>
   );

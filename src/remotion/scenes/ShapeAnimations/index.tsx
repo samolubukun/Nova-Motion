@@ -1,5 +1,5 @@
 /**
- * Shape Animations - シェイプ&ジオメトリックアニメーション集
+ * Shape Animations - シェイプ&ジオメトリックAnimation集
  * 
  * 幾何学的な図形を使ったモーショングラフィックス
  */

@@ -1,18 +1,20 @@
 /**
- * TransitionLiquidMorph - リキッドモーフ - 液体状に変形
+ * TransitionLiquidMorph - Liquid Morph - Morphic Transformation
  */
 
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const TransitionLiquidMorph = ({ startDelay = 0 }: {
+export const TransitionLiquidMorph = ({ labelA = "LIQUID", labelB = "MORPH", startDelay = 0 }: {
+  labelA?: string;
+  labelB?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
 
   const morphProgress = lerp(frame, [startDelay, startDelay + 50], [0, 1], EASE.inOut);
 
-  // 波形のパス生成
+  // Wave Path Generation
   const generateWavePath = (progress: number, amplitude: number) => {
     const points = 20;
     const yBase = 100 - progress * 100;
@@ -32,7 +34,7 @@ export const TransitionLiquidMorph = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* 古いシーン */}
+      {/* Old Scene */}
       <AbsoluteFill
         style={{
           display: "flex",
@@ -41,11 +43,11 @@ export const TransitionLiquidMorph = ({ startDelay = 0 }: {
         }}
       >
         <div style={{ fontFamily: font, fontSize: 80, fontWeight: 700, color: C.gray[800] }}>
-          LIQUID
+          {labelA}
         </div>
       </AbsoluteFill>
 
-      {/* 液体オーバーレイ */}
+      {/* Liquid Overlay */}
       <svg
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
         viewBox="0 0 100 100"
@@ -61,7 +63,7 @@ export const TransitionLiquidMorph = ({ startDelay = 0 }: {
         <path d={generateWavePath(morphProgress, 8)} fill="url(#liquidGrad)" />
       </svg>
 
-      {/* 新しいシーン */}
+      {/* New Scene */}
       {morphProgress > 0.5 && (
         <AbsoluteFill
           style={{
@@ -79,12 +81,12 @@ export const TransitionLiquidMorph = ({ startDelay = 0 }: {
               color: C.white,
             }}
           >
-            MORPH
+            {labelB}
           </div>
         </AbsoluteFill>
       )}
 
-      {/* 泡 */}
+      {/* Bubble */}
       {morphProgress > 0.2 && morphProgress < 0.8 && (
         <>
           {Array.from({ length: 8 }).map((_, i) => {

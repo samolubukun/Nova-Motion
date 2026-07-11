@@ -1,11 +1,12 @@
 /**
- * UITabs - タブアニメーション
+ * UITabs - Tabs Animation
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const UITabs = ({ startDelay = 0 }: {
+export const UITabs = ({ title = "TABS", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -24,7 +25,18 @@ export const UITabs = ({ startDelay = 0 }: {
           right: 60,
         }}
       >
-        {/* タブヘッダー */}
+        <div
+          style={{
+            fontFamily: font,
+            fontSize: 14,
+            color: C.gray[500],
+            letterSpacing: 2,
+            marginBottom: 20,
+          }}
+        >
+          {title}
+        </div>
+        {/* Tab Header */}
         <div
           style={{
             display: "flex",
@@ -70,7 +82,7 @@ export const UITabs = ({ startDelay = 0 }: {
           })}
         </div>
 
-        {/* タブコンテンツ */}
+        {/* Tab Content */}
         <div
           style={{
             background: C.gray[900],

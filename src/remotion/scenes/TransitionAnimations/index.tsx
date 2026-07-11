@@ -1,7 +1,7 @@
 /**
- * Transition Animations - トランジション&リビール集
+ * Transition Animations - Transitions & Reveals Collection
  * 
- * プロのモーショングラフィックスで使用されるトランジション
+ * Transitions used in professional motion graphics
  */
 
 // Individual components

@@ -1,13 +1,14 @@
 /**
- * DemoTooltip - ツールチップ/ポップオーバーデモ
+ * DemoTooltip - Tooltip / Popover Demo
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 import { Cursor } from "./shared/Cursor";
 
-export const DemoTooltip = ({ startDelay = 0 }: {
+export const DemoTooltip = ({ startDelay = 0, title = "Tooltip" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -45,10 +46,10 @@ export const DemoTooltip = ({ startDelay = 0 }: {
             marginBottom: 30,
           }}
         >
-          User Profile
+          {title}
         </div>
 
-        {/* ステータスバッジ（ツールチップ対象） */}
+        {/* Statusバッジ（ツールチップ対象） */}
         <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
           <div
             style={{

@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, random, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ShapeHexGrid = ({ startDelay = 0 }: {
+export const ShapeHexGrid = ({ startDelay = 0, title = "HEXAGONAL" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -77,10 +78,7 @@ export const ShapeHexGrid = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 30, startDelay + 50], [0, 1]),
         }}
       >
-        HEXAGONAL
-        <div style={{ fontSize: 18, color: C.gray[500], marginTop: 10, letterSpacing: 4 }}>
-          GRID PATTERN
-        </div>
+        {title}
       </div>
     </AbsoluteFill>
   );

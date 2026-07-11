@@ -1,11 +1,12 @@
 /**
- * UIToggle - スイッチ/トグル
+ * UIToggle - Switch/Toggle
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const UIToggle = ({ startDelay = 0 }: {
+export const UIToggle = ({ title = "TOGGLE", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -36,7 +37,17 @@ export const UIToggle = ({ startDelay = 0 }: {
           gap: 40,
         }}
       >
-        {/* トグルスイッチ */}
+        <div
+          style={{
+            fontFamily: font,
+            fontSize: 14,
+            color: C.gray[500],
+            letterSpacing: 2,
+          }}
+        >
+          {title}
+        </div>
+        {/* Toggle Switch */}
         <div
           style={{
             width: 70,
@@ -62,7 +73,7 @@ export const UIToggle = ({ startDelay = 0 }: {
           />
         </div>
 
-        {/* ステータス */}
+        {/* Status */}
         <div
           style={{
             fontFamily: font,
@@ -74,7 +85,7 @@ export const UIToggle = ({ startDelay = 0 }: {
           {isOn ? "ON" : "OFF"}
         </div>
 
-        {/* 設定項目 */}
+        {/* Settings Items */}
         <div
           style={{
             display: "flex",

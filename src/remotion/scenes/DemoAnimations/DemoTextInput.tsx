@@ -1,16 +1,17 @@
 /**
- * DemoTextInput - テキスト入力デモ
+ * DemoTextInput - Text Input Demo
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const DemoTextInput = ({ startDelay = 0 }: {
+export const DemoTextInput = ({ startDelay = 0, title = "Text Input Demo" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
-  // タイピングアニメーション
+  // タイピングAnimation
   const text1 = "hello@example.com";
   const text2 = "Welcome to our platform";
 
@@ -48,10 +49,10 @@ export const DemoTextInput = ({ startDelay = 0 }: {
             marginBottom: 30,
           }}
         >
-          Create Account
+          {title}
         </div>
 
-        {/* Email入力フィールド */}
+        {/* Email Inputフィールド */}
         <div style={{ marginBottom: 25 }}>
           <div
             style={{
@@ -121,7 +122,7 @@ export const DemoTextInput = ({ startDelay = 0 }: {
           </div>
         </div>
 
-        {/* 送信ボタン */}
+        {/* 送信Button */}
         <button
           type="button"
           style={{

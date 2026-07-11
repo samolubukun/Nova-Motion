@@ -1,5 +1,5 @@
 /**
- * Cursor - 共通マウスカーソルコンポーネント
+ * Cursor - Common Mouse Cursor Component
  */
 
 import { C } from "../../../common";
@@ -40,7 +40,7 @@ export const Cursor = ({ x, y, clicking = false, style }: {
         strokeWidth="1.5"
       />
     </svg>
-    {/* クリックリップル */}
+    {/* Clickリップル */}
     {clicking && (
       <div
         style={{

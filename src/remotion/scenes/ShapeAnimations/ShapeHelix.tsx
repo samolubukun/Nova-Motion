@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ShapeHelix = ({ startDelay = 0 }: {
+export const ShapeHelix = ({ startDelay = 0, title = "HELIX" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -101,7 +102,7 @@ export const ShapeHelix = ({ startDelay = 0 }: {
           opacity: entryProgress,
         }}
       >
-        HELIX
+        {title}
       </div>
     </AbsoluteFill>
   );

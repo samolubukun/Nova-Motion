@@ -1,11 +1,13 @@
 /**
- * TransitionCircleWipe - サークルワイプ - 円形に広がる
+ * TransitionCircleWipe - Circle Wipe - Spreads in Circle
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const TransitionCircleWipe = ({ startDelay = 0, originX = 50, originY = 50 }: {
+export const TransitionCircleWipe = ({ labelA = "OLD CONTENT", labelB = "REVEAL", startDelay = 0, originX = 50, originY = 50 }: {
+  labelA?: string;
+  labelB?: string;
   startDelay?: number;
   originX?: number;
   originY?: number;
@@ -16,7 +18,7 @@ export const TransitionCircleWipe = ({ startDelay = 0, originX = 50, originY = 5
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* 背景 */}
+      {/* Background */}
       <AbsoluteFill
         style={{
           display: "flex",
@@ -25,11 +27,11 @@ export const TransitionCircleWipe = ({ startDelay = 0, originX = 50, originY = 5
         }}
       >
         <div style={{ fontFamily: font, fontSize: 60, color: C.gray[700] }}>
-          OLD CONTENT
+          {labelA}
         </div>
       </AbsoluteFill>
 
-      {/* 新しいコンテンツ */}
+      {/* New Content */}
       <AbsoluteFill
         style={{
           background: C.accent,
@@ -47,11 +49,11 @@ export const TransitionCircleWipe = ({ startDelay = 0, originX = 50, originY = 5
             color: C.white,
           }}
         >
-          REVEAL
+          {labelB}
         </div>
       </AbsoluteFill>
 
-      {/* エッジのリング */}
+      {/* Edge Ring */}
       <div
         style={{
           position: "absolute",

@@ -1,11 +1,13 @@
 /**
- * TransitionZoomBlur - ズームブラートランジション
+ * TransitionZoomBlur - Zoom Blur Transition
  */
 
 import { AbsoluteFill, useCurrentFrame, interpolate } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const TransitionZoomBlur = ({ startDelay = 0 }: {
+export const TransitionZoomBlur = ({ labelA = "ZOOM OUT", labelB = "ZOOM IN", startDelay = 0 }: {
+  labelA?: string;
+  labelB?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -17,7 +19,7 @@ export const TransitionZoomBlur = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* 古いシーン（ズーム＆ブラー） */}
+      {/* Old Scene (Zoom & Blur) */}
       <AbsoluteFill
         style={{
           transform: `scale(${zoomProgress})`,
@@ -29,11 +31,11 @@ export const TransitionZoomBlur = ({ startDelay = 0 }: {
         }}
       >
         <div style={{ fontFamily: font, fontSize: 80, fontWeight: 700, color: C.white }}>
-          ZOOM OUT
+          {labelA}
         </div>
       </AbsoluteFill>
 
-      {/* 新しいシーン */}
+      {/* New Scene */}
       <AbsoluteFill
         style={{
           background: C.gray[950],
@@ -52,7 +54,7 @@ export const TransitionZoomBlur = ({ startDelay = 0 }: {
             transform: `scale(${interpolate(newSceneOpacity, [0, 1], [0.8, 1])})`,
           }}
         >
-          ZOOM IN
+          {labelB}
         </div>
       </AbsoluteFill>
     </AbsoluteFill>

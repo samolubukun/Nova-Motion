@@ -1,38 +1,39 @@
 /**
- * UICard - カードアニメーション - ホバーエフェクト
+ * UICard - Card Animation - Hover Effect
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const UICard = ({ startDelay = 0 }: {
+export const UICard = ({ title = "PORTFOLIO REVEAL", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // メインカードのアニメーション
+  // Main Card Animation
   const mainProgress = spring({
     frame: frame - startDelay,
     fps,
     config: { damping: 20, stiffness: 100 },
   });
 
-  // サブカードのアニメーション
+  // Sub Card Animation
   const subProgress = spring({
     frame: frame - startDelay - 15,
     fps,
     config: { damping: 15, stiffness: 150 },
   });
 
-  // ホバーエフェクト（フレームベース）
+  // Hover Effect (Frame Based)
   const hoverStart = startDelay + 50;
   const isHovered = frame >= hoverStart;
   const hoverScale = isHovered ? 1.02 : 1;
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>
-      {/* 背景装飾ライン */}
+      {/* Background Decorative Line */}
       <div
         style={{
           position: "absolute",
@@ -44,7 +45,7 @@ export const UICard = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* 左上のラベル */}
+      {/* Top-Left Label */}
       <div
         style={{
           position: "absolute",
@@ -57,10 +58,10 @@ export const UICard = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 20], [0, 1]),
         }}
       >
-        FEATURED WORK
+        {title}
       </div>
 
-      {/* メインカード（大きく左寄り） */}
+      {/* Main Card (Large Left-aligned) */}
       <div
         style={{
           position: "absolute",
@@ -77,7 +78,7 @@ export const UICard = ({ startDelay = 0 }: {
           transition: "border-color 0.3s",
         }}
       >
-        {/* カード内のアクセントライン */}
+        {/* Accent Line inside Card */}
         <div
           style={{
             position: "absolute",
@@ -89,7 +90,7 @@ export const UICard = ({ startDelay = 0 }: {
           }}
         />
         
-        {/* コンテンツエリア */}
+        {/* Content Area */}
         <div style={{ padding: "40px 40px 40px 50px" }}>
           <div
             style={{
@@ -100,7 +101,7 @@ export const UICard = ({ startDelay = 0 }: {
               marginBottom: 20,
             }}
           >
-            01 — PROJECT
+            01 — OUTPUT
           </div>
           <div
             style={{
@@ -125,11 +126,11 @@ export const UICard = ({ startDelay = 0 }: {
               maxWidth: 350,
             }}
           >
-            Complete visual identity system including logo, typography, and brand guidelines.
+            Pre-rendered multi-format reel optimized for TikTok, Instagram, and Shorts.
           </div>
         </div>
 
-        {/* 下部のタグ */}
+        {/* Bottom Tag */}
         <div
           style={{
             position: "absolute",
@@ -139,7 +140,7 @@ export const UICard = ({ startDelay = 0 }: {
             gap: 10,
           }}
         >
-          {["Branding", "Strategy"].map((tag) => (
+          {["Shorts", "Reels"].map((tag) => (
             <div
               key={`tag-${tag}`}
               style={{
@@ -157,7 +158,7 @@ export const UICard = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* サブカード（右側、小さめ、上にオフセット） */}
+      {/* Sub Card (Right side, smaller, offset top) */}
       <div
         style={{
           position: "absolute",
@@ -206,7 +207,7 @@ export const UICard = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* 右下の番号装飾 */}
+      {/* Bottom-Right Number Decoration */}
       <div
         style={{
           position: "absolute",

@@ -1,11 +1,12 @@
 /**
- * UIModal - モーダルアニメーション
+ * UIModal - Modal Animation
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const UIModal = ({ startDelay = 0 }: {
+export const UIModal = ({ title = "Dashboard", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -28,7 +29,7 @@ export const UIModal = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>
-      {/* 背景コンテンツ */}
+      {/* Background Content */}
       <div
         style={{
           position: "absolute",
@@ -46,7 +47,7 @@ export const UIModal = ({ startDelay = 0 }: {
             marginBottom: 20,
           }}
         >
-          Dashboard
+          {title}
         </div>
         <div
           style={{
@@ -69,7 +70,7 @@ export const UIModal = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* バックドロップ */}
+      {/* Backdrop */}
       <AbsoluteFill
         style={{
           background: C.black,
@@ -77,7 +78,7 @@ export const UIModal = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* モーダル */}
+      {/* Modal */}
       {(isOpen || frame < closeStart + 15) && (
         <div
           style={{
@@ -92,7 +93,7 @@ export const UIModal = ({ startDelay = 0 }: {
             opacity: modalProgress,
           }}
         >
-          {/* 閉じるボタン */}
+          {/* Close Button */}
           <div
             style={{
               position: "absolute",
@@ -111,7 +112,7 @@ export const UIModal = ({ startDelay = 0 }: {
             ×
           </div>
 
-          {/* チェックマークアイコン（SVG） */}
+          {/* Checkmark Icon（SVG） */}
           <div
             style={{
               width: 60,
@@ -143,7 +144,7 @@ export const UIModal = ({ startDelay = 0 }: {
               marginBottom: 12,
             }}
           >
-            Account Created
+            Campaign Scheduled
           </div>
           <div
             style={{
@@ -154,7 +155,7 @@ export const UIModal = ({ startDelay = 0 }: {
               lineHeight: 1.6,
             }}
           >
-            Your account has been successfully created. You can now access all features.
+            Your content campaign is successfully scheduled. All platforms synced.
           </div>
           <button
             type="button"
@@ -171,7 +172,7 @@ export const UIModal = ({ startDelay = 0 }: {
               cursor: "pointer",
             }}
           >
-            Get Started
+            View Dashboard
           </button>
         </div>
       )}

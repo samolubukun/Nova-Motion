@@ -1,11 +1,13 @@
 /**
- * TransitionFlash - フラッシュトランジション
+ * TransitionFlash - Flash Transition
  */
 
 import { AbsoluteFill, useCurrentFrame, interpolate } from "remotion";
 import { C, font } from "../../common";
 
-export const TransitionFlash = ({ startDelay = 0, flashColor = C.white }: {
+export const TransitionFlash = ({ labelA = "BEFORE", labelB = "AFTER", startDelay = 0, flashColor = C.white }: {
+  labelA?: string;
+  labelB?: string;
   startDelay?: number;
   flashColor?: string;
 }) => {
@@ -31,7 +33,7 @@ export const TransitionFlash = ({ startDelay = 0, flashColor = C.white }: {
           }}
         >
           <div style={{ fontFamily: font, fontSize: 80, fontWeight: 700, color: C.white }}>
-            BEFORE
+            {labelA}
           </div>
         </AbsoluteFill>
       )}
@@ -54,7 +56,7 @@ export const TransitionFlash = ({ startDelay = 0, flashColor = C.white }: {
               color: C.white,
             }}
           >
-            AFTER
+            {labelB}
           </div>
         </AbsoluteFill>
       )}

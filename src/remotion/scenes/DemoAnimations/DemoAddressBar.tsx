@@ -1,12 +1,13 @@
 /**
- * DemoAddressBar - ブラウザアドレスバーデモ
+ * DemoAddressBar - Browser Address Bar Demo
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const DemoAddressBar = ({ startDelay = 0 }: {
+export const DemoAddressBar = ({ startDelay = 0, title = "Address Bar Demo" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -49,14 +50,14 @@ export const DemoAddressBar = ({ startDelay = 0 }: {
             gap: 15,
           }}
         >
-          {/* ウィンドウボタン */}
+          {/* ウィンドウButton */}
           <div style={{ display: "flex", gap: 8 }}>
             <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#ff5f57" }} />
             <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#febc2e" }} />
             <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#28c840" }} />
           </div>
 
-          {/* ナビゲーションボタン */}
+          {/* ナビゲーションButton */}
           <div style={{ display: "flex", gap: 10 }}>
             <span style={{ color: C.gray[500], fontSize: 18 }}>←</span>
             <span style={{ color: C.gray[600], fontSize: 18 }}>→</span>
@@ -91,7 +92,7 @@ export const DemoAddressBar = ({ startDelay = 0 }: {
             )}
           </div>
 
-          {/* 更新ボタン */}
+          {/* 更新Button */}
           <span
             style={{
               color: C.gray[500],
@@ -140,7 +141,7 @@ export const DemoAddressBar = ({ startDelay = 0 }: {
                   marginBottom: 20,
                 }}
               >
-                Dashboard
+                {title}
               </div>
               <div style={{ display: "flex", gap: 20 }}>
                 <div style={{ flex: 1, height: 150, background: C.gray[800], borderRadius: 8 }} />

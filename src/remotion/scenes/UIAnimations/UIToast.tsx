@@ -1,11 +1,12 @@
 /**
- * UIToast - 通知アニメーション - トースト
+ * UIToast - Notification Animation - Toast
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const UIToast = ({ startDelay = 0 }: {
+export const UIToast = ({ title = "Notifications", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -19,7 +20,7 @@ export const UIToast = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>
-      {/* 背景 */}
+      {/* Background */}
       <div
         style={{
           position: "absolute",
@@ -31,10 +32,10 @@ export const UIToast = ({ startDelay = 0 }: {
           color: C.white,
         }}
       >
-        Notifications
+        {title}
       </div>
 
-      {/* トースト */}
+      {/* Toast */}
       <div
         style={{
           position: "absolute",

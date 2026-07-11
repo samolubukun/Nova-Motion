@@ -1,11 +1,13 @@
 /**
- * TransitionGlitch - グリッチトランジション
+ * TransitionGlitch - Glitch Transition
  */
 
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, font } from "../../common";
 
-export const TransitionGlitch = ({ startDelay = 0 }: {
+export const TransitionGlitch = ({ labelA = "SCENE 1", labelB = "SCENE 2", startDelay = 0 }: {
+  labelA?: string;
+  labelB?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -17,7 +19,7 @@ export const TransitionGlitch = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* 背景シーン */}
+      {/* Background Scene */}
       {!transitionComplete && (
         <AbsoluteFill
           style={{
@@ -27,12 +29,12 @@ export const TransitionGlitch = ({ startDelay = 0 }: {
           }}
         >
           <div style={{ fontFamily: font, fontSize: 80, fontWeight: 700, color: C.white }}>
-            SCENE 1
+            {labelA}
           </div>
         </AbsoluteFill>
       )}
 
-      {/* グリッチスライス */}
+      {/* Glitch Slice */}
       {glitchPhase &&
         Array.from({ length: slices }).map((_, i) => {
           const sliceHeight = 100 / slices;
@@ -56,7 +58,7 @@ export const TransitionGlitch = ({ startDelay = 0 }: {
           );
         })}
 
-      {/* 新しいシーン */}
+      {/* New Scene */}
       {transitionComplete && (
         <AbsoluteFill
           style={{
@@ -74,12 +76,12 @@ export const TransitionGlitch = ({ startDelay = 0 }: {
               color: C.white,
             }}
           >
-            SCENE 2
+            {labelB}
           </div>
         </AbsoluteFill>
       )}
 
-      {/* RGBずれ */}
+      {/* RGB Shift */}
       {glitchPhase && (
         <>
           <AbsoluteFill

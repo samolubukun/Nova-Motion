@@ -1,13 +1,14 @@
 /**
- * DemoSearchFilter - 検索フィルターデモ
+ * DemoSearchFilter - Search Filter Demo
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 import { Cursor } from "./shared/Cursor";
 
-export const DemoSearchFilter = ({ startDelay = 0 }: {
+export const DemoSearchFilter = ({ startDelay = 0, title = "Search Filter" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -78,7 +79,7 @@ export const DemoSearchFilter = ({ startDelay = 0 }: {
             )}
           </div>
 
-          {/* フィルターボタン */}
+          {/* フィルターButton */}
           <button
             type="button"
             style={{

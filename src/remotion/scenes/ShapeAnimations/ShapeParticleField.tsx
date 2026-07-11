@@ -6,9 +6,10 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, random } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ShapeParticleField = ({ particleCount = 60, startDelay = 0 }: {
+export const ShapeParticleField = ({ particleCount = 60, startDelay = 0, title = "PARTICLES" }: {
   particleCount?: number;
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
@@ -64,7 +65,7 @@ export const ShapeParticleField = ({ particleCount = 60, startDelay = 0 }: {
           textShadow: `0 0 60px ${C.accent}`,
         }}
       >
-        PARTICLES
+        {title}
       </div>
     </AbsoluteFill>
   );

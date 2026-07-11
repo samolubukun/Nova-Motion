@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ShapeRipples = ({ startDelay = 0 }: {
+export const ShapeRipples = ({ startDelay = 0, title = "RIPPLE" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -65,7 +66,7 @@ export const ShapeRipples = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 20, startDelay + 40], [0, 1]),
         }}
       >
-        RIPPLE
+        {title}
       </div>
     </AbsoluteFill>
   );

@@ -1,17 +1,18 @@
 /**
- * DemoDragDrop - ドラッグ&ドロップデモ
+ * DemoDragDrop - Drag & Drop Demo
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 import { Cursor } from "./shared/Cursor";
 
-export const DemoDragDrop = ({ startDelay = 0 }: {
+export const DemoDragDrop = ({ startDelay = 0, title = "Drag & Drop" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
-  // ドラッグアニメーション
+  // ドラッグAnimation
   const dragStart = startDelay + 20;
   const dragEnd = startDelay + 70;
   const dropFrame = startDelay + 75;

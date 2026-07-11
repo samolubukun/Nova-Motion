@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, random, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ShapeExplosion = ({ startDelay = 0 }: {
+export const ShapeExplosion = ({ startDelay = 0, text = "BANG!" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -86,7 +87,7 @@ export const ShapeExplosion = ({ startDelay = 0 }: {
           opacity: 1 - explodeProgress,
         }}
       >
-        BANG!
+        {text}
       </div>
     </AbsoluteFill>
   );

@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, interpolate } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ShapeMorphing = ({ startDelay = 0 }: {
+export const ShapeMorphing = ({ startDelay = 0, title = "MORPH" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -65,7 +66,7 @@ export const ShapeMorphing = ({ startDelay = 0 }: {
           color: C.white,
         }}
       >
-        MORPH
+        {title}
       </div>
 
       <div

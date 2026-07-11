@@ -1,11 +1,13 @@
 /**
- * TransitionBlinds - ブラインドトランジション - 縦ブラインド
+ * TransitionBlinds - Blinds Transition - Vertical Blinds
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const TransitionBlinds = ({ startDelay = 0, direction = "vertical" }: {
+export const TransitionBlinds = ({ labelA = "BEFORE", labelB = "AFTER", startDelay = 0, direction = "vertical" }: {
+  labelA?: string;
+  labelB?: string;
   startDelay?: number;
   direction?: "vertical" | "horizontal";
 }) => {
@@ -16,7 +18,7 @@ export const TransitionBlinds = ({ startDelay = 0, direction = "vertical" }: {
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>
-      {/* 背景コンテンツ */}
+      {/* Background Content */}
       <AbsoluteFill
         style={{
           background: C.black,
@@ -33,11 +35,11 @@ export const TransitionBlinds = ({ startDelay = 0, direction = "vertical" }: {
             color: C.gray[800],
           }}
         >
-          BEFORE
+          {labelA}
         </div>
       </AbsoluteFill>
 
-      {/* ブラインド */}
+      {/* Blinds */}
       {Array.from({ length: blindCount }).map((_, i) => {
         const delay = i * 3;
         const progress = lerp(
@@ -75,7 +77,7 @@ export const TransitionBlinds = ({ startDelay = 0, direction = "vertical" }: {
         );
       })}
 
-      {/* 前景コンテンツ */}
+      {/* Foreground Content */}
       <AbsoluteFill
         style={{
           clipPath: `polygon(${Array.from({ length: blindCount })
@@ -106,7 +108,7 @@ export const TransitionBlinds = ({ startDelay = 0, direction = "vertical" }: {
             color: C.black,
           }}
         >
-          AFTER
+          {labelB}
         </div>
       </AbsoluteFill>
     </AbsoluteFill>

@@ -1,18 +1,19 @@
 /**
- * DemoMenuExpand - メニュー展開デモ
+ * DemoMenuExpand - Menu Expansion Demo
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 import { Cursor } from "./shared/Cursor";
 
-export const DemoMenuExpand = ({ startDelay = 0 }: {
+export const DemoMenuExpand = ({ startDelay = 0, title = "Menu Expansion" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // メニュー開閉
+  // Menu開閉
   const menuOpenFrame = startDelay + 30;
   const isMenuOpen = frame >= menuOpenFrame;
 
@@ -55,7 +56,7 @@ export const DemoMenuExpand = ({ startDelay = 0 }: {
           Application
         </div>
 
-        {/* ユーザーメニュートリガー */}
+        {/* ユーザーMenuTrigger */}
         <div
           style={{
             display: "flex",
@@ -96,7 +97,7 @@ export const DemoMenuExpand = ({ startDelay = 0 }: {
             ▼
           </span>
 
-          {/* ドロップダウンメニュー */}
+          {/* Dropdown Menu */}
           {isMenuOpen && (
             <div
               style={{
@@ -155,7 +156,7 @@ export const DemoMenuExpand = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* メインコンテンツ（ブラー効果） */}
+      {/* メインコンテンツ（ブラーEffect） */}
       <div
         style={{
           position: "absolute",
@@ -176,7 +177,7 @@ export const DemoMenuExpand = ({ startDelay = 0 }: {
             marginBottom: 20,
           }}
         >
-          Dashboard
+          {title}
         </div>
         <div style={{ display: "flex", gap: 20 }}>
           <div style={{ flex: 1, height: 200, background: C.gray[900], borderRadius: 12 }} />

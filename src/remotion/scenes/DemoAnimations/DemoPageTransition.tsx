@@ -1,5 +1,5 @@
 /**
- * DemoPageTransition - 画面遷移デモ
+ * DemoPageTransition - Page Transition Demo
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
@@ -7,8 +7,9 @@ import { C, EASE, lerp, font } from "../../common";
 import { Cursor } from "./shared/Cursor";
 import { Highlight } from "./shared/Highlight";
 
-export const DemoPageTransition = ({ startDelay = 0 }: {
+export const DemoPageTransition = ({ startDelay = 0, title = "Page Transition" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -48,7 +49,7 @@ export const DemoPageTransition = ({ startDelay = 0 }: {
             marginBottom: 20,
           }}
         >
-          Products
+          {title}
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
           {["Product A", "Product B", "Product C"].map((name) => (
@@ -116,7 +117,7 @@ export const DemoPageTransition = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* クリックターゲット */}
+      {/* Clickターゲット */}
       {frame < transitionStart && (
         <>
           <Highlight

@@ -1,11 +1,13 @@
 /**
- * TransitionLineSweep - ラインスイープ - 複数の線が横切る
+ * TransitionLineSweep - Line Sweep - Multiple Lines Cross
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const TransitionLineSweep = ({ startDelay = 0, lineCount = 5 }: {
+export const TransitionLineSweep = ({ labelA = "SWEEPING", labelB = "LINES", startDelay = 0, lineCount = 5 }: {
+  labelA?: string;
+  labelB?: string;
   startDelay?: number;
   lineCount?: number;
 }) => {
@@ -13,7 +15,7 @@ export const TransitionLineSweep = ({ startDelay = 0, lineCount = 5 }: {
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>
-      {/* 背景 */}
+      {/* Background */}
       <AbsoluteFill style={{ background: C.black }}>
         <div
           style={{
@@ -26,7 +28,7 @@ export const TransitionLineSweep = ({ startDelay = 0, lineCount = 5 }: {
             color: C.gray[800],
           }}
         >
-          SWEEPING
+          {labelA}
         </div>
       </AbsoluteFill>
 
@@ -73,7 +75,7 @@ export const TransitionLineSweep = ({ startDelay = 0, lineCount = 5 }: {
           opacity: lerp(frame, [startDelay + 40, startDelay + 60], [0, 1]),
         }}
       >
-        LINES
+        {labelB}
       </div>
     </AbsoluteFill>
   );

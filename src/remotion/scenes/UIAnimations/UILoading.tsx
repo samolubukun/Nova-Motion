@@ -1,11 +1,12 @@
 /**
- * UILoading - ローディングアニメーション
+ * UILoading - Loading Animation
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, font } from "../../common";
 
-export const UILoading = ({ startDelay = 0 }: {
+export const UILoading = ({ title = "LOADING STATES", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -28,7 +29,7 @@ export const UILoading = ({ startDelay = 0 }: {
           gap: 60,
         }}
       >
-        {/* スピナー */}
+        {/* Spinner */}
         <div
           style={{
             width: 60,
@@ -40,7 +41,7 @@ export const UILoading = ({ startDelay = 0 }: {
           }}
         />
 
-        {/* ドットローダー */}
+        {/* Dot Loader */}
         <div style={{ display: "flex", gap: 12 }}>
           {Array.from({ length: dotCount }).map((_, i) => {
             const bounce = Math.sin((frame - startDelay - i * dotDelay) * 0.2) * 10;
@@ -59,7 +60,7 @@ export const UILoading = ({ startDelay = 0 }: {
           })}
         </div>
 
-        {/* プログレスバー */}
+        {/* Progress Bar */}
         <div
           style={{
             width: 200,
@@ -79,7 +80,7 @@ export const UILoading = ({ startDelay = 0 }: {
           />
         </div>
 
-        {/* スケルトン */}
+        {/* Skeleton */}
         <div
           style={{
             width: 300,
@@ -130,7 +131,7 @@ export const UILoading = ({ startDelay = 0 }: {
           letterSpacing: 2,
         }}
       >
-        LOADING STATES
+        {title}
       </div>
     </AbsoluteFill>
   );

@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const ShapeMandala = ({ startDelay = 0 }: {
+export const ShapeMandala = ({ startDelay = 0, title = "MANDALA" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -107,8 +108,7 @@ export const ShapeMandala = ({ startDelay = 0 }: {
           opacity: entryProgress,
         }}
       >
-        GEOMETRIC
-        <div style={{ marginTop: 5 }}>PATTERN</div>
+        {title}
       </div>
     </AbsoluteFill>
   );

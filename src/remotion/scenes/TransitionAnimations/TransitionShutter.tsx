@@ -1,11 +1,13 @@
 /**
- * TransitionShutter - シャッタートランジション - カメラシャッター風
+ * TransitionShutter - Shutter Transition - Camera Shutter Style
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const TransitionShutter = ({ startDelay = 0, bladeCount = 8 }: {
+export const TransitionShutter = ({ labelA = "SCENE A", labelB = "SCENE B", startDelay = 0, bladeCount = 8 }: {
+  labelA?: string;
+  labelB?: string;
   startDelay?: number;
   bladeCount?: number;
 }) => {
@@ -25,7 +27,7 @@ export const TransitionShutter = ({ startDelay = 0, bladeCount = 8 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* 背景シーン */}
+      {/* Background Scene */}
       {!isOpening && (
         <AbsoluteFill
           style={{
@@ -35,12 +37,12 @@ export const TransitionShutter = ({ startDelay = 0, bladeCount = 8 }: {
           }}
         >
           <div style={{ fontFamily: font, fontSize: 60, color: C.gray[700] }}>
-            SCENE A
+            {labelA}
           </div>
         </AbsoluteFill>
       )}
 
-      {/* 新しいシーン */}
+      {/* New Scene */}
       {isOpening && (
         <AbsoluteFill
           style={{
@@ -51,12 +53,12 @@ export const TransitionShutter = ({ startDelay = 0, bladeCount = 8 }: {
           }}
         >
           <div style={{ fontFamily: font, fontSize: 80, fontWeight: 800, color: C.white }}>
-            SCENE B
+            {labelB}
           </div>
         </AbsoluteFill>
       )}
 
-      {/* シャッターブレード */}
+      {/* Shutter Blades */}
       {Array.from({ length: bladeCount }).map((_, i) => {
         const angle = (i / bladeCount) * 360;
         const bladeLength = 800;
@@ -82,7 +84,7 @@ export const TransitionShutter = ({ startDelay = 0, bladeCount = 8 }: {
         );
       })}
 
-      {/* 中央の円（アパーチャー） */}
+      {/* Center Circle (Aperture) */}
       {!isClosed && (
         <div
           style={{

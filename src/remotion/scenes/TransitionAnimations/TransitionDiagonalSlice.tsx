@@ -1,11 +1,13 @@
 /**
- * TransitionDiagonalSlice - 斜めスライス - 斜線で切り替え
+ * TransitionDiagonalSlice - Diagonal Slice - Switch on Diagonal Line
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const TransitionDiagonalSlice = ({ startDelay = 0, angle = 15 }: {
+export const TransitionDiagonalSlice = ({ labelA = "SCENE A", labelB = "SCENE B", startDelay = 0, angle = 15 }: {
+  labelA?: string;
+  labelB?: string;
   startDelay?: number;
   angle?: number;
 }) => {
@@ -15,7 +17,7 @@ export const TransitionDiagonalSlice = ({ startDelay = 0, angle = 15 }: {
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>
-      {/* 背景コンテンツ */}
+      {/* Background Content */}
       <AbsoluteFill
         style={{
           display: "flex",
@@ -24,11 +26,11 @@ export const TransitionDiagonalSlice = ({ startDelay = 0, angle = 15 }: {
         }}
       >
         <div style={{ fontFamily: font, fontSize: 80, fontWeight: 700, color: C.gray[700] }}>
-          SCENE A
+          {labelA}
         </div>
       </AbsoluteFill>
 
-      {/* 新しいコンテンツ */}
+      {/* New Content */}
       <AbsoluteFill
         style={{
           background: C.black,
@@ -51,11 +53,11 @@ export const TransitionDiagonalSlice = ({ startDelay = 0, angle = 15 }: {
             color: C.white,
           }}
         >
-          SCENE B
+          {labelB}
         </div>
       </AbsoluteFill>
 
-      {/* エッジライン */}
+      {/* Edge Line */}
       <div
         style={{
           position: "absolute",

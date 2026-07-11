@@ -1,18 +1,19 @@
 /**
- * DemoModal - モーダル表示デモ
+ * DemoModal - Modal Display Demo
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 import { Cursor } from "./shared/Cursor";
 
-export const DemoModal = ({ startDelay = 0 }: {
+export const DemoModal = ({ startDelay = 0, title = "Modal Dialog" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // モーダル開閉
+  // Modal開閉
   const modalOpenFrame = startDelay + 35;
   const modalCloseFrame = startDelay + 100;
   const isModalOpen = frame >= modalOpenFrame && frame < modalCloseFrame;
@@ -33,7 +34,7 @@ export const DemoModal = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>
-      {/* 背景コンテンツ */}
+      {/* Background Content */}
       <div
         style={{
           position: "absolute",
@@ -51,10 +52,10 @@ export const DemoModal = ({ startDelay = 0 }: {
             marginBottom: 30,
           }}
         >
-          Settings
+          {title}
         </div>
 
-        {/* トリガーボタン */}
+        {/* TriggerButton */}
         <button
           type="button"
           style={{
@@ -73,7 +74,7 @@ export const DemoModal = ({ startDelay = 0 }: {
         </button>
       </div>
 
-      {/* バックドロップ */}
+      {/* Backdrop */}
       <AbsoluteFill
         style={{
           background: C.black,
@@ -81,7 +82,7 @@ export const DemoModal = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* モーダル */}
+      {/* Modal */}
       {(isModalOpen || frame < modalCloseFrame + 15) && (
         <div
           style={{
@@ -96,7 +97,7 @@ export const DemoModal = ({ startDelay = 0 }: {
             opacity: modalProgress,
           }}
         >
-          {/* 閉じるボタン */}
+          {/* Close Button */}
           <button
             type="button"
             style={{
@@ -164,7 +165,7 @@ export const DemoModal = ({ startDelay = 0 }: {
             This action cannot be undone. All your data will be permanently removed from our servers.
           </div>
 
-          {/* ボタン */}
+          {/* Button */}
           <div style={{ display: "flex", gap: 12 }}>
             <button
               type="button"

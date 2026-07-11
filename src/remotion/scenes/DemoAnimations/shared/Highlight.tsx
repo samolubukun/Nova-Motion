@@ -1,5 +1,5 @@
 /**
- * Highlight - ハイライトボックス
+ * Highlight - Highlight Box
  */
 
 import { C, font } from "../../../common";

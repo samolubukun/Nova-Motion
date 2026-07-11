@@ -5,9 +5,10 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ShapeCircularProgress = ({ percentage = 75, startDelay = 0 }: {
+export const ShapeCircularProgress = ({ percentage = 75, startDelay = 0, title = "COMPLETION RATE" }: {
   percentage?: number;
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -29,7 +30,7 @@ export const ShapeCircularProgress = ({ percentage = 75, startDelay = 0 }: {
         height="300"
         aria-hidden="true"
       >
-        {/* 背景円 */}
+        {/* Background円 */}
         <circle
           cx="150"
           cy="150"
@@ -89,7 +90,7 @@ export const ShapeCircularProgress = ({ percentage = 75, startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 30, startDelay + 50], [0, 1]),
         }}
       >
-        COMPLETION RATE
+        {title}
       </div>
     </AbsoluteFill>
   );

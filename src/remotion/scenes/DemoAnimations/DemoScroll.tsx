@@ -1,12 +1,13 @@
 /**
- * DemoScroll - 画面スクロールデモ
+ * DemoScroll - Page Scroll Demo
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const DemoScroll = ({ startDelay = 0 }: {
+export const DemoScroll = ({ startDelay = 0, title = "Scroll" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -68,7 +69,7 @@ export const DemoScroll = ({ startDelay = 0 }: {
           </div>
         </div>
 
-        {/* コンテンツエリア */}
+        {/* Content Area */}
         <div
           style={{
             height: "calc(100% - 40px)",

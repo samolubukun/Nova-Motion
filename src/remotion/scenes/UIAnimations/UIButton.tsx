@@ -1,11 +1,12 @@
 /**
- * UIButton - ボタンアニメーション - ホバー&クリック
+ * UIButton - Button Animation - Hover & Click
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const UIButton = ({ startDelay = 0 }: {
+export const UIButton = ({ title = "BUTTON INTERACTION", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -44,7 +45,7 @@ export const UIButton = ({ startDelay = 0 }: {
           gap: 40,
         }}
       >
-        {/* メインボタン */}
+        {/* Main Button */}
         <button
           type="button"
           style={{
@@ -71,7 +72,7 @@ export const UIButton = ({ startDelay = 0 }: {
           Get Started
         </button>
 
-        {/* セカンダリボタン */}
+        {/* Secondary Button */}
         <button
           type="button"
           style={{
@@ -118,7 +119,7 @@ export const UIButton = ({ startDelay = 0 }: {
           letterSpacing: 2,
         }}
       >
-        BUTTON INTERACTION
+        {title}
       </div>
     </AbsoluteFill>
   );

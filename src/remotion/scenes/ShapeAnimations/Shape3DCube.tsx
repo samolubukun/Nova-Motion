@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const Shape3DCube = ({ startDelay = 0 }: {
+export const Shape3DCube = ({ startDelay = 0, title = "3D TRANSFORM" }: {
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -92,7 +93,7 @@ export const Shape3DCube = ({ startDelay = 0 }: {
           opacity: entryProgress,
         }}
       >
-        3D TRANSFORM
+        {title}
       </div>
     </AbsoluteFill>
   );
