@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ThemeBrutalistWeb = ({ startDelay = 0 }: {
+export const ThemeBrutalistWeb = ({ title = "BRUTALIST", subtitle = "Raw, unpolished, and intentionally rough. Breaking conventional web design rules.", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -14,7 +16,7 @@ export const ThemeBrutalistWeb = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.white }}>
-      {/* 巨大テキスト背景 */}
+      {/* Giant Text Background */}
       <div
         style={{
           position: "absolute",
@@ -31,7 +33,7 @@ export const ThemeBrutalistWeb = ({ startDelay = 0 }: {
         RAW
       </div>
 
-      {/* 境界線ボックス */}
+      {/* Border Box */}
       <div
         style={{
           position: "absolute",
@@ -52,7 +54,7 @@ export const ThemeBrutalistWeb = ({ startDelay = 0 }: {
             textTransform: "uppercase",
           }}
         >
-          BRUTALIST
+          {title}
         </div>
         <div
           style={{
@@ -67,7 +69,7 @@ export const ThemeBrutalistWeb = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* マーキー風テキスト */}
+      {/* Marquee Style Text */}
       <div
         style={{
           position: "absolute",
@@ -105,7 +107,7 @@ export const ThemeBrutalistWeb = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* リンクスタイル */}
+      {/* Link Style */}
       <div
         style={{
           position: "absolute",
@@ -133,7 +135,7 @@ export const ThemeBrutalistWeb = ({ startDelay = 0 }: {
         ))}
       </div>
 
-      {/* カウンター */}
+      {/* Counter */}
       <div
         style={{
           position: "absolute",

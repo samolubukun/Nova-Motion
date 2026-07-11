@@ -1,11 +1,13 @@
 /**
- * ThemeNeobrutalism - ネオブルタリズム - 太い枠線、原色、影
+ * ThemeNeobrutalism - ネオブルタリズム - Thick Border, Primaries, Shadow
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const ThemeNeobrutalism = ({ startDelay = 0 }: {
+export const ThemeNeobrutalism = ({ title = "NEOBRUTALISM", subtitle = "Raw aesthetics with purpose", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -42,9 +44,7 @@ export const ThemeNeobrutalism = ({ startDelay = 0 }: {
             textTransform: "uppercase",
           }}
         >
-          Bold &amp;
-          <br />
-          Brutal
+          {title}
         </div>
       </div>
 

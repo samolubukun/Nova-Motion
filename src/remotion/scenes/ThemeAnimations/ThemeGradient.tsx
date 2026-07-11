@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ThemeGradient = ({ startDelay = 0 }: {
+export const ThemeGradient = ({ title = "GRADIENT", subtitle = "FLOW WITH COLORS", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -48,7 +50,7 @@ export const ThemeGradient = ({ startDelay = 0 }: {
             transform: `scale(${lerp(frame, [startDelay, startDelay + 25], [0.8, 1], EASE.out)})`,
           }}
         >
-          Gradient
+          {title}
         </div>
         <div
           style={{
@@ -60,7 +62,7 @@ export const ThemeGradient = ({ startDelay = 0 }: {
             opacity: lerp(frame, [startDelay + 15, startDelay + 35], [0, 1]),
           }}
         >
-          FLOW WITH COLORS
+          {subtitle}
         </div>
       </div>
     </AbsoluteFill>

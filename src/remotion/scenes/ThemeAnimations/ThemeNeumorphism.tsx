@@ -1,11 +1,13 @@
 /**
- * ThemeNeumorphism - ニューモーフィズム - ソフトな凹凸
+ * ThemeNeumorphism - ニューモーフィズム - Soft Contours
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const ThemeNeumorphism = ({ startDelay = 0 }: {
+export const ThemeNeumorphism = ({ title = "NEUMORPHISM", subtitle = "Soft UI", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -48,7 +50,7 @@ export const ThemeNeumorphism = ({ startDelay = 0 }: {
             marginBottom: 20,
           }}
         >
-          NEUMORPHISM
+          {title}
         </div>
         <div
           style={{
@@ -62,7 +64,7 @@ export const ThemeNeumorphism = ({ startDelay = 0 }: {
           Soft UI
         </div>
 
-        {/* ボタン（凸） */}
+        {/* Button（凸） */}
         <button
           type="button"
           style={{

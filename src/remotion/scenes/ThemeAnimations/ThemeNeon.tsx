@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ThemeNeon = ({ startDelay = 0 }: {
+export const ThemeNeon = ({ title = "NEON", subtitle = "LIGHTS", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -56,7 +58,7 @@ export const ThemeNeon = ({ startDelay = 0 }: {
             filter: `brightness(${glowPulse})`,
           }}
         >
-          NEON
+          {title}
         </div>
         <div
           style={{
@@ -73,7 +75,7 @@ export const ThemeNeon = ({ startDelay = 0 }: {
             filter: `brightness(${glowPulse})`,
           }}
         >
-          LIGHTS
+          {subtitle}
         </div>
       </div>
 

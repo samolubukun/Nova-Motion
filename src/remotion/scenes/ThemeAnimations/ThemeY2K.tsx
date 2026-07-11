@@ -1,11 +1,13 @@
 /**
- * ThemeY2K - Y2K / Millennium - 2000年代初頭のグロッシー&メタリック
+ * ThemeY2K - Y2K / Millennium - Glossy & Metallic of early 2000s
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { font } from "../../common";
 
-export const ThemeY2K = ({ startDelay = 0 }: {
+export const ThemeY2K = ({ title = "Y2K", subtitle = "MILLENNIUM AESTHETIC", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -17,9 +19,9 @@ export const ThemeY2K = ({ startDelay = 0 }: {
     config: { damping: 15, stiffness: 100 },
   });
 
-  // キラキラの回転
+  // Glitter Rotation
   const sparkleRotate = (frame - startDelay) * 2;
-  // グラデーションのアニメーション
+  // グラデーションのAnimation
   const gradientShift = (frame - startDelay) * 3;
 
   return (
@@ -29,7 +31,7 @@ export const ThemeY2K = ({ startDelay = 0 }: {
         overflow: "hidden",
       }}
     >
-      {/* メタリックな背景オーブ */}
+      {/* Metallic Background Orb */}
       <div
         style={{
           position: "absolute",
@@ -57,7 +59,7 @@ export const ThemeY2K = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* キラキラ星 */}
+      {/* Sparkling Stars */}
       {[
         { x: 15, y: 20, size: 30, delay: 0 },
         { x: 75, y: 15, size: 25, delay: 10 },
@@ -103,7 +105,7 @@ export const ThemeY2K = ({ startDelay = 0 }: {
         );
       })}
 
-      {/* メインのグロッシーカード */}
+      {/* Main Glossy Card */}
       <div
         style={{
           position: "absolute",
@@ -133,7 +135,7 @@ export const ThemeY2K = ({ startDelay = 0 }: {
           padding: 40,
         }}
       >
-        {/* グロッシーハイライト */}
+        {/* Glossy Highlights */}
         <div
           style={{
             position: "absolute",
@@ -161,7 +163,7 @@ export const ThemeY2K = ({ startDelay = 0 }: {
             letterSpacing: -2,
           }}
         >
-          Y2K VIBES
+          {title}
         </div>
         <div
           style={{
@@ -173,11 +175,11 @@ export const ThemeY2K = ({ startDelay = 0 }: {
             opacity: 0.8,
           }}
         >
-          MILLENNIUM AESTHETIC
+          {subtitle}
         </div>
       </div>
 
-      {/* バブル装飾 */}
+      {/* Bubble Decoration */}
       {[
         { x: 8, y: 30, size: 80 },
         { x: 82, y: 25, size: 60 },

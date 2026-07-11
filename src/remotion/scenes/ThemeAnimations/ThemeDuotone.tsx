@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ThemeDuotone = ({ startDelay = 0 }: {
+export const ThemeDuotone = ({ title = "DUOTONE", subtitle = "DUOTONE", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -76,19 +78,7 @@ export const ThemeDuotone = ({ startDelay = 0 }: {
             mixBlendMode: "difference",
           }}
         >
-          DUO
-        </div>
-        <div
-          style={{
-            fontFamily: font,
-            fontSize: 120,
-            fontWeight: 100,
-            color: C.white,
-            mixBlendMode: "difference",
-            marginTop: -30,
-          }}
-        >
-          TONE
+          {title}
         </div>
       </div>
 

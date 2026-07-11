@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, font } from "../../common";
 
-export const ThemeCyberpunk = ({ startDelay: _startDelay = 0 }: {
+export const ThemeCyberpunk = ({ title = "CYBERPUNK", subtitle = "CYBERPUNK", startDelay: _startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   void _startDelay; // 未使用警告を抑制
@@ -39,7 +41,7 @@ export const ThemeCyberpunk = ({ startDelay: _startDelay = 0 }: {
           transform: "translateY(-50%)",
         }}
       >
-        {/* グリッチレイヤー */}
+        {/* Glitch Layer */}
         <div
           style={{
             position: "absolute",
@@ -82,24 +84,7 @@ export const ThemeCyberpunk = ({ startDelay: _startDelay = 0 }: {
             opacity: neonPulse,
           }}
         >
-          CYBER
-        </div>
-        <div
-          style={{
-            fontFamily: font,
-            fontSize: 100,
-            fontWeight: 900,
-            color: "#00ffff",
-            textShadow: `
-              0 0 10px #00ffff,
-              0 0 20px #00ffff,
-              0 0 40px #00ffff
-            `,
-            marginTop: -20,
-            opacity: neonPulse,
-          }}
-        >
-          PUNK
+          {title}
         </div>
       </div>
 

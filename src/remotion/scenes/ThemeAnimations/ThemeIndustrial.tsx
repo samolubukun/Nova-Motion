@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ThemeIndustrial = ({ startDelay = 0 }: {
+export const ThemeIndustrial = ({ title = "INDUSTRIAL", subtitle = "HEAVY DUTY", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -15,7 +17,7 @@ export const ThemeIndustrial = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#2d2d2d" }}>
-      {/* 金属テクスチャ */}
+      {/* Metal Texture */}
       <div
         style={{
           position: "absolute",
@@ -73,7 +75,7 @@ export const ThemeIndustrial = ({ startDelay = 0 }: {
         <circle cx="50" cy="50" r="15" fill="#2d2d2d" />
       </svg>
 
-      {/* 警告ストライプ */}
+      {/* Warning Stripe */}
       <div
         style={{
           position: "absolute",
@@ -111,7 +113,7 @@ export const ThemeIndustrial = ({ startDelay = 0 }: {
             marginBottom: 15,
           }}
         >
-          HEAVY DUTY
+          {subtitle}
         </div>
         <div
           style={{
@@ -123,7 +125,7 @@ export const ThemeIndustrial = ({ startDelay = 0 }: {
             textTransform: "uppercase",
           }}
         >
-          INDUSTRIAL
+          {title}
         </div>
         <div
           style={{
@@ -138,7 +140,7 @@ export const ThemeIndustrial = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* ボルト装飾 */}
+      {/* Bolt Decoration */}
       {[
         { x: 40, y: 40 },
         { x: 1200, y: 40 },

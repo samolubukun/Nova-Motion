@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ThemeMonochrome = ({ startDelay = 0 }: {
+export const ThemeMonochrome = ({ title = "MONOCHROME", subtitle = "BLACK / WHITE", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -14,7 +16,7 @@ export const ThemeMonochrome = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.white }}>
-      {/* 黒いブロック */}
+      {/* Black Block */}
       <div
         style={{
           position: "absolute",
@@ -26,7 +28,7 @@ export const ThemeMonochrome = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* 白テキスト（黒背景上） */}
+      {/* White Text (on Black Background) */}
       <div
         style={{
           position: "absolute",
@@ -45,11 +47,11 @@ export const ThemeMonochrome = ({ startDelay = 0 }: {
             lineHeight: 0.9,
           }}
         >
-          BLACK
+          {title}
         </div>
       </div>
 
-      {/* 黒テキスト（白背景上） */}
+      {/* Black Text (on White Background) */}
       <div
         style={{
           position: "absolute",
@@ -73,7 +75,7 @@ export const ThemeMonochrome = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* 中央の境界線 */}
+      {/* Center Border */}
       <div
         style={{
           position: "absolute",

@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ThemeSwiss = ({ startDelay = 0 }: {
+export const ThemeSwiss = ({ title = "SWISS", subtitle = "INTERNATIONAL TYPOGRAPHIC STYLE", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -29,7 +31,7 @@ export const ThemeSwiss = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* 赤いアクセントブロック */}
+      {/* Red Accent Block */}
       <div
         style={{
           position: "absolute",
@@ -60,7 +62,7 @@ export const ThemeSwiss = ({ startDelay = 0 }: {
             letterSpacing: -5,
           }}
         >
-          GRID
+          {title}
         </div>
         <div
           style={{
@@ -76,7 +78,7 @@ export const ThemeSwiss = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* サイドテキスト */}
+      {/* Side Text */}
       <div
         style={{
           position: "absolute",

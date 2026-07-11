@@ -1,17 +1,19 @@
 /**
- * Theme3DGlass - 3D Glass - 液体ガラス効果（透明感と流動性）
+ * Theme3DGlass - 3D Glass - 液体ガラスEffect（透明感と流動性）
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const Theme3DGlass = ({ startDelay = 0 }: {
+export const Theme3DGlass = ({ title = "GLASS MORPHISM", subtitle = "PREMIUM", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // ゆったりとした浮遊アニメーション
+  // ゆったりとした浮遊Animation
   const floatY = Math.sin((frame - startDelay) * 0.04) * 12;
   const floatX = Math.cos((frame - startDelay) * 0.03) * 5;
 
@@ -29,7 +31,7 @@ export const Theme3DGlass = ({ startDelay = 0 }: {
   const wobble1 = Math.sin((frame - startDelay) * 0.06) * 3;
   const wobble2 = Math.cos((frame - startDelay) * 0.05) * 2;
 
-  // カースティクス（水中の光）のアニメーション位置
+  // カースティクス（水中の光）のAnimation位置
   const causticOffset1 = ((frame - startDelay) * 0.8) % 400;
   const causticOffset2 = ((frame - startDelay) * 0.6 + 200) % 400;
 
@@ -45,7 +47,7 @@ export const Theme3DGlass = ({ startDelay = 0 }: {
         overflow: "hidden",
       }}
     >
-      {/* 背景のオーブ（ガラス越しに見える） */}
+      {/* Backgroundのオーブ（ガラス越しに見える） */}
       <div
         style={{
           position: "absolute",
@@ -191,7 +193,7 @@ export const Theme3DGlass = ({ startDelay = 0 }: {
                 }}
               />
 
-              {/* カースティクス効果1（水中の光の揺らめき） */}
+              {/* カースティクスEffect1（水中の光の揺らめき） */}
               <div
                 style={{
                   position: "absolute",
@@ -212,7 +214,7 @@ export const Theme3DGlass = ({ startDelay = 0 }: {
                 }}
               />
 
-              {/* カースティクス効果2 */}
+              {/* カースティクスEffect2 */}
               <div
                 style={{
                   position: "absolute",
@@ -255,7 +257,7 @@ export const Theme3DGlass = ({ startDelay = 0 }: {
                 }}
               />
 
-              {/* 虹色のエッジ（色収差/プリズム効果） */}
+              {/* 虹色のエッジ（色収差/プリズムEffect） */}
               <div
                 style={{
                   position: "absolute",
@@ -291,7 +293,7 @@ export const Theme3DGlass = ({ startDelay = 0 }: {
                     textShadow: "0 2px 8px rgba(0,0,0,0.2)",
                   }}
                 >
-                  PREMIUM
+                  {subtitle}
                 </div>
                 <div
                   style={{
@@ -306,9 +308,7 @@ export const Theme3DGlass = ({ startDelay = 0 }: {
                     `,
                   }}
                 >
-                  Glass
-                  <br />
-                  Morphism
+                  {title}
                 </div>
               </div>
             </div>
@@ -481,7 +481,7 @@ export const Theme3DGlass = ({ startDelay = 0 }: {
           />
         </div>
 
-        {/* 小さな気泡（浮遊） */}
+        {/* 小さな気Bubble（浮遊） */}
         {[
           { id: "bubble-a", offset: 0, left: 50, sizeAdd: 0 },
           { id: "bubble-b", offset: 30, left: 120, sizeAdd: 3 },

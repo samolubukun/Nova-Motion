@@ -1,11 +1,13 @@
 /**
- * ThemeWatercolor - Watercolor - 水彩
+ * ThemeWatercolor - Watercolor - Watercolor
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ThemeWatercolor = ({ startDelay = 0 }: {
+export const ThemeWatercolor = ({ title = "WATERCOLOR", subtitle = "HAND PAINTED", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -21,7 +23,7 @@ export const ThemeWatercolor = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#fefefe" }}>
-      {/* 紙テクスチャ */}
+      {/* Paper Texture */}
       <div
         style={{
           position: "absolute",
@@ -31,7 +33,7 @@ export const ThemeWatercolor = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* 水彩ブロブ */}
+      {/* Watercolor Blobs */}
       {blobs.map((blob) => {
         const blobOpacity = lerp(
           frame,
@@ -82,7 +84,7 @@ export const ThemeWatercolor = ({ startDelay = 0 }: {
             marginBottom: 15,
           }}
         >
-          HAND PAINTED
+          {subtitle}
         </div>
         <div
           style={{
@@ -93,7 +95,7 @@ export const ThemeWatercolor = ({ startDelay = 0 }: {
             fontStyle: "italic",
           }}
         >
-          Watercolor
+          {title}
         </div>
         <div
           style={{

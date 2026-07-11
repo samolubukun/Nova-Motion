@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { lerp, font } from "../../common";
 
-export const ThemeHolographic = ({ startDelay = 0 }: {
+export const ThemeHolographic = ({ title = "HOLOGRAPHIC", subtitle = "IRIDESCENT", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -15,7 +17,7 @@ export const ThemeHolographic = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#1a1a2e" }}>
-      {/* ホログラフィック背景 */}
+      {/* ホログラフィックBackground */}
       <div
         style={{
           position: "absolute",
@@ -84,7 +86,7 @@ export const ThemeHolographic = ({ startDelay = 0 }: {
             letterSpacing: 3,
           }}
         >
-          IRIDESCENT
+          {subtitle}
         </div>
         <div
           style={{
@@ -98,7 +100,7 @@ export const ThemeHolographic = ({ startDelay = 0 }: {
             marginTop: 10,
           }}
         >
-          HOLOGRAM
+          {title}
         </div>
       </div>
     </AbsoluteFill>

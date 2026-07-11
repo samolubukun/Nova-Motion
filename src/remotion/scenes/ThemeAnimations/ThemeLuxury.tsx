@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ThemeLuxury = ({ startDelay = 0 }: {
+export const ThemeLuxury = ({ title = "LUXURY", subtitle = "PREMIUM COLLECTION", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -15,7 +17,7 @@ export const ThemeLuxury = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* 金色のライン装飾 */}
+      {/* Gold Line Decoration */}
       <div
         style={{
           position: "absolute",
@@ -48,7 +50,7 @@ export const ThemeLuxury = ({ startDelay = 0 }: {
             opacity: textOpacity,
           }}
         >
-          PREMIUM COLLECTION
+          {subtitle}
         </div>
         <div
           style={{
@@ -61,7 +63,7 @@ export const ThemeLuxury = ({ startDelay = 0 }: {
             opacity: textOpacity,
           }}
         >
-          Luxury
+          {title}
         </div>
         <div
           style={{

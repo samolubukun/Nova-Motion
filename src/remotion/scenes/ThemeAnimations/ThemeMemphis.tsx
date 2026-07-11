@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const ThemeMemphis = ({ startDelay = 0 }: {
+export const ThemeMemphis = ({ title = "MEMPHIS", subtitle = "DESIGN GROUP", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -27,7 +29,7 @@ export const ThemeMemphis = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#ffeaa7" }}>
-      {/* ドットパターン背景 */}
+      {/* ドットPattern Background */}
       <div
         style={{
           position: "absolute",
@@ -121,7 +123,7 @@ export const ThemeMemphis = ({ startDelay = 0 }: {
             textShadow: "6px 6px 0 #ff6b6b, 12px 12px 0 #4ecdc4",
           }}
         >
-          MEMPHIS
+          {title}
         </div>
         <div
           style={{
@@ -133,7 +135,7 @@ export const ThemeMemphis = ({ startDelay = 0 }: {
             marginTop: 10,
           }}
         >
-          DESIGN GROUP
+          {subtitle}
         </div>
       </div>
     </AbsoluteFill>

@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ThemePop = ({ startDelay = 0 }: {
+export const ThemePop = ({ title = "POP", subtitle = "POP!", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -53,7 +55,7 @@ export const ThemePop = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 30, startDelay + 50], [0, 1]),
         }}
       >
-        POP!
+        {title}
       </div>
     </AbsoluteFill>
   );

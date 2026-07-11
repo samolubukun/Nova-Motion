@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const ThemeGlassmorphism = ({ startDelay = 0 }: {
+export const ThemeGlassmorphism = ({ title = "GLASSMORPHISM", subtitle = "Frosted Glass Effect", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -23,7 +25,7 @@ export const ThemeGlassmorphism = ({ startDelay = 0 }: {
         background: "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
       }}
     >
-      {/* 背景の装飾円 */}
+      {/* Backgroundの装飾円 */}
       <div
         style={{
           position: "absolute",
@@ -73,7 +75,7 @@ export const ThemeGlassmorphism = ({ startDelay = 0 }: {
             marginBottom: 20,
           }}
         >
-          GLASSMORPHISM
+          {title}
         </div>
         <div
           style={{
@@ -84,9 +86,7 @@ export const ThemeGlassmorphism = ({ startDelay = 0 }: {
             lineHeight: 1.2,
           }}
         >
-          Frosted Glass
-          <br />
-          Effect
+          {subtitle}
         </div>
       </div>
     </AbsoluteFill>

@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ThemeMinimalist = ({ startDelay = 0 }: {
+export const ThemeMinimalist = ({ title = "MINIMALIST", subtitle = "Less is more.", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -32,7 +34,7 @@ export const ThemeMinimalist = ({ startDelay = 0 }: {
             opacity: textOpacity,
           }}
         >
-          Less is more.
+          {title}
         </div>
         <div
           style={{

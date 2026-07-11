@@ -1,11 +1,13 @@
 /**
- * ThemeNatural - ナチュラル/オーガニック - 自然、アースカラー
+ * ThemeNatural - ナチュラル/オーガニック - Nature, Earth Colors
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { lerp, font } from "../../common";
 
-export const ThemeNatural = ({ startDelay = 0 }: {
+export const ThemeNatural = ({ title = "NATURAL", subtitle = "ORGANIC • NATURAL • PURE", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -14,7 +16,7 @@ export const ThemeNatural = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#f5f1eb" }}>
-      {/* 有機的な形状 */}
+      {/* Organic Shapes */}
       <div
         style={{
           position: "absolute",
@@ -74,9 +76,7 @@ export const ThemeNatural = ({ startDelay = 0 }: {
             opacity: lerp(frame, [startDelay + 10, startDelay + 30], [0, 1]),
           }}
         >
-          Back to
-          <br />
-          <span style={{ fontWeight: 600, color: "#5a6b4d" }}>Nature</span>
+          {title}
         </div>
       </div>
 

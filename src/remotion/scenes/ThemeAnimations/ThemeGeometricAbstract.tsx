@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ThemeGeometricAbstract = ({ startDelay = 0 }: {
+export const ThemeGeometricAbstract = ({ title = "GEOMETRIC", subtitle = "ABSTRACT GEOMETRIC COMPOSITION", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -81,7 +83,7 @@ export const ThemeGeometricAbstract = ({ startDelay = 0 }: {
             color: "#264653",
           }}
         >
-          ABSTRACT
+          {title}
         </div>
         <div
           style={{

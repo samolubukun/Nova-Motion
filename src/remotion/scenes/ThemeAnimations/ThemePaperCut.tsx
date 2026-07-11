@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ThemePaperCut = ({ startDelay = 0 }: {
+export const ThemePaperCut = ({ title = "PAPER CUT", subtitle = "LAYERED DESIGN", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -77,7 +79,7 @@ export const ThemePaperCut = ({ startDelay = 0 }: {
             marginBottom: 20,
           }}
         >
-          LAYERED DESIGN
+          {subtitle}
         </div>
         <div
           style={{
@@ -88,9 +90,7 @@ export const ThemePaperCut = ({ startDelay = 0 }: {
             lineHeight: 1.1,
           }}
         >
-          Paper
-          <br />
-          Cut
+          {title}
         </div>
         <div
           style={{

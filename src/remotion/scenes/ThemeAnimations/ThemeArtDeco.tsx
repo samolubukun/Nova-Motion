@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ThemeArtDeco = ({ startDelay = 0 }: {
+export const ThemeArtDeco = ({ title = "ART DECO", subtitle = "THE ROARING", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -15,7 +17,7 @@ export const ThemeArtDeco = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#1a1a2e" }}>
-      {/* 放射状パターン */}
+      {/* Radial Pattern */}
       <svg
         style={{
           position: "absolute",
@@ -38,7 +40,7 @@ export const ThemeArtDeco = ({ startDelay = 0 }: {
             transform={`rotate(${angle} 300 300)`}
           />
         ))}
-        {/* 中心円 */}
+        {/* Center Circle */}
         <circle cx="300" cy="300" r="80" stroke="#d4af37" strokeWidth="2" fill="none" />
         <circle cx="300" cy="300" r="60" stroke="#d4af37" strokeWidth="1" fill="none" />
         <circle cx="300" cy="300" r="100" stroke="#d4af37" strokeWidth="3" fill="none" />
@@ -99,7 +101,7 @@ export const ThemeArtDeco = ({ startDelay = 0 }: {
             marginBottom: 15,
           }}
         >
-          THE ROARING
+          {subtitle}
         </div>
         <div
           style={{
@@ -110,7 +112,7 @@ export const ThemeArtDeco = ({ startDelay = 0 }: {
             letterSpacing: 20,
           }}
         >
-          1920
+          {title}
         </div>
         <div
           style={{

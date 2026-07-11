@@ -1,11 +1,13 @@
 /**
- * ThemeTech - テック/スタートアップ - モダン、クリーン
+ * ThemeTech - テック/スタートアップ - Modern, Clean
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ThemeTech = ({ startDelay = 0 }: {
+export const ThemeTech = ({ title = "TECH", subtitle = "Introducing v2.0", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -63,7 +65,7 @@ export const ThemeTech = ({ startDelay = 0 }: {
             opacity: lerp(frame, [startDelay + 10, startDelay + 25], [0, 1]),
           }}
         >
-          Introducing v2.0
+          {subtitle}
         </div>
         <div
           style={{
@@ -75,9 +77,7 @@ export const ThemeTech = ({ startDelay = 0 }: {
             opacity: lerp(frame, [startDelay + 15, startDelay + 35], [0, 1]),
           }}
         >
-          Build faster.
-          <br />
-          Ship smarter.
+          {title}
         </div>
         <div
           style={{
@@ -136,7 +136,7 @@ export const ThemeTech = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* プロダクトカード */}
+      {/* Product Card */}
       <div
         style={{
           position: "absolute",
@@ -167,7 +167,7 @@ export const ThemeTech = ({ startDelay = 0 }: {
             position: "relative",
           }}
         >
-          {/* 簡易グラフ */}
+          {/* Simple Graph */}
           <svg width="100%" height="100%" viewBox="0 0 320 120" aria-hidden="true">
             <path
               d="M0 100 Q80 80, 160 60 T320 20"

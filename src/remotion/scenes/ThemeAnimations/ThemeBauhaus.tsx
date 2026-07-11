@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ThemeBauhaus = ({ startDelay = 0 }: {
+export const ThemeBauhaus = ({ title = "BAUHAUS", subtitle = "FORM FOLLOWS FUNCTION", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -31,7 +33,7 @@ export const ThemeBauhaus = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#f5f1e6" }}>
-      {/* 円（赤） */}
+      {/* Circle (Red) */}
       <div
         style={{
           position: "absolute",
@@ -45,7 +47,7 @@ export const ThemeBauhaus = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* 四角（青） */}
+      {/* Square (Blue) */}
       <div
         style={{
           position: "absolute",
@@ -58,7 +60,7 @@ export const ThemeBauhaus = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* 三角（黄） */}
+      {/* Triangle (Yellow) */}
       <div
         style={{
           position: "absolute",
@@ -98,7 +100,7 @@ export const ThemeBauhaus = ({ startDelay = 0 }: {
             letterSpacing: 20,
           }}
         >
-          BAUHAUS
+          {title}
         </div>
         <div
           style={{
@@ -109,11 +111,11 @@ export const ThemeBauhaus = ({ startDelay = 0 }: {
             marginTop: 20,
           }}
         >
-          FORM FOLLOWS FUNCTION
+          {subtitle}
         </div>
       </div>
 
-      {/* 線の装飾 */}
+      {/* Line Decoration */}
       <div
         style={{
           position: "absolute",

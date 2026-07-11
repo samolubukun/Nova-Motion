@@ -1,11 +1,13 @@
 /**
- * ThemeJapanese - 和風/ジャパニーズ - 余白、縦書き
+ * ThemeJapanese - Japanese Style - 余白、縦書き
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ThemeJapanese = ({ startDelay = 0 }: {
+export const ThemeJapanese = ({ title = "JAPANESE", subtitle = "JAPANESE AESTHETICS", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -15,7 +17,7 @@ export const ThemeJapanese = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#f5f0e8" }}>
-      {/* 縦書きテキスト */}
+      {/* Vertical Text */}
       <div
         style={{
           position: "absolute",
@@ -30,10 +32,10 @@ export const ThemeJapanese = ({ startDelay = 0 }: {
           opacity: textOpacity,
         }}
       >
-        静寂の美
+        {title}
       </div>
 
-      {/* 横書きサブテキスト */}
+      {/* Horizontal Subtext */}
       <div
         style={{
           position: "absolute",
@@ -51,7 +53,7 @@ export const ThemeJapanese = ({ startDelay = 0 }: {
             marginBottom: 15,
           }}
         >
-          JAPANESE AESTHETICS
+          {subtitle}
         </div>
         <div
           style={{

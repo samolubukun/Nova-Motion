@@ -5,14 +5,16 @@
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ThemeCosmic = ({ startDelay = 0 }: {
+export const ThemeCosmic = ({ title = "COSMIC", subtitle = "EXPLORE THE", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
 
   const textOpacity = lerp(frame, [startDelay + 20, startDelay + 40], [0, 1]);
 
-  // 星を生成
+  // Generate Stars
   const stars = Array.from({ length: 100 }, (_, i) => ({
     x: random(`star-x-${i}`) * 100,
     y: random(`star-y-${i}`) * 100,
@@ -22,7 +24,7 @@ export const ThemeCosmic = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#0a0a1a" }}>
-      {/* 星空 */}
+      {/* Starry Sky */}
       {stars.map((star, i) => {
         const twinkle = Math.sin((frame - startDelay) * 0.1 + star.twinkle) * 0.5 + 0.5;
         return (
@@ -42,7 +44,7 @@ export const ThemeCosmic = ({ startDelay = 0 }: {
         );
       })}
 
-      {/* 惑星 */}
+      {/* Planet */}
       <div
         style={{
           position: "absolute",
@@ -94,7 +96,7 @@ export const ThemeCosmic = ({ startDelay = 0 }: {
             marginBottom: 15,
           }}
         >
-          EXPLORE THE
+          {subtitle}
         </div>
         <div
           style={{
@@ -105,7 +107,7 @@ export const ThemeCosmic = ({ startDelay = 0 }: {
             lineHeight: 1,
           }}
         >
-          COSMOS
+          {title}
         </div>
         <div
           style={{

@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ThemeDarkMode = ({ startDelay = 0 }: {
+export const ThemeDarkMode = ({ title = "DARK MODE", subtitle = "Easy on the eyes", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -18,7 +20,7 @@ export const ThemeDarkMode = ({ startDelay = 0 }: {
         background: "linear-gradient(180deg, #0d0d0d 0%, #1a1a2e 100%)",
       }}
     >
-      {/* 背景グロー */}
+      {/* Backgroundグロー */}
       <div
         style={{
           position: "absolute",
@@ -52,7 +54,7 @@ export const ThemeDarkMode = ({ startDelay = 0 }: {
             opacity: lerp(frame, [startDelay, startDelay + 20], [0, 1]),
           }}
         >
-          DARK MODE
+          {title}
         </div>
         <div
           style={{

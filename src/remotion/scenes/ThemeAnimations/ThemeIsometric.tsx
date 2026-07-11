@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "remotion";
 import { C, font } from "../../common";
 
-export const ThemeIsometric = ({ startDelay = 0 }: {
+export const ThemeIsometric = ({ title = "ISOMETRIC", subtitle = "Isometric perspective", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -83,7 +85,7 @@ export const ThemeIsometric = ({ startDelay = 0 }: {
             color: C.white,
           }}
         >
-          3D Space
+          {title}
         </div>
         <div
           style={{

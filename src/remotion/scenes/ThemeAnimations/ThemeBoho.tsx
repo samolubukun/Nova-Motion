@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { lerp, font } from "../../common";
 
-export const ThemeBoho = ({ startDelay = 0 }: {
+export const ThemeBoho = ({ title = "BOHO", subtitle = "FREE SPIRIT", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -14,7 +16,7 @@ export const ThemeBoho = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#faf3e8" }}>
-      {/* パターン背景 */}
+      {/* Pattern Background */}
       <AbsoluteFill
         style={{
           backgroundImage: `
@@ -26,7 +28,7 @@ export const ThemeBoho = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* アーチ装飾 */}
+      {/* Arch Decoration */}
       <div
         style={{
           position: "absolute",
@@ -41,7 +43,7 @@ export const ThemeBoho = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* 太陽モチーフ */}
+      {/* Sun Motif */}
       <svg
         style={{
           position: "absolute",
@@ -88,7 +90,7 @@ export const ThemeBoho = ({ startDelay = 0 }: {
             marginBottom: 15,
           }}
         >
-          FREE SPIRIT
+          {subtitle}
         </div>
         <div
           style={{
@@ -99,13 +101,11 @@ export const ThemeBoho = ({ startDelay = 0 }: {
             lineHeight: 1.1,
           }}
         >
-          Bohemian
-          <br />
-          <span style={{ fontStyle: "italic" }}>Style</span>
+          {title}
         </div>
       </div>
 
-      {/* 植物装飾 */}
+      {/* Plant Decoration */}
       <div
         style={{
           position: "absolute",

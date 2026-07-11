@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ThemeOrganic = ({ startDelay = 0 }: {
+export const ThemeOrganic = ({ title = "ORGANIC", subtitle = "FLUID FORMS", startDelay = 0 }: {
+  title?: string;
+  subtitle?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -18,7 +20,7 @@ export const ThemeOrganic = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#faf8f5" }}>
-      {/* 流動的な背景ブロブ */}
+      {/* 流動的なBackgroundブロブ */}
       <div
         style={{
           position: "absolute",
@@ -77,9 +79,7 @@ export const ThemeOrganic = ({ startDelay = 0 }: {
             lineHeight: 1.1,
           }}
         >
-          Organic
-          <br />
-          <span style={{ fontWeight: 600 }}>Shapes</span>
+          {title}
         </div>
       </div>
     </AbsoluteFill>
