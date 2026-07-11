@@ -5,7 +5,14 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ListAsymmetric3 = ({ startDelay = 0 }: {
+const defaultItems = [
+  { subtitle: "01 — PRIMARY", title: "Speed & Performance", description: "10x faster than traditional solutions with optimized algorithms." },
+  { subtitle: "02", title: "Security", description: "Enterprise-grade encryption and compliance." },
+  { subtitle: "03", title: "Scalability", description: "From startup to enterprise, grow without limits." },
+];
+
+export const ListAsymmetric3 = ({ items = defaultItems, startDelay = 0 }: {
+  items?: Array<{ title: string; subtitle: string; description: string }>;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -51,7 +58,7 @@ export const ListAsymmetric3 = ({ startDelay = 0 }: {
             marginBottom: 20,
           }}
         >
-          01 — PRIMARY
+           {items[0].subtitle}
         </div>
         <div
           style={{
@@ -63,9 +70,7 @@ export const ListAsymmetric3 = ({ startDelay = 0 }: {
             marginBottom: 20,
           }}
         >
-          Speed &amp;
-          <br />
-          Performance
+          {items[0].title}
         </div>
         <div
           style={{
@@ -76,7 +81,7 @@ export const ListAsymmetric3 = ({ startDelay = 0 }: {
             maxWidth: 400,
           }}
         >
-          10x faster than traditional solutions with optimized algorithms.
+           {items[0].description}
         </div>
       </div>
 
@@ -102,7 +107,7 @@ export const ListAsymmetric3 = ({ startDelay = 0 }: {
             marginBottom: 12,
           }}
         >
-          02
+           {items[1].subtitle}
         </div>
         <div
           style={{
@@ -113,7 +118,7 @@ export const ListAsymmetric3 = ({ startDelay = 0 }: {
             marginBottom: 8,
           }}
         >
-          Security
+          {items[1].title}
         </div>
         <div
           style={{
@@ -123,7 +128,7 @@ export const ListAsymmetric3 = ({ startDelay = 0 }: {
             lineHeight: 1.6,
           }}
         >
-          Enterprise-grade encryption and compliance.
+          {items[1].description}
         </div>
       </div>
 
@@ -149,7 +154,7 @@ export const ListAsymmetric3 = ({ startDelay = 0 }: {
             marginBottom: 12,
           }}
         >
-          03
+           {items[2].subtitle}
         </div>
         <div
           style={{
@@ -160,7 +165,7 @@ export const ListAsymmetric3 = ({ startDelay = 0 }: {
             marginBottom: 8,
           }}
         >
-          Scalability
+          {items[2].title}
         </div>
         <div
           style={{
@@ -170,7 +175,7 @@ export const ListAsymmetric3 = ({ startDelay = 0 }: {
             lineHeight: 1.6,
           }}
         >
-          From startup to enterprise, grow without limits.
+          {items[2].description}
         </div>
       </div>
 

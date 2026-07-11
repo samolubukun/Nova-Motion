@@ -5,17 +5,21 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ListStatsFocused = ({ startDelay = 0 }: {
+export const ListStatsFocused = ({
+  stats = [
+    { value: "94", unit: "%", label: "Voice Match" },
+    { value: "20", unit: "x", label: "Speed Lift" },
+    { value: "4", unit: "", label: "Channels Synced" },
+  ],
+  startDelay = 0
+}: {
+  stats?: Array<{ value: string; unit: string; label: string }>;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const stats = [
-    { value: "99.9", unit: "%", label: "Uptime" },
-    { value: "50", unit: "ms", label: "Latency" },
-    { value: "10", unit: "x", label: "Faster" },
-  ];
+
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>

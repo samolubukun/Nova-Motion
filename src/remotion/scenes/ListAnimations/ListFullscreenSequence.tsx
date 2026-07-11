@@ -5,16 +5,20 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ListFullscreenSequence = ({ startDelay = 0 }: {
+export const ListFullscreenSequence = ({
+  items = [
+    { num: "01", text: "IDEATE", color: C.accent },
+    { num: "02", text: "CREATE", color: C.secondary },
+    { num: "03", text: "REPURPOSE", color: C.tertiary },
+  ],
+  startDelay = 0
+}: {
+  items?: Array<{ num: string; text: string; color: string }>;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
 
-  const items = [
-    { num: "01", text: "INNOVATE", color: C.accent },
-    { num: "02", text: "CREATE", color: C.secondary },
-    { num: "03", text: "DELIVER", color: C.tertiary },
-  ];
+
 
   // 各シーンの時間
   const sceneDuration = 30;

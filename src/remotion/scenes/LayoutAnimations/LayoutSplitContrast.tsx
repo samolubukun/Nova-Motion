@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LayoutSplitContrast = ({ startDelay = 0 }: {
+export const LayoutSplitContrast = ({ titleBefore = "BEFORE", titleAfter = "AFTER", startDelay = 0 }: {
+  titleBefore?: string;
+  titleAfter?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -15,7 +17,7 @@ export const LayoutSplitContrast = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill>
-      {/* 左半分：黒背景 */}
+      {/* 左半分：黒Background */}
       <div
         style={{
           position: "absolute",
@@ -44,7 +46,7 @@ export const LayoutSplitContrast = ({ startDelay = 0 }: {
               marginBottom: 20,
             }}
           >
-            BEFORE
+             {titleBefore}
           </div>
           <div
             style={{
@@ -62,7 +64,7 @@ export const LayoutSplitContrast = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* 右半分：白背景 */}
+      {/* 右半分：白Background */}
       <div
         style={{
           position: "absolute",
@@ -92,7 +94,7 @@ export const LayoutSplitContrast = ({ startDelay = 0 }: {
               marginBottom: 20,
             }}
           >
-            AFTER
+             {titleAfter}
           </div>
           <div
             style={{

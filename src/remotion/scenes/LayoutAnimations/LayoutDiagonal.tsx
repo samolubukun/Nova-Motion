@@ -5,7 +5,15 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LayoutDiagonal = ({ startDelay = 0 }: {
+export const LayoutDiagonal = ({
+  title = "CREATIVE",
+  subtitle1 = "AI",
+  subtitle2 = "Power",
+  startDelay = 0
+}: {
+  title?: string;
+  subtitle1?: string;
+  subtitle2?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -14,7 +22,7 @@ export const LayoutDiagonal = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.white, overflow: "hidden" }}>
-      {/* 斜めの背景 */}
+      {/* 斜めのBackground */}
       <div
         style={{
           position: "absolute",
@@ -27,7 +35,7 @@ export const LayoutDiagonal = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* 左側（黒背景上）のテキスト */}
+      {/* 左側（黒Background上）のテキスト */}
       <div
         style={{
           position: "absolute",
@@ -46,11 +54,11 @@ export const LayoutDiagonal = ({ startDelay = 0 }: {
             lineHeight: 0.9,
           }}
         >
-          DYNAMIC
+          CREATIVE
         </div>
       </div>
 
-      {/* 右側（白背景上）のテキスト */}
+      {/* 右側（白Background上）のテキスト */}
       <div
         style={{
           position: "absolute",
@@ -69,9 +77,9 @@ export const LayoutDiagonal = ({ startDelay = 0 }: {
             lineHeight: 1.2,
           }}
         >
-          Motion
+          AI
           <br />
-          Design
+          Power
         </div>
       </div>
 

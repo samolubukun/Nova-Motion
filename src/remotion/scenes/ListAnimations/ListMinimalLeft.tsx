@@ -5,17 +5,21 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ListMinimalLeft = ({ startDelay = 0 }: {
+export const ListMinimalLeft = ({
+  items = [
+    "AI-powered brand voice assistant",
+    "One-click multi-format repurposing",
+    "Unified cross-platform scheduling",
+  ],
+  startDelay = 0
+}: {
+  items?: string[];
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const items = [
-    "Faster development cycles",
-    "Reduced operational costs",
-    "Improved team collaboration",
-  ];
+
 
   return (
     <AbsoluteFill style={{ background: C.white }}>

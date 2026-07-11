@@ -5,7 +5,8 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LayoutFullscreenType = ({ startDelay = 0 }: {
+export const LayoutFullscreenType = ({ title = "CONTENT NOVA", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -29,7 +30,7 @@ export const LayoutFullscreenType = ({ startDelay = 0 }: {
             transform: `translateY(${line1Y}%)`,
           }}
         >
-          MAKE
+          GO
         </div>
       </div>
 
@@ -46,7 +47,7 @@ export const LayoutFullscreenType = ({ startDelay = 0 }: {
             transform: `translateY(${line2Y}%)`,
           }}
         >
-          IT<span style={{ color: C.secondary }}> HAPPEN</span>
+          VI<span style={{ color: C.secondary }}>RAL NOW</span>
         </div>
       </div>
 
@@ -63,7 +64,7 @@ export const LayoutFullscreenType = ({ startDelay = 0 }: {
             transform: `translateY(${line3Y}%)`,
           }}
         >
-          NOW.
+          GROW.
         </div>
       </div>
 
@@ -85,7 +86,7 @@ export const LayoutFullscreenType = ({ startDelay = 0 }: {
             letterSpacing: 3,
           }}
         >
-          START TODAY
+           {title}
         </div>
       </div>
     </AbsoluteFill>

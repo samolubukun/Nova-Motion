@@ -1,23 +1,25 @@
 /**
- * ListTimeline - タイムライン風縦リスト
+ * ListTimeline - Timeline風縦リスト
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ListTimeline = ({ startDelay = 0 }: {
+const defaultItems = [
+  { year: "01", title: "Brand Profile", desc: "Map your style and topics" },
+  { year: "02", title: "Drafting", desc: "Create high-performing assets" },
+  { year: "03", title: "Publishing", desc: "One-click schedule and post" },
+];
+
+export const ListTimeline = ({ title = "OUR JOURNEY", items = defaultItems, startDelay = 0 }: {
+  title?: string;
+  items?: Array<{ year: string; title: string; desc: string }>;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const items = [
-    { year: "2022", title: "Foundation", desc: "Company established" },
-    { year: "2023", title: "Growth", desc: "Series A funding" },
-    { year: "2024", title: "Scale", desc: "Global expansion" },
-  ];
-
-  // タイムラインの線のアニメーション
+  // Timelineの線のAnimation
   const lineProgress = lerp(frame, [startDelay, startDelay + 80], [0, 100], EASE.out);
 
   return (
@@ -40,7 +42,7 @@ export const ListTimeline = ({ startDelay = 0 }: {
             marginBottom: 10,
           }}
         >
-          OUR JOURNEY
+           {title}
         </div>
         <div
           style={{
@@ -54,7 +56,7 @@ export const ListTimeline = ({ startDelay = 0 }: {
         </div>
       </div>
 
-      {/* タイムライン */}
+      {/* Timeline */}
       <div
         style={{
           position: "absolute",

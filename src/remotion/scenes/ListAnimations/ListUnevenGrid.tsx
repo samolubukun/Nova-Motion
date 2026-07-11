@@ -5,7 +5,15 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const ListUnevenGrid = ({ startDelay = 0 }: {
+const defaultItems = [
+  { badge: "FEATURED", title: "Content Nova", description: "A unified creative workspace designed for modern creators, teams, and content brands." },
+  { badge: "OPTION 02", title: "Ideate", description: "AI-assisted niche brainstorming" },
+  { badge: "OPTION 03", title: "Individual", description: "For solo professionals" },
+];
+
+export const ListUnevenGrid = ({ title = "Content Nova", items = defaultItems, startDelay = 0 }: {
+  title?: string;
+  items?: Array<{ badge: string; title: string; description: string }>;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -69,7 +77,7 @@ export const ListUnevenGrid = ({ startDelay = 0 }: {
                 marginBottom: 20,
               }}
             >
-              FEATURED
+               {items[0].badge}
             </div>
             <div
               style={{
@@ -80,9 +88,7 @@ export const ListUnevenGrid = ({ startDelay = 0 }: {
                 lineHeight: 1.1,
               }}
             >
-              Enterprise
-              <br />
-              Solutions
+               {items[0].title}
             </div>
           </div>
           <div
@@ -94,7 +100,7 @@ export const ListUnevenGrid = ({ startDelay = 0 }: {
               lineHeight: 1.7,
             }}
           >
-            Comprehensive platform designed for large-scale operations and complex workflows.
+            {items[0].description}
           </div>
         </div>
 
@@ -117,7 +123,7 @@ export const ListUnevenGrid = ({ startDelay = 0 }: {
               marginBottom: 15,
             }}
           >
-            OPTION 02
+             {items[1].badge}
           </div>
           <div
             style={{
@@ -128,7 +134,7 @@ export const ListUnevenGrid = ({ startDelay = 0 }: {
               marginBottom: 10,
             }}
           >
-            Startup
+             {items[1].title}
           </div>
           <div
             style={{
@@ -137,7 +143,7 @@ export const ListUnevenGrid = ({ startDelay = 0 }: {
               color: C.gray[500],
             }}
           >
-            Perfect for growing teams
+             {items[1].description}
           </div>
         </div>
 
@@ -160,7 +166,7 @@ export const ListUnevenGrid = ({ startDelay = 0 }: {
               marginBottom: 15,
             }}
           >
-            OPTION 03
+             {items[2].badge}
           </div>
           <div
             style={{
@@ -171,7 +177,7 @@ export const ListUnevenGrid = ({ startDelay = 0 }: {
               marginBottom: 10,
             }}
           >
-            Individual
+             {items[2].title}
           </div>
           <div
             style={{
@@ -180,7 +186,7 @@ export const ListUnevenGrid = ({ startDelay = 0 }: {
               color: C.gray[500],
             }}
           >
-            For solo professionals
+             {items[2].description}
           </div>
         </div>
       </div>

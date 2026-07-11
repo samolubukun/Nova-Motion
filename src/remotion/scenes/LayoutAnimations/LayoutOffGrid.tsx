@@ -5,7 +5,8 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LayoutOffGrid = ({ startDelay = 0 }: {
+export const LayoutOffGrid = ({ title = "THINK DIFFERENT", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();

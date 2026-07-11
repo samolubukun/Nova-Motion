@@ -5,7 +5,8 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const LayoutFrameInFrame = ({ startDelay = 0 }: {
+export const LayoutFrameInFrame = ({ title = "CO-BRAIN", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -87,7 +88,7 @@ export const LayoutFrameInFrame = ({ startDelay = 0 }: {
               color: C.white,
             }}
           >
-            FRAME
+            {title}
           </div>
         </div>
       </div>

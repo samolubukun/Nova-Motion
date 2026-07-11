@@ -5,7 +5,8 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LayoutWhitespace = ({ startDelay = 0 }: {
+export const LayoutWhitespace = ({ title = "LESS IS MORE", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -33,7 +34,7 @@ export const LayoutWhitespace = ({ startDelay = 0 }: {
             marginBottom: 20,
           }}
         >
-          LESS IS MORE
+           {title}
         </div>
         <div
           style={{

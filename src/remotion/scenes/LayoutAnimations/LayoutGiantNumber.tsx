@@ -5,7 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LayoutGiantNumber = ({ startDelay = 0 }: {
+export const LayoutGiantNumber = ({ title = "SPEED INCREASE", number = "97", startDelay = 0 }: {
+  title?: string;
+  number?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -30,7 +32,7 @@ export const LayoutGiantNumber = ({ startDelay = 0 }: {
           opacity: numberProgress,
         }}
       >
-        97
+         {number}
       </div>
 
       {/* 左側のテキスト情報 */}
@@ -53,7 +55,7 @@ export const LayoutGiantNumber = ({ startDelay = 0 }: {
             marginBottom: 20,
           }}
         >
-          CUSTOMER SATISFACTION
+           {title}
         </div>
         <div
           style={{
@@ -64,9 +66,9 @@ export const LayoutGiantNumber = ({ startDelay = 0 }: {
             lineHeight: 1.1,
           }}
         >
-          Percent
+          Faster
           <br />
-          <span style={{ color: C.accent }}>Happy</span>
+          <span style={{ color: C.accent }}>Output</span>
         </div>
         <div
           style={{
@@ -78,7 +80,7 @@ export const LayoutGiantNumber = ({ startDelay = 0 }: {
             lineHeight: 1.7,
           }}
         >
-          Based on 10,000+ reviews from verified customers worldwide.
+          Generates multiple channels formats instantly using AI matching your voice.
         </div>
       </div>
 

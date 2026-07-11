@@ -5,7 +5,8 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const LayoutMultiColumn = ({ startDelay = 0 }: {
+export const LayoutMultiColumn = ({ title = "OUR PROCESS", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -38,7 +39,7 @@ export const LayoutMultiColumn = ({ startDelay = 0 }: {
             marginBottom: 15,
           }}
         >
-          OUR PROCESS
+           {title}
         </div>
         <div
           style={{

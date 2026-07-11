@@ -5,17 +5,21 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ListSimpleText = ({ startDelay = 0 }: {
+export const ListSimpleText = ({
+  items = [
+    "Brand Assistant Voice-Match",
+    "Unified Creator Dashboard",
+    "One-click Cross-posting",
+  ],
+  startDelay = 0
+}: {
+  items?: string[];
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const items = [
-    "Intuitive interface",
-    "Powerful automation",
-    "Seamless integration",
-  ];
+
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>

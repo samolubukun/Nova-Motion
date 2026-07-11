@@ -5,7 +5,15 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LayoutAsymmetric = ({ startDelay = 0 }: {
+export const LayoutAsymmetric = ({
+  title1 = "CO",
+  title2 = "BRAIN",
+  badge = "V2.0",
+  startDelay = 0
+}: {
+  title1?: string;
+  title2?: string;
+  badge?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -45,7 +53,7 @@ export const LayoutAsymmetric = ({ startDelay = 0 }: {
             letterSpacing: -15,
           }}
         >
-          BIG
+          CO
         </div>
         <div
           style={{
@@ -58,7 +66,7 @@ export const LayoutAsymmetric = ({ startDelay = 0 }: {
             marginLeft: 60,
           }}
         >
-          IDEA
+          BRAIN
         </div>
       </div>
 
@@ -82,7 +90,7 @@ export const LayoutAsymmetric = ({ startDelay = 0 }: {
             marginBottom: 15,
           }}
         >
-          EST. 2024
+          V2.0
         </div>
         <div
           style={{

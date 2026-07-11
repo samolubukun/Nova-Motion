@@ -5,7 +5,8 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const LayoutGridBreak = ({ startDelay = 0 }: {
+export const LayoutGridBreak = ({ title = "BREAK", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -73,7 +74,7 @@ export const LayoutGridBreak = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 30, startDelay + 50], [0, 1]),
         }}
       >
-        BREAK
+        {title}
       </div>
     </AbsoluteFill>
   );

@@ -5,17 +5,21 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ListStaggered = ({ startDelay = 0 }: {
+const defaultItems = [
+  { title: "Capture", desc: "Voice-to-text notes capture", align: "left", top: 100 },
+  { title: "Co-Brainstorm", desc: "AI-assisted generation", align: "right", top: 220 },
+  { title: "Optimize", desc: "Platform tailored formats", align: "left", top: 340 },
+];
+
+export const ListStaggered = ({ items = defaultItems, startDelay = 0 }: {
+  items?: Array<{ title: string; desc: string }>;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const items = [
-    { title: "Research", desc: "Deep market analysis", align: "left", top: 100 },
-    { title: "Strategy", desc: "Data-driven planning", align: "right", top: 220 },
-    { title: "Execute", desc: "Rapid implementation", align: "left", top: 340 },
-  ];
+  const alignMap = ["left", "right", "left"];
+  const topMap = [100, 220, 340];
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
@@ -27,7 +31,7 @@ export const ListStaggered = ({ startDelay = 0 }: {
           config: { damping: 18, stiffness: 120 },
         });
 
-        const isLeft = item.align === "left";
+        const isLeft = alignMap[i] === "left";
 
         return (
           <div
@@ -35,7 +39,7 @@ export const ListStaggered = ({ startDelay = 0 }: {
             style={{
               position: "absolute",
               [isLeft ? "left" : "right"]: 100,
-              top: item.top,
+              top: topMap[i],
               textAlign: isLeft ? "left" : "right",
               transform: `translateX(${(1 - progress) * (isLeft ? -60 : 60)}px)`,
               opacity: progress,
@@ -78,7 +82,7 @@ export const ListStaggered = ({ startDelay = 0 }: {
               {item.desc}
             </div>
 
-            {/* アンダーライン */}
+            {/* Underline */}
             <div
               style={{
                 width: lerp(frame, [delay + 10, delay + 30], [0, 150], EASE.out),

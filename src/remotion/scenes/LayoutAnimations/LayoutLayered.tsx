@@ -5,7 +5,8 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LayoutLayered = ({ startDelay = 0 }: {
+export const LayoutLayered = ({ title = "LAYERED", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -91,7 +92,7 @@ export const LayoutLayered = ({ startDelay = 0 }: {
             letterSpacing: 3,
           }}
         >
-          LAYERED
+           {title}
           <br />
           COMPOSITION
         </div>

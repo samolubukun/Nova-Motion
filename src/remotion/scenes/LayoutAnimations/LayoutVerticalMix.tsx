@@ -5,7 +5,8 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LayoutVerticalMix = ({ startDelay = 0 }: {
+export const LayoutVerticalMix = ({ title = "BRAND IDENTITY 2024", startDelay = 0 }: {
+  title?: string;
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -15,7 +16,7 @@ export const LayoutVerticalMix = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>
-      {/* 縦書きテキスト（左端） */}
+      {/* Vertical Text（左端） */}
       <div
         style={{
           position: "absolute",
@@ -30,7 +31,7 @@ export const LayoutVerticalMix = ({ startDelay = 0 }: {
           transform: `translateX(${(1 - verticalProgress) * -30}px)`,
         }}
       >
-        BRAND IDENTITY 2024
+         {title}
       </div>
 
       {/* 縦書き大文字（右端） */}

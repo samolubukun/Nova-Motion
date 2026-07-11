@@ -5,7 +5,15 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const ListHeroWithList = ({ startDelay = 0 }: {
+export const ListHeroWithList = ({
+  title1 = "CONTENT",
+  title2 = "NOVA",
+  items = ["Unified Hub", "AI Assistant", "Multi-Format"],
+  startDelay = 0
+}: {
+  title1?: string;
+  title2?: string;
+  items?: string[];
   startDelay?: number;
 }) => {
   const frame = useCurrentFrame();
@@ -17,7 +25,7 @@ export const ListHeroWithList = ({ startDelay = 0 }: {
     config: { damping: 20, stiffness: 100 },
   });
 
-  const listItems = ["Fast", "Secure", "Reliable"];
+  
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>
@@ -41,7 +49,7 @@ export const ListHeroWithList = ({ startDelay = 0 }: {
             letterSpacing: -5,
           }}
         >
-          BUILD
+          CONTENT
         </div>
         <div
           style={{
@@ -53,7 +61,7 @@ export const ListHeroWithList = ({ startDelay = 0 }: {
             letterSpacing: -5,
           }}
         >
-          BETTER
+          NOVA
         </div>
       </div>
 
@@ -79,7 +87,7 @@ export const ListHeroWithList = ({ startDelay = 0 }: {
           WHAT WE OFFER
         </div>
 
-        {listItems.map((item, i) => {
+        {items.map((item, i) => {
           const delay = startDelay + 35 + i * 10;
           const progress = spring({
             frame: frame - delay,
