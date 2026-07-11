@@ -1,14 +1,15 @@
 /**
- * DataGauge - ゲージメーター - スピードメーター風
+ * DataGauge - Gauge Meter - Speedometer Style
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const DataGauge = ({ value = 78, maxValue = 100, startDelay = 0 }: {
+export const DataGauge = ({ value = 78, maxValue = 100, startDelay = 0, title = "Performance Score" }: {
   value?: number;
   maxValue?: number;
   startDelay?: number;
+  title?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -25,7 +26,7 @@ export const DataGauge = ({ value = 78, maxValue = 100, startDelay = 0 }: {
           transform: "translate(-50%, -50%)",
         }}
       >
-        {/* 背景アーク */}
+        {/* Backgroundアーク */}
         <svg width={400} height={300} style={{ overflow: "visible" }} aria-hidden="true">
           <defs>
             <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -35,7 +36,7 @@ export const DataGauge = ({ value = 78, maxValue = 100, startDelay = 0 }: {
             </linearGradient>
           </defs>
 
-          {/* 背景トラック */}
+          {/* Backgroundトラック */}
           <path
             d="M 50 250 A 150 150 0 1 1 350 250"
             fill="none"
@@ -137,7 +138,7 @@ export const DataGauge = ({ value = 78, maxValue = 100, startDelay = 0 }: {
               color: C.gray[500],
             }}
           >
-            Performance Score
+            {title}
           </div>
         </div>
       </div>

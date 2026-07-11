@@ -1,23 +1,31 @@
 /**
- * DataRanking - ランキング - リストアニメーション
+ * DataRanking - Ranking - List Animation
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const DataRanking = ({ startDelay = 0 }: {
+export interface RankingDataItem {
+  rank: number;
+  name: string;
+  value: string;
+  change: "up" | "down" | "same";
+}
+
+export const DataRanking = ({ startDelay = 0, title = "Top Cities", subtitle = "By population (2024)", items = [
+    { rank: 1, name: "Tokyo", value: "37.4M", change: "up" as const },
+    { rank: 2, name: "Delhi", value: "32.9M", change: "up" as const },
+    { rank: 3, name: "Shanghai", value: "29.2M", change: "down" as const },
+    { rank: 4, name: "São Paulo", value: "22.4M", change: "same" as const },
+    { rank: 5, name: "Mexico City", value: "21.9M", change: "up" as const },
+  ] }: {
   startDelay?: number;
+  title?: string;
+  subtitle?: string;
+  items?: Array<RankingDataItem>;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-
-  const items = [
-    { rank: 1, name: "Tokyo", value: "37.4M", change: "up" },
-    { rank: 2, name: "Delhi", value: "32.9M", change: "up" },
-    { rank: 3, name: "Shanghai", value: "29.2M", change: "down" },
-    { rank: 4, name: "São Paulo", value: "22.4M", change: "same" },
-    { rank: 5, name: "Mexico City", value: "21.9M", change: "up" },
-  ];
 
   return (
     <AbsoluteFill style={{ background: C.gray[950], padding: 60 }}>
@@ -32,7 +40,7 @@ export const DataRanking = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 20], [0, 1]),
         }}
       >
-        Top Cities
+        {title}
       </div>
       <div
         style={{
@@ -43,7 +51,7 @@ export const DataRanking = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 10, startDelay + 30], [0, 1]),
         }}
       >
-        By population (2024)
+        {subtitle}
       </div>
 
       {/* リスト */}

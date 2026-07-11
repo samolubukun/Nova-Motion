@@ -1,22 +1,28 @@
 /**
- * DataProgressBars - プログレスバー - 複数のプログレス
+ * DataProgressBars - Progress Bar - Multiple Progress Indicators
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const DataProgressBars = ({ startDelay = 0 }: {
-  startDelay?: number;
-}) => {
-  const frame = useCurrentFrame();
+export interface ProgressBarDataItem {
+  label: string;
+  value: number;
+  color?: string;
+}
 
-  const items = [
+export const DataProgressBars = ({ startDelay = 0, title = "Skills", data = [
     { label: "JavaScript", value: 92, color: C.warning },
     { label: "TypeScript", value: 85, color: C.accent },
     { label: "React", value: 88, color: C.secondary },
     { label: "Node.js", value: 75, color: C.success },
     { label: "Python", value: 65, color: C.tertiary },
-  ];
+  ] }: {
+  startDelay?: number;
+  title?: string;
+  data?: Array<ProgressBarDataItem>;
+}) => {
+  const frame = useCurrentFrame();
 
   return (
     <AbsoluteFill style={{ background: C.gray[950], padding: 80 }}>
@@ -31,11 +37,11 @@ export const DataProgressBars = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 20], [0, 1]),
         }}
       >
-        Skills
+        {title}
       </div>
 
-      {/* プログレスバー */}
-      {items.map((item, i) => {
+      {/* Progress Bar */}
+      {data.map((item, i) => {
         const delay = startDelay + 20 + i * 10;
         const labelOpacity = lerp(frame, [delay, delay + 15], [0, 1]);
         const barProgress = lerp(frame, [delay + 5, delay + 45], [0, item.value], EASE.out);

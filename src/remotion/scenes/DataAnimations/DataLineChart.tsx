@@ -1,12 +1,14 @@
 /**
- * DataLineChart - ラインチャート - 折れ線グラフ
+ * DataLineChart - Line Chart - Line Graph
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const DataLineChart = ({ startDelay = 0 }: {
+export const DataLineChart = ({ startDelay = 0, title = "Growth Trend", subtitle = "Performance over time" }: {
   startDelay?: number;
+  title?: string;
+  subtitle?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -49,7 +51,7 @@ export const DataLineChart = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 20], [0, 1]),
         }}
       >
-        Growth Trend
+        {title}
       </div>
       <div
         style={{
@@ -60,7 +62,7 @@ export const DataLineChart = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 10, startDelay + 30], [0, 1]),
         }}
       >
-        Performance over time
+        {subtitle}
       </div>
 
       {/* チャート */}

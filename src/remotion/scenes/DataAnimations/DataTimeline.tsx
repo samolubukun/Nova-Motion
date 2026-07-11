@@ -1,23 +1,29 @@
 /**
- * DataTimeline - タイムライン - 時系列表示
+ * DataTimeline - Timeline - Chronological Timeline
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const DataTimeline = ({ startDelay = 0 }: {
-  startDelay?: number;
-}) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+export interface TimelineEventItem {
+  year: string;
+  title: string;
+  desc: string;
+}
 
-  const events = [
+export const DataTimeline = ({ startDelay = 0, title = "Our Journey", events = [
     { year: "2020", title: "Founded", desc: "Company established" },
     { year: "2021", title: "Series A", desc: "$10M funding raised" },
     { year: "2022", title: "Global", desc: "Expanded to 20 countries" },
     { year: "2023", title: "IPO", desc: "Public listing" },
     { year: "2024", title: "100M Users", desc: "Major milestone" },
-  ];
+  ] }: {
+  startDelay?: number;
+  title?: string;
+  events?: Array<TimelineEventItem>;
+}) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
 
   return (
     <AbsoluteFill style={{ background: C.black, padding: 60 }}>
@@ -32,10 +38,10 @@ export const DataTimeline = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 20], [0, 1]),
         }}
       >
-        Our Journey
+        {title}
       </div>
 
-      {/* タイムライン */}
+      {/* Timeline */}
       <div style={{ position: "relative", marginLeft: 100 }}>
         {/* 縦線 */}
         <div

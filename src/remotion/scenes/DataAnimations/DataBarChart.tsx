@@ -1,5 +1,5 @@
 /**
- * DataBarChart - バーチャート - 棒グラフ
+ * DataBarChart - Bar Chart - Column Graph
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
@@ -23,12 +23,16 @@ export const DataBarChart = ({
     { label: "Fri", value: 78, color: C.accent },
     { label: "Sat", value: 55, color: C.gray[600] },
     { label: "Sun", value: 40, color: C.gray[600] },
-  ]
+  ],
+  weekdayLabel = "Weekday",
+  weekendLabel = "Weekend",
 }: {
   startDelay?: number;
   title?: string;
   subtitle?: string;
   data?: Array<BarChartDataItem>;
+  weekdayLabel?: string;
+  weekendLabel?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -144,11 +148,11 @@ export const DataBarChart = ({
       >
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ width: 12, height: 12, background: C.accent, borderRadius: 2 }} />
-          <span style={{ fontFamily: font, fontSize: 14, color: C.gray[500] }}>Weekday</span>
+          <span style={{ fontFamily: font, fontSize: 14, color: C.gray[500] }}>{weekdayLabel}</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ width: 12, height: 12, background: C.gray[600], borderRadius: 2 }} />
-          <span style={{ fontFamily: font, fontSize: 14, color: C.gray[500] }}>Weekend</span>
+          <span style={{ fontFamily: font, fontSize: 14, color: C.gray[500] }}>{weekendLabel}</span>
         </div>
       </div>
     </AbsoluteFill>

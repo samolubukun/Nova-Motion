@@ -1,22 +1,28 @@
 /**
- * DataPieChart - パイチャート - 円グラフ
+ * DataPieChart - Pie Chart - Circle Graph
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const DataPieChart = ({ startDelay = 0 }: {
-  startDelay?: number;
-}) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+export interface PieChartDataItem {
+  label: string;
+  value: number;
+  color?: string;
+}
 
-  const data = [
+export const DataPieChart = ({ startDelay = 0, title = "Market Share", data = [
     { label: "Product A", value: 35, color: C.accent },
     { label: "Product B", value: 25, color: C.secondary },
     { label: "Product C", value: 20, color: C.tertiary },
     { label: "Others", value: 20, color: C.gray[600] },
-  ];
+  ] }: {
+  startDelay?: number;
+  title?: string;
+  data?: Array<PieChartDataItem>;
+}) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
 
   const radius = 140;
   const cx = 200;
@@ -33,7 +39,7 @@ export const DataPieChart = ({ startDelay = 0 }: {
   return (
     <AbsoluteFill style={{ background: C.gray[950], padding: 60 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 100 }}>
-        {/* パイチャート */}
+        {/* Pie Chart */}
         <svg width={400} height={400} aria-hidden="true">
           {data.map((item) => {
             const angle = (item.value / 100) * 360 * entryProgress;
@@ -108,7 +114,7 @@ export const DataPieChart = ({ startDelay = 0 }: {
               opacity: lerp(frame, [startDelay, startDelay + 20], [0, 1]),
             }}
           >
-            Market Share
+            {title}
           </div>
 
           {data.map((item, i) => {
