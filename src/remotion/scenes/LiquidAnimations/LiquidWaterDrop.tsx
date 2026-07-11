@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LiquidWaterDrop = ({ startDelay = 0 }: {
+export const LiquidWaterDrop = ({ startDelay = 0, text = "WATER DROP" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();

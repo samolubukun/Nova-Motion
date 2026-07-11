@@ -1,16 +1,20 @@
 /**
- * TextCounter - カウンターテキスト - 数字がカウントアップ
+ * TextCounter - Counterテキスト - 数字がカウントアップ
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
 export const TextCounter = ({
+  title = "ACTIVE USERS",
+  unit = "K",
   targetNumber = 10000,
   prefix = "",
   suffix = "+",
   startDelay = 0,
 }: {
+  title?: string;
+  unit?: string;
   targetNumber?: number;
   prefix?: string;
   suffix?: string;
@@ -60,11 +64,11 @@ export const TextCounter = ({
             opacity: lerp(frame, [startDelay + 40, startDelay + 60], [0, 1]),
           }}
         >
-          ACTIVE USERS
+           {title}
         </div>
       </div>
 
-      {/* 背景の大きな数字 */}
+      {/* Backgroundの大きな数字 */}
       <div
         style={{
           position: "absolute",
@@ -78,7 +82,7 @@ export const TextCounter = ({
           opacity: 0.3,
         }}
       >
-        {Math.floor(targetNumber / 1000)}K
+        {Math.floor(targetNumber / 1000)}{unit}
       </div>
     </AbsoluteFill>
   );

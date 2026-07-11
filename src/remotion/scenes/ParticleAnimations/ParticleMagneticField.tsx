@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ParticleMagneticField = ({ startDelay = 0 }: {
+export const ParticleMagneticField = ({ startDelay = 0, text = "MAGNETIC FIELD" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -109,7 +110,7 @@ export const ParticleMagneticField = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 20, startDelay + 40], [0, 1]),
         }}
       >
-        MAGNETIC FIELD
+        {text}
       </div>
     </AbsoluteFill>
   );

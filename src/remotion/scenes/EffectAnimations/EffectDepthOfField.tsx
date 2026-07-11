@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const EffectDepthOfField = ({ startDelay = 0 }: {
+export const EffectDepthOfField = ({ startDelay = 0, text = "DEPTH OF FIELD" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -17,7 +18,25 @@ export const EffectDepthOfField = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.gray[950] }}>
-      {/* 背景レイヤー（遠い） */}
+      {/* タイトル */}
+      <div
+        style={{
+          position: "absolute",
+          left: "50%",
+          top: 60,
+          transform: "translateX(-50%)",
+          fontFamily: font,
+          fontSize: 32,
+          fontWeight: 700,
+          color: C.white,
+          letterSpacing: 6,
+          opacity: lerp(frame, [startDelay, startDelay + 30], [0, 1]),
+          zIndex: 10,
+        }}
+      >
+        {text}
+      </div>
+      {/* Backgroundレイヤー（遠い） */}
       <AbsoluteFill
         style={{
           display: "flex",

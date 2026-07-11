@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, random } from "remotion";
 import { lerp, font } from "../../common";
 
-export const ParticleSakura = ({ startDelay = 0 }: {
+export const ParticleSakura = ({ startDelay = 0, text = "SAKURA" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { height } = useVideoConfig();
@@ -72,7 +73,7 @@ export const ParticleSakura = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 30], [0, 1]),
         }}
       >
-        桜
+        {text}
       </div>
     </AbsoluteFill>
   );

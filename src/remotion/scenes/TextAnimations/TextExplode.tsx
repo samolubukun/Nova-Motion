@@ -21,7 +21,7 @@ export const TextExplode = ({ text = "BOOM", startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* フラッシュ効果 */}
+      {/* フラッシュEffect */}
       {frame >= explodeFrame && frame < explodeFrame + 5 && (
         <AbsoluteFill
           style={{

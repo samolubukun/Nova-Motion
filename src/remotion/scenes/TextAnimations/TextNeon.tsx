@@ -1,5 +1,5 @@
 /**
- * TextNeon - ネオンテキスト - グロウ効果
+ * TextNeon - ネオンテキスト - グロウEffect
  */
 
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
@@ -20,7 +20,7 @@ export const TextNeon = ({ text = "NEON", startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* 背景グロー */}
+      {/* Backgroundグロー */}
       <div
         style={{
           position: "absolute",

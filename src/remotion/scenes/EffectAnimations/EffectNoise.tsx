@@ -1,12 +1,13 @@
 /**
- * EffectNoise - ノイズテクスチャ - TVノイズ
+ * EffectNoise - Noise Texture - TVノイズ
  */
 
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const EffectNoise = ({ startDelay = 0 }: {
+export const EffectNoise = ({ startDelay = 0, text = "STATIC" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -67,7 +68,7 @@ export const EffectNoise = ({ startDelay = 0 }: {
             `,
           }}
         >
-          STATIC
+          {text}
         </div>
       </AbsoluteFill>
 

@@ -56,7 +56,7 @@ export const TextMaskReveal = ({ text = "MASKED", startDelay = 0 }: {
         })}
       </div>
 
-      {/* 背景のグリッド */}
+      {/* Backgroundのグリッド */}
       <div
         style={{
           position: "absolute",

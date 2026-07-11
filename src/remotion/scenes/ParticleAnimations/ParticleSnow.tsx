@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, random } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ParticleSnow = ({ startDelay = 0 }: {
+export const ParticleSnow = ({ startDelay = 0, text = "WINTER" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { height } = useVideoConfig();
@@ -85,7 +86,7 @@ export const ParticleSnow = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 30], [0, 1]),
         }}
       >
-        WINTER
+        {text}
       </div>
     </AbsoluteFill>
   );

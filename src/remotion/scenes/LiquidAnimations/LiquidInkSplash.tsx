@@ -6,8 +6,9 @@ import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "r
 import { C, font } from "../../common";
 import { generateBlobPath } from "./shared/blobUtils";
 
-export const LiquidInkSplash = ({ startDelay = 0 }: {
+export const LiquidInkSplash = ({ startDelay = 0, text = "SPLASH" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -84,7 +85,7 @@ export const LiquidInkSplash = ({ startDelay = 0 }: {
         );
       })}
 
-      {/* 中央のロゴ */}
+      {/* 中央のLogo */}
       <div
         style={{
           position: "absolute",

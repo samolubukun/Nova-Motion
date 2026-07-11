@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, random } from "remotion";
 import { C, font } from "../../common";
 
-export const ParticleConfetti = ({ startDelay = 0 }: {
+export const ParticleConfetti = ({ startDelay = 0, text = "CELEBRATE!" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { height } = useVideoConfig();
@@ -69,7 +70,7 @@ export const ParticleConfetti = ({ startDelay = 0 }: {
           textShadow: "0 0 40px rgba(0,0,0,0.5)",
         }}
       >
-        CELEBRATE!
+        {text}
       </div>
     </AbsoluteFill>
   );

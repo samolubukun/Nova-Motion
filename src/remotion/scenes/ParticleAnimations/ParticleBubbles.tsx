@@ -1,13 +1,14 @@
 /**
- * ParticleBubbles - 泡エフェクト
+ * ParticleBubbles - Bubbleエフェクト
  */
 
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, font } from "../../common";
 
-export const ParticleBubbles = ({ startDelay = 0 }: {
+export const ParticleBubbles = ({ startDelay = 0, text = "BUBBLES" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -69,7 +70,7 @@ export const ParticleBubbles = ({ startDelay = 0 }: {
           textShadow: "0 0 20px rgba(0,0,0,0.3)",
         }}
       >
-        BUBBLES
+        {text}
       </div>
     </AbsoluteFill>
   );

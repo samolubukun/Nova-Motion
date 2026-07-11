@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LiquidOilSpill = ({ startDelay = 0 }: {
+export const LiquidOilSpill = ({ startDelay = 0, text = "OIL SPILL" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();

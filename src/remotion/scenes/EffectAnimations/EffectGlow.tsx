@@ -1,12 +1,13 @@
 /**
- * EffectGlow - グロー効果 - 発光
+ * EffectGlow - グローEffect - 発光
  */
 
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const EffectGlow = ({ startDelay = 0 }: {
+export const EffectGlow = ({ startDelay = 0, text = "GLOW" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -22,7 +23,7 @@ export const EffectGlow = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* 背景グロー */}
+      {/* Backgroundグロー */}
       <div
         style={{
           position: "absolute",
@@ -60,7 +61,7 @@ export const EffectGlow = ({ startDelay = 0 }: {
             `,
           }}
         >
-          GLOW
+          {text}
         </div>
       </AbsoluteFill>
 

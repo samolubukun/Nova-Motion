@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ParticleFireworks = ({ startDelay = 0 }: {
+export const ParticleFireworks = ({ startDelay = 0, text = "FIREWORKS" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -101,7 +102,7 @@ export const ParticleFireworks = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay + 60, startDelay + 80], [0, 1]),
         }}
       >
-        FIREWORKS
+        {text}
       </div>
     </AbsoluteFill>
   );

@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ParticleShootingStars = ({ startDelay = 0 }: {
+export const ParticleShootingStars = ({ startDelay = 0, text = "SHOOTING STARS" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -26,7 +27,7 @@ export const ParticleShootingStars = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#0a0a1a" }}>
-      {/* 背景の星 */}
+      {/* Backgroundの星 */}
       {Array.from({ length: 50 }).map((_, i) => {
         const twinkle = Math.sin((frame - startDelay) * 0.1 + i * 0.5) * 0.5 + 0.5;
         return (
@@ -88,7 +89,7 @@ export const ParticleShootingStars = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 30], [0, 1]),
         }}
       >
-        SHOOTING STARS
+        {text}
       </div>
     </AbsoluteFill>
   );

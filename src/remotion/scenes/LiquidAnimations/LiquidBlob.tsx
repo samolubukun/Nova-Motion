@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LiquidBlob = ({ startDelay = 0 }: {
+export const LiquidBlob = ({ startDelay = 0, text = "BLOB" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -20,7 +21,7 @@ export const LiquidBlob = ({ startDelay = 0 }: {
     { scale: 2, rotation: 0.7, color: C.accent, opacity: 0.9, blur: 0, delay: 12 },
   ];
 
-  // アニメーションするブロブパス生成
+  // Animationするブロブパス生成
   const generateAnimatedBlob = (f: number, seed: number, points: number = 10) => {
     const radius = 100;
     const angleStep = (Math.PI * 2) / points;
@@ -137,7 +138,7 @@ export const LiquidBlob = ({ startDelay = 0 }: {
           textShadow: `0 0 60px ${C.accent}, 0 0 120px ${C.secondary}`,
         }}
       >
-        BLOB
+        {text}
       </div>
     </AbsoluteFill>
   );

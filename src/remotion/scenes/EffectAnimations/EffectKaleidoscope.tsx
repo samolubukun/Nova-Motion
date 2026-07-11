@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring } from "remotion";
 import { C, font } from "../../common";
 
-export const EffectKaleidoscope = ({ startDelay = 0 }: {
+export const EffectKaleidoscope = ({ startDelay = 0, text = "KALEIDOSCOPE" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -103,7 +104,7 @@ export const EffectKaleidoscope = ({ startDelay = 0 }: {
             opacity: entryProgress,
           }}
         >
-          KALEIDOSCOPE
+          {text}
         </div>
       </AbsoluteFill>
     </AbsoluteFill>

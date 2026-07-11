@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const ParticleSmoke = ({ startDelay = 0 }: {
+export const ParticleSmoke = ({ startDelay = 0, text = "SMOKE" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -66,7 +67,7 @@ export const ParticleSmoke = ({ startDelay = 0 }: {
           opacity: lerp(frame, [startDelay, startDelay + 30], [0, 1]),
         }}
       >
-        SMOKE
+        {text}
       </div>
     </AbsoluteFill>
   );

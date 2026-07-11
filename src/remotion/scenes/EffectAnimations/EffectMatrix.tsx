@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, random } from "remotion";
 import { lerp, font } from "../../common";
 
-export const EffectMatrix = ({ startDelay = 0 }: {
+export const EffectMatrix = ({ startDelay = 0, text = "THE MATRIX" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { height } = useVideoConfig();
@@ -83,7 +84,7 @@ export const EffectMatrix = ({ startDelay = 0 }: {
             opacity: textOpacity,
           }}
         >
-          THE MATRIX
+          {text}
         </div>
       </AbsoluteFill>
     </AbsoluteFill>

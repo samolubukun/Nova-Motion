@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, font } from "../../common";
 
-export const EffectVHS = ({ startDelay = 0 }: {
+export const EffectVHS = ({ startDelay = 0, text = "VHS" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -40,7 +41,7 @@ export const EffectVHS = ({ startDelay = 0 }: {
               color: "rgba(255, 0, 0, 0.7)",
             }}
           >
-            VHS
+            {text}
           </div>
         </AbsoluteFill>
 
@@ -62,7 +63,7 @@ export const EffectVHS = ({ startDelay = 0 }: {
               color: "rgba(0, 255, 255, 0.7)",
             }}
           >
-            VHS
+            {text}
           </div>
         </AbsoluteFill>
 
@@ -82,7 +83,7 @@ export const EffectVHS = ({ startDelay = 0 }: {
               color: C.white,
             }}
           >
-            VHS
+            {text}
           </div>
         </AbsoluteFill>
       </AbsoluteFill>

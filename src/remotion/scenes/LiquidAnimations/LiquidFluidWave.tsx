@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LiquidFluidWave = ({ startDelay = 0 }: {
+export const LiquidFluidWave = ({ startDelay = 0, text = "WAVE" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
@@ -64,7 +65,7 @@ export const LiquidFluidWave = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: `linear-gradient(180deg, #0a0a1a 0%, #1a1a3a 100%)` }}>
-      {/* 背景グロー */}
+      {/* Backgroundグロー */}
       <div
         style={{
           position: "absolute",
@@ -150,7 +151,7 @@ export const LiquidFluidWave = ({ startDelay = 0 }: {
           textShadow: `0 0 60px ${C.accent}, 0 0 120px ${C.secondary}`,
         }}
       >
-        WAVE
+        {text}
       </div>
     </AbsoluteFill>
   );

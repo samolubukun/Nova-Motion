@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LiquidPaintDrip = ({ startDelay = 0 }: {
+export const LiquidPaintDrip = ({ startDelay = 0, text = "DRIP" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();

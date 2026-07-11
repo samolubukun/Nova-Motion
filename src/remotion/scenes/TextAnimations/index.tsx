@@ -1,7 +1,7 @@
 /**
- * Text Animations - テキストアニメーション集
+ * Text Animations - テキストAnimation集
  * 
- * After Effects/Motion Graphicsで頻繁に使用されるテキストアニメーション
+ * After Effects/Motion Graphicsで頻繁に使用されるテキストAnimation
  */
 
 // Individual components

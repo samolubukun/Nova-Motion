@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const EffectFilmGrain = ({ startDelay = 0 }: {
+export const EffectFilmGrain = ({ startDelay = 0, text = "FILM GRAIN" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -42,7 +43,7 @@ export const EffectFilmGrain = ({ startDelay = 0 }: {
             opacity: textOpacity,
           }}
         >
-          CINEMATIC
+          {text}
         </div>
         <div
           style={{

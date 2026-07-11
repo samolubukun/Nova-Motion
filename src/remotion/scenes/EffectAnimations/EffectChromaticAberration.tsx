@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const EffectChromaticAberration = ({ startDelay = 0 }: {
+export const EffectChromaticAberration = ({ startDelay = 0, text = "CHROMATIC" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -34,7 +35,7 @@ export const EffectChromaticAberration = ({ startDelay = 0 }: {
             opacity: textOpacity,
           }}
         >
-          CHROMATIC
+          {text}
         </div>
       </AbsoluteFill>
 
@@ -56,7 +57,7 @@ export const EffectChromaticAberration = ({ startDelay = 0 }: {
             opacity: textOpacity,
           }}
         >
-          CHROMATIC
+          {text}
         </div>
       </AbsoluteFill>
 
@@ -79,7 +80,7 @@ export const EffectChromaticAberration = ({ startDelay = 0 }: {
             opacity: textOpacity,
           }}
         >
-          CHROMATIC
+          {text}
         </div>
       </AbsoluteFill>
 

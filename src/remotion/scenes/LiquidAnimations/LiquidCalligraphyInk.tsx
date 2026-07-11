@@ -7,8 +7,9 @@ import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "r
 import { EASE, lerp, font } from "../../common";
 import { generateBlobPath } from "./shared/blobUtils";
 
-export const LiquidCalligraphyInk = ({ startDelay = 0 }: {
+export const LiquidCalligraphyInk = ({ startDelay = 0, text = "CALLIGRAPHY" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
@@ -54,7 +55,7 @@ export const LiquidCalligraphyInk = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: "#f5f0e8" }}>
-      {/* 和紙テクスチャ */}
+      {/* 和Paper Texture */}
       <AbsoluteFill
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
@@ -62,7 +63,7 @@ export const LiquidCalligraphyInk = ({ startDelay = 0 }: {
         }}
       />
 
-      {/* 背景の滲み */}
+      {/* Backgroundの滲み */}
       <div
         style={{
           position: "absolute",
@@ -152,7 +153,7 @@ export const LiquidCalligraphyInk = ({ startDelay = 0 }: {
           textShadow: "0 0 60px rgba(26,26,26,0.3)",
         }}
       >
-        墨
+        {text}
       </div>
 
       {/* 署名 */}

@@ -1,12 +1,13 @@
 /**
- * EffectDuotone - デュオトーン効果
+ * EffectDuotone - デュオトーンEffect
  */
 
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const EffectDuotone = ({ startDelay = 0 }: {
+export const EffectDuotone = ({ startDelay = 0, text = "DUOTONE" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -62,7 +63,7 @@ export const EffectDuotone = ({ startDelay = 0 }: {
             mixBlendMode: "overlay",
           }}
         >
-          DUOTONE
+          {text}
         </div>
         <div
           style={{

@@ -59,7 +59,7 @@ export const TextKinetic = ({ text = "KINETIC", startDelay = 0 }: {
         })}
       </div>
 
-      {/* アンダーライン */}
+      {/* Underline */}
       <div
         style={{
           position: "absolute",

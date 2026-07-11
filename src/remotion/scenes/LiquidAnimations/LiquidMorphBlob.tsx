@@ -6,8 +6,9 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "remotion";
 import { C, EASE, lerp, font } from "../../common";
 
-export const LiquidMorphBlob = ({ startDelay = 0 }: {
+export const LiquidMorphBlob = ({ startDelay = 0, text = "MORPH" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
@@ -73,7 +74,7 @@ export const LiquidMorphBlob = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* 背景グロー */}
+      {/* Backgroundグロー */}
       <div
         style={{
           position: "absolute",

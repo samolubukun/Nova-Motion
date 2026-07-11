@@ -5,8 +5,9 @@
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";
 import { C, font } from "../../common";
 
-export const ParticleLightning = ({ startDelay = 0 }: {
+export const ParticleLightning = ({ startDelay = 0, text = "THUNDER" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -96,7 +97,7 @@ export const ParticleLightning = ({ startDelay = 0 }: {
           textShadow: lightningActive ? `0 0 30px ${C.white}` : "none",
         }}
       >
-        THUNDER
+        {text}
       </div>
     </AbsoluteFill>
   );

@@ -1,5 +1,5 @@
 /**
- * TextGlitch - グリッチテキスト - デジタルグリッチ効果
+ * TextGlitch - グリッチテキスト - デジタルグリッチEffect
  */
 
 import { AbsoluteFill, useCurrentFrame, random } from "remotion";

@@ -7,8 +7,9 @@ import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, random } from "r
 import { C, EASE, lerp, font } from "../../common";
 import { generateBlobPath } from "./shared/blobUtils";
 
-export const LiquidSplatter = ({ startDelay = 0 }: {
+export const LiquidSplatter = ({ startDelay = 0, text = "SPLAT!" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
@@ -52,7 +53,7 @@ export const LiquidSplatter = ({ startDelay = 0 }: {
 
   return (
     <AbsoluteFill style={{ background: C.black }}>
-      {/* 背景グラデーション */}
+      {/* Backgroundグラデーション */}
       <AbsoluteFill
         style={{
           background: `radial-gradient(circle at 50% 50%, ${C.gray[900]} 0%, ${C.black} 70%)`,

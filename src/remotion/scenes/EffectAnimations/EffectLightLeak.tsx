@@ -1,12 +1,13 @@
 /**
- * EffectLightLeak - ライトリーク - 光漏れ効果
+ * EffectLightLeak - ライトリーク - 光漏れEffect
  */
 
 import { AbsoluteFill, useCurrentFrame, interpolate } from "remotion";
 import { C, lerp, font } from "../../common";
 
-export const EffectLightLeak = ({ startDelay = 0 }: {
+export const EffectLightLeak = ({ startDelay = 0, text = "LIGHT LEAKS" }: {
   startDelay?: number;
+  text?: string;
 }) => {
   const frame = useCurrentFrame();
 
@@ -42,7 +43,7 @@ export const EffectLightLeak = ({ startDelay = 0 }: {
             opacity: lerp(frame, [startDelay, startDelay + 30], [0, 1]),
           }}
         >
-          LIGHT LEAKS
+          {text}
         </div>
       </AbsoluteFill>
 
