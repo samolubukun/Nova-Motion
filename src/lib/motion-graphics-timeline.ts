@@ -105,7 +105,7 @@ async function callOpenAI(endpoint: string, payload: any): Promise<any> {
 export interface MotionGraphicsStoryboard {
   shortTitle: string;
   scenes: Array<{
-    type: "TextGlitch" | "TextKinetic" | "TextTypewriter" | "DataBarChart";
+    type: string;
     durationFrames: number;
     props: any;
     narration?: string; // Optional voiceover text for this specific scene
@@ -135,40 +135,120 @@ export async function generateMotionGraphicsTimeline(
 
   const systemPrompt = `You are an expert motion graphics director.
 Generate a dynamic, premium, highly engaging storyboard in JSON format based on the user's prompt.
-You have access to the following 25 scene components. DO NOT repeat the same component consecutively. Vary your selections to make the video feel active and professional.
+You have access to the COMPLETE catalog of scene components (200+) across all categories below. Vary your selections to make the video feel active, professional, and visually engaging. DO NOT repeat the same component twice in a row.
 
-Supported Scene Components:
-1. "TextGlitch": Glitchy cyber reveal text. Props: { "text": string }
-2. "TextKinetic": Fast kinetic word-by-word typography. Props: { "text": string }
-3. "TextTypewriter": Monospace typing terminal simulation. Props: { "text": string }
-4. "TextNeon": Glowing neon text against dark background. Props: { "text": string }
-5. "TextWave": Bouncing sine-wave text. Props: { "text": string }
-6. "TextGradient": Gradient colored stylish layout. Props: { "text": string }
-7. "TextScramble": Scrambling matrix/hacker text. Props: { "text": string }
-8. "DataBarChart": Animated comparison bar chart. Props: { "title": string, "subtitle": string, "data": Array<{ "label": string, "value": number, "color": string }> }
-9. "DataPieChart": Dynamic pie/donut visualization. Props: { "title": string, "subtitle": string, "data": Array<{ "label": string, "value": number, "color": string }> }
-10. "DataLineChart": Growth line chart. Props: { "title": string, "subtitle": string, "data": Array<{ "label": string, "value": number, "color": string }> }
-11. "DataStatsCards": Multiple key-value stats counters grid. Props: { "title": string, "subtitle": string }
-12. "DataProgressBars": Side-by-side horizontal loader bars. Props: { "title": string }
-13. "DataTimeline": Animated process timeline milestone list. Props: { "title": string }
-14. "DataRanking": High-to-low ranked list of items. Props: { "title": string }
-15. "DataGauge": Radial/speedometer visualizer. Props: { "title": string }
-16. "UIButton": Dynamic glassmorphic button click simulation. Props: {}
-17. "UICard": Sliding product card details. Props: {}
-18. "UIModal": Pop-up overlay card. Props: {}
-19. "UIToast": Slide-in alert toast notification. Props: {}
-20. "UINavigation": Topbar navigation sliding links animation. Props: {}
-21. "UIDropdown": Interactive list dropdown expansion. Props: {}
-22. "UIToggle": Modern switcher toggle animation. Props: {}
-23. "UILoading": High-tech dashboard loader spinner. Props: {}
-24. "UITabs": Switching tabs animation with layout change. Props: {}
-25. "UIForm": Modern input fields autocomplete simulation. Props: {}
+CRITICAL: All scene components accept content props (text, title, subtitle, items, data, etc.). You MUST pass MEANINGFUL content from the user's prompt into these props — never use generic placeholder text. The content you pass will be displayed on screen.
+
+Available Categories & Scene Components:
+
+--- 1. LOGO ANIMATIONS (for intro/outro branding) ---
+Components: Logo3DRotate, LogoGlitch, LogoLightTrail, LogoMaskReveal, LogoMorph, LogoNeonSign, LogoParticles, LogoSplitScreen, LogoStamp, LogoStroke.
+Props: { text: string } — displays the brand/logo name.
+
+--- 2. BACKGROUND ANIMATIONS (full-screen ambient backdrop) ---
+Components: BackgroundAurora, BackgroundBokeh, BackgroundFlowingGradient, BackgroundGeometric, BackgroundGrid, BackgroundMeshGradient, BackgroundNoiseTexture, BackgroundPerspectiveGrid, BackgroundRadial, BackgroundWaves.
+Props: { text: string } — a short tagline or brand name to overlay on the background.
+
+--- 3. CINEMATIC TEXT TITLES (hero titles with dramatic styling) ---
+Components: CinematicAction, CinematicAnime, CinematicDocumentary, CinematicEpic, CinematicHorror, CinematicMinimalEnd, CinematicNoir, CinematicRomance, CinematicSciFi, CinematicVintage.
+Props: { title: string, subtitle: string } — main headline and supporting text.
+
+--- 4. TYPOGRAPHY & TEXT ANIMATIONS ---
+Components: Text3DFlip, TextExplode, TextGlitch, TextGradient, TextKinetic, TextMaskReveal, TextNeon, TextScramble, TextTypewriter, TextWave.
+Props: { text: string } — a dynamic animated word or phrase.
+Special: TextCounter — Props: { title?: string, unit?: string, targetNumber?: number, prefix?: string, suffix?: string }
+Special: TextSplit — Props: { textTop: string, textBottom: string }
+
+--- 5. DATA VISUALIZATION ---
+Components: DataBarChart, DataGauge, DataLineChart, DataPieChart, DataProgressBars, DataRanking, DataStatsCards, DataTimeline.
+Each has unique structured props — pass the data the user wants to visualize:
+- DataBarChart: { title?: string, subtitle?: string, data?: Array<{ label: string, value: number, color?: string }> }
+- DataGauge: { value?: number, maxValue?: number, title?: string }
+- DataLineChart: { title?: string, subtitle?: string }
+- DataPieChart: { title?: string, data?: Array<{ label: string, value: number, color?: string }> }
+- DataProgressBars: { title?: string, data?: Array<{ label: string, value: number, color?: string }> }
+- DataRanking: { title?: string, subtitle?: string, items?: Array<{ rank: number, name: string, value: string, change: "up"|"down"|"same" }> }
+- DataStatsCards: { title?: string, subtitle?: string, mainValue?: number, mainChange?: string, mainPrefix?: string, data?: Array<{ label: string, value: string, color?: string }> }
+- DataTimeline: { title?: string, events?: Array<{ year: string, title: string, desc: string }> }
+
+--- 6. DEMO/UI INTERACTION ANIMATIONS (product or app mockups) ---
+Components: DemoAddressBar, DemoCursorClick, DemoDragDrop, DemoMenuExpand, DemoModal, DemoPageTransition, DemoScroll, DemoSearchFilter, DemoTextInput, DemoTooltip, DemoWizard, DemoZoomFocus.
+Props: { title?: string } — short label describing the interaction.
+
+--- 7. POST-PRODUCTION EFFECTS ---
+Components: EffectChromaticAberration, EffectDepthOfField, EffectDuotone, EffectFilmGrain, EffectGlow, EffectKaleidoscope, EffectLightLeak, EffectMatrix, EffectNoise, EffectVHS.
+Props: { text?: string } — a word or phrase to display with the effect.
+
+--- 8. LAYOUT & COMPOSITION (stylized page/panel layouts) ---
+Components: LayoutAsymmetric, LayoutDiagonal, LayoutFrameInFrame, LayoutFullscreenType, LayoutGiantNumber, LayoutGridBreak, LayoutLayered, LayoutMultiColumn, LayoutOffGrid, LayoutSplitContrast, LayoutVerticalMix, LayoutWhitespace.
+Props vary by component:
+- LayoutAsymmetric: { title1?: string, title2?: string, badge?: string }
+- LayoutDiagonal: { title?: string, subtitle1?: string, subtitle2?: string }
+- LayoutFrameInFrame, LayoutFullscreenType, LayoutGridBreak, LayoutLayered, LayoutMultiColumn, LayoutOffGrid, LayoutVerticalMix, LayoutWhitespace: { title?: string }
+- LayoutGiantNumber: { title?: string, number?: string }
+- LayoutSplitContrast: { titleBefore?: string, titleAfter?: string }
+
+--- 9. LIQUID/MORPHING ANIMATIONS (fluid organic motion) ---
+Components: LiquidBlob, LiquidCalligraphyInk, LiquidFluidWave, LiquidInkSplash, LiquidMorphBlob, LiquidOilSpill, LiquidPaintDrip, LiquidSplatter, LiquidSwirl, LiquidWaterDrop.
+Props: { text?: string } — a word to display with the liquid animation.
+
+--- 10. LIST & GRID LAYOUTS ---
+Components: ListAsymmetric3, ListFullscreenSequence, ListHeroWithList, ListHorizontalPeek, ListMinimalLeft, ListNumberedVertical, ListSimpleText, ListStaggered, ListStatsFocused, ListTimeline, ListTwoColumnCompare, ListUnevenGrid.
+Props vary:
+- ListAsymmetric3: { items?: Array<{ title: string, subtitle: string, description: string }> }
+- ListFullscreenSequence: { items?: Array<{ num: string, text: string, color: string }> }
+- ListHeroWithList: { title1?: string, title2?: string, items?: string[] }
+- ListHorizontalPeek: { items?: Array<{ num: string, title: string, highlighted: boolean }> }
+- ListMinimalLeft: { items?: string[] }
+- ListNumberedVertical: { items?: Array<{ num: string, text: string }> }
+- ListSimpleText: { items?: string[] }
+- ListStaggered: { items?: Array<{ title: string, desc: string }> }
+- ListStatsFocused: { stats?: Array<{ value: string, unit: string, label: string }> }
+- ListTimeline: { title?: string, items?: Array<{ year: string, title: string, desc: string }> }
+- ListTwoColumnCompare: { title?: string, leftItems?: string[], rightValues?: string[] }
+- ListUnevenGrid: { title?: string, items?: Array<{ badge: string, title: string, description: string }> }
+
+--- 11. PARTICLE SYSTEMS (ambient particle effects) ---
+Components: ParticleBubbles, ParticleConfetti, ParticleFireworks, ParticleLightning, ParticleMagneticField, ParticleSakura, ParticleShootingStars, ParticleSmoke, ParticleSnow, ParticleSparks.
+Props: { text?: string } — a word to display with the particle effect.
+
+--- 12. ROLLER/TEXT CYCLING ANIMATIONS (animated rotating text) ---
+Components: Roller3DCarousel, RollerBlur, RollerCountdown, RollerDramaticStop, RollerDrum, RollerFadeSlide, RollerFlip, RollerGlitch, RollerGradientWave, RollerLiquid, RollerMaskSlide, RollerMultiSlot, RollerOutlineHighlight, RollerPerspectiveStripes, RollerScaleBounce, RollerShuffle, RollerSlotMachine, RollerSlotReveal, RollerSplitFlap, RollerTypewriter, RollerVerticalList, RollerWave.
+Common props: { title?: string, items?: string[] } — title is the heading, items are the cycling words/phrases.
+Special variants:
+- RollerCountdown, RollerSplitFlap, RollerShuffle: also accept { subtitle?: string }
+- RollerFlip: also accepts { prefix?: string, suffix?: string }
+- RollerMultiSlot: { slot1?: string[], slot2?: string[], slot3?: string[] } (3 independent cycling slots)
+- RollerPerspectiveStripes: { items?: Array<{ text: string, color: string }> }
+- RollerOutlineHighlight: { title?: string } (no items)
+
+--- 13. GEOMETRIC SHAPES ---
+Components: Shape3DCube, ShapeCircularProgress, ShapeExplosion, ShapeHelix, ShapeHexGrid, ShapeMandala, ShapeMorphing, ShapeParticleField, ShapeRipples, ShapeSpinningRings.
+Props: { title?: string } — headline text for the shape animation.
+Special: ShapeCircularProgress also accepts { percentage?: number }
+Special: ShapeExplosion accepts { text?: string }
+Special: ShapeParticleField also accepts { particleCount?: number }
+
+--- 14. DESIGN THEMES (stylized design trend showcases) ---
+Components: Theme3DGlass, ThemeArtDeco, ThemeBauhaus, ThemeBoho, ThemeBrutalistWeb, ThemeCosmic, ThemeCyberpunk, ThemeDarkMode, ThemeDuotone, ThemeGeometricAbstract, ThemeGlassmorphism, ThemeGradient, ThemeHolographic, ThemeIndustrial, ThemeIsometric, ThemeJapanese, ThemeLuxury, ThemeMemphis, ThemeMinimalist, ThemeMonochrome, ThemeNatural, ThemeNeobrutalism, ThemeNeon, ThemeNeumorphism, ThemeOrganic, ThemePaperCut, ThemePop, ThemeRetro, ThemeSwiss, ThemeTech, ThemeWatercolor, ThemeY2K.
+Props: { title?: string, subtitle?: string } — headline and supporting text themed in the visual style.
+
+--- 15. TRANSITIONS (between main chapters, duration: 20-30 frames) ---
+Components: TransitionBlinds, TransitionBoxReveal, TransitionCircleWipe, TransitionDiagonalSlice, TransitionFlash, TransitionGlitch, TransitionLineSweep, TransitionLiquidMorph, TransitionShutter, TransitionZoomBlur.
+Most accept: { labelA?: string, labelB?: string } — "before" and "after" labels.
+Special: TransitionBoxReveal: { title?: string, gridSize?: number }
+Note: Some transitions also accept visual-only props (direction, angle, flashColor, bladeCount, originX, originY, lineCount) for style control.
+
+--- 16. UI COMPONENTS (interface element mockups) ---
+Components: UIButton, UICard, UIDropdown, UIForm, UILoading, UIModal, UINavigation, UITabs, UIToast, UIToggle.
+Props: { title?: string } — label text for the UI element.
 
 Guidelines:
-- Choose the best components matching the prompt context. Vary your choices! Do not repeat the same component twice in a row.
-- Total scenes: between 5 to 10 scenes. Make the storyboard complete and narrative-driven.
+- Choose the best components matching the prompt context across ALL 16 categories above. Vary your choices! Do not repeat the same component twice in a row.
+- Total scenes: between 5 to 20 scenes. Make the storyboard complete and narrative-driven.
 - Keep the visual tone premium (use colors like cyan "#00ffd2", magenta "#ff007f", electric blue, purple, dark gray background).
 - Generate optional narration scripts for each scene if the user wants voiceover.
+- CRITICAL: Fill EVERY scene's props with real content from the user's prompt. The props are what gets displayed on screen.
 
 Give output in strict JSON format:
 {
