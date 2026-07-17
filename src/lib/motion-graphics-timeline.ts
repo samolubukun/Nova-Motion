@@ -104,11 +104,11 @@ async function callOpenAI(endpoint: string, payload: any): Promise<any> {
 
 export interface MotionGraphicsStoryboard {
   shortTitle: string;
-  scenes: Array<{
-    type: string;
+  slides: Array<{
     durationFrames: number;
-    props: any;
-    narration?: string; // Optional voiceover text for this specific scene
+    narration?: string;
+    background?: any;
+    elements?: any[];
   }>;
   audio?: Array<{
     startMs: number;
@@ -135,131 +135,71 @@ export async function generateMotionGraphicsTimeline(
 
   const systemPrompt = `You are an expert motion graphics director.
 Generate a dynamic, premium, highly engaging storyboard in JSON format based on the user's prompt.
-You have access to the COMPLETE catalog of scene components (200+) across all categories below. Vary your selections to make the video feel active, professional, and visually engaging. DO NOT repeat the same component twice in a row.
+You must construct a timeline using a simple, universal array of "slides".
 
-CRITICAL: All scene components accept content props (text, title, subtitle, items, data, etc.). You MUST pass MEANINGFUL content from the user's prompt into these props — never use generic placeholder text. The content you pass will be displayed on screen.
+For each slide, you define the background and an array of elements (text, charts, lists, stats, etc.).
+The rendering engine will automatically animate these elements based on the types and properties you provide.
 
-Available Categories & Scene Components:
+AVAILABLE BACKGROUND TYPES:
+- "solid": solid color (uses 'from' color)
+- "gradient": linear gradient (uses 'from', 'to', 'angle')
+- "grid": subtle tech grid
+- "mesh": smooth organic mesh gradient
+- "radial": glowing radial gradient
+- "noise": grainy texture overlay
 
---- 1. LOGO ANIMATIONS (for intro/outro branding) ---
-Components: Logo3DRotate, LogoGlitch, LogoLightTrail, LogoMaskReveal, LogoMorph, LogoNeonSign, LogoParticles, LogoSplitScreen, LogoStamp, LogoStroke.
-Props: { text: string } — displays the brand/logo name.
+AVAILABLE ELEMENT TYPES & SCHEMA:
+All elements support: { "type": "...", "delay": 0 (frames relative to slide start) }
 
---- 2. BACKGROUND ANIMATIONS (full-screen ambient backdrop) ---
-Components: BackgroundAurora, BackgroundBokeh, BackgroundFlowingGradient, BackgroundGeometric, BackgroundGrid, BackgroundMeshGradient, BackgroundNoiseTexture, BackgroundPerspectiveGrid, BackgroundRadial, BackgroundWaves.
-Props: { text: string } — a short tagline or brand name to overlay on the background.
+1. "title": Main headline
+   - text: string
+   - animation: "fadeIn" | "slideUp" | "slideLeft" | "glitch" | "typewriter" | "scale"
+   - color: string (hex)
 
---- 3. CINEMATIC TEXT TITLES (hero titles with dramatic styling) ---
-Components: CinematicAction, CinematicAnime, CinematicDocumentary, CinematicEpic, CinematicHorror, CinematicMinimalEnd, CinematicNoir, CinematicRomance, CinematicSciFi, CinematicVintage.
-Props: { title: string, subtitle: string } — main headline and supporting text.
+2. "subtitle" / "body": Supporting text
+   - text: string
+   - color: string (hex)
 
---- 4. TYPOGRAPHY & TEXT ANIMATIONS ---
-Components: Text3DFlip, TextExplode, TextGlitch, TextGradient, TextKinetic, TextMaskReveal, TextNeon, TextScramble, TextTypewriter, TextWave.
-Props: { text: string } — a dynamic animated word or phrase.
-Special: TextCounter — Props: { title?: string, unit?: string, targetNumber?: number, prefix?: string, suffix?: string }
-Special: TextSplit — Props: { textTop: string, textBottom: string }
+3. "badge" / "label": Small accented label
+   - text: string
+   - color: string (hex)
 
---- 5. DATA VISUALIZATION ---
-Components: DataBarChart, DataGauge, DataLineChart, DataPieChart, DataProgressBars, DataRanking, DataStatsCards, DataTimeline.
-Each has unique structured props — pass the data the user wants to visualize:
-- DataBarChart: { title?: string, subtitle?: string, data?: Array<{ label: string, value: number, color?: string }> }
-- DataGauge: { value?: number, maxValue?: number, title?: string }
-- DataLineChart: { title?: string, subtitle?: string }
-- DataPieChart: { title?: string, data?: Array<{ label: string, value: number, color?: string }> }
-- DataProgressBars: { title?: string, data?: Array<{ label: string, value: number, color?: string }> }
-- DataRanking: { title?: string, subtitle?: string, items?: Array<{ rank: number, name: string, value: string, change: "up"|"down"|"same" }> }
-- DataStatsCards: { title?: string, subtitle?: string, mainValue?: number, mainChange?: string, mainPrefix?: string, data?: Array<{ label: string, value: string, color?: string }> }
-- DataTimeline: { title?: string, events?: Array<{ year: string, title: string, desc: string }> }
+4. "list": Bulleted list
+   - items: string[]
+   - color: string (hex) (bullet color)
 
---- 6. DEMO/UI INTERACTION ANIMATIONS (product or app mockups) ---
-Components: DemoAddressBar, DemoCursorClick, DemoDragDrop, DemoMenuExpand, DemoModal, DemoPageTransition, DemoScroll, DemoSearchFilter, DemoTextInput, DemoTooltip, DemoWizard, DemoZoomFocus.
-Props: { title?: string } — short label describing the interaction.
+5. "barChart" / "pieChart": Data visualization
+   - title: string
+   - data: [ { "label": "A", "value": 85, "color": "#ff0000" } ]
 
---- 7. POST-PRODUCTION EFFECTS ---
-Components: EffectChromaticAberration, EffectDepthOfField, EffectDuotone, EffectFilmGrain, EffectGlow, EffectKaleidoscope, EffectLightLeak, EffectMatrix, EffectNoise, EffectVHS.
-Props: { text?: string } — a word or phrase to display with the effect.
+6. "stat" / "counter": Big numbers
+   - stat uses "value", counter animates up to "targetNumber"
+   - label: string
+   - prefix / suffix: string (e.g., "$", "%")
 
---- 8. LAYOUT & COMPOSITION (stylized page/panel layouts) ---
-Components: LayoutAsymmetric, LayoutDiagonal, LayoutFrameInFrame, LayoutFullscreenType, LayoutGiantNumber, LayoutGridBreak, LayoutLayered, LayoutMultiColumn, LayoutOffGrid, LayoutSplitContrast, LayoutVerticalMix, LayoutWhitespace.
-Props vary by component:
-- LayoutAsymmetric: { title1?: string, title2?: string, badge?: string }
-- LayoutDiagonal: { title?: string, subtitle1?: string, subtitle2?: string }
-- LayoutFrameInFrame, LayoutFullscreenType, LayoutGridBreak, LayoutLayered, LayoutMultiColumn, LayoutOffGrid, LayoutVerticalMix, LayoutWhitespace: { title?: string }
-- LayoutGiantNumber: { title?: string, number?: string }
-- LayoutSplitContrast: { titleBefore?: string, titleAfter?: string }
-
---- 9. LIQUID/MORPHING ANIMATIONS (fluid organic motion) ---
-Components: LiquidBlob, LiquidCalligraphyInk, LiquidFluidWave, LiquidInkSplash, LiquidMorphBlob, LiquidOilSpill, LiquidPaintDrip, LiquidSplatter, LiquidSwirl, LiquidWaterDrop.
-Props: { text?: string } — a word to display with the liquid animation.
-
---- 10. LIST & GRID LAYOUTS ---
-Components: ListAsymmetric3, ListFullscreenSequence, ListHeroWithList, ListHorizontalPeek, ListMinimalLeft, ListNumberedVertical, ListSimpleText, ListStaggered, ListStatsFocused, ListTimeline, ListTwoColumnCompare, ListUnevenGrid.
-Props vary:
-- ListAsymmetric3: { items?: Array<{ title: string, subtitle: string, description: string }> }
-- ListFullscreenSequence: { items?: Array<{ num: string, text: string, color: string }> }
-- ListHeroWithList: { title1?: string, title2?: string, items?: string[] }
-- ListHorizontalPeek: { items?: Array<{ num: string, title: string, highlighted: boolean }> }
-- ListMinimalLeft: { items?: string[] }
-- ListNumberedVertical: { items?: Array<{ num: string, text: string }> }
-- ListSimpleText: { items?: string[] }
-- ListStaggered: { items?: Array<{ title: string, desc: string }> }
-- ListStatsFocused: { stats?: Array<{ value: string, unit: string, label: string }> }
-- ListTimeline: { title?: string, items?: Array<{ year: string, title: string, desc: string }> }
-- ListTwoColumnCompare: { title?: string, leftItems?: string[], rightValues?: string[] }
-- ListUnevenGrid: { title?: string, items?: Array<{ badge: string, title: string, description: string }> }
-
---- 11. PARTICLE SYSTEMS (ambient particle effects) ---
-Components: ParticleBubbles, ParticleConfetti, ParticleFireworks, ParticleLightning, ParticleMagneticField, ParticleSakura, ParticleShootingStars, ParticleSmoke, ParticleSnow, ParticleSparks.
-Props: { text?: string } — a word to display with the particle effect.
-
---- 12. ROLLER/TEXT CYCLING ANIMATIONS (animated rotating text) ---
-Components: Roller3DCarousel, RollerBlur, RollerCountdown, RollerDramaticStop, RollerDrum, RollerFadeSlide, RollerFlip, RollerGlitch, RollerGradientWave, RollerLiquid, RollerMaskSlide, RollerMultiSlot, RollerOutlineHighlight, RollerPerspectiveStripes, RollerScaleBounce, RollerShuffle, RollerSlotMachine, RollerSlotReveal, RollerSplitFlap, RollerTypewriter, RollerVerticalList, RollerWave.
-Common props: { title?: string, items?: string[] } — title is the heading, items are the cycling words/phrases.
-Special variants:
-- RollerCountdown, RollerSplitFlap, RollerShuffle: also accept { subtitle?: string }
-- RollerFlip: also accepts { prefix?: string, suffix?: string }
-- RollerMultiSlot: { slot1?: string[], slot2?: string[], slot3?: string[] } (3 independent cycling slots)
-- RollerPerspectiveStripes: { items?: Array<{ text: string, color: string }> }
-- RollerOutlineHighlight: { title?: string } (no items)
-
---- 13. GEOMETRIC SHAPES ---
-Components: Shape3DCube, ShapeCircularProgress, ShapeExplosion, ShapeHelix, ShapeHexGrid, ShapeMandala, ShapeMorphing, ShapeParticleField, ShapeRipples, ShapeSpinningRings.
-Props: { title?: string } — headline text for the shape animation.
-Special: ShapeCircularProgress also accepts { percentage?: number }
-Special: ShapeExplosion accepts { text?: string }
-Special: ShapeParticleField also accepts { particleCount?: number }
-
---- 14. DESIGN THEMES (stylized design trend showcases) ---
-Components: Theme3DGlass, ThemeArtDeco, ThemeBauhaus, ThemeBoho, ThemeBrutalistWeb, ThemeCosmic, ThemeCyberpunk, ThemeDarkMode, ThemeDuotone, ThemeGeometricAbstract, ThemeGlassmorphism, ThemeGradient, ThemeHolographic, ThemeIndustrial, ThemeIsometric, ThemeJapanese, ThemeLuxury, ThemeMemphis, ThemeMinimalist, ThemeMonochrome, ThemeNatural, ThemeNeobrutalism, ThemeNeon, ThemeNeumorphism, ThemeOrganic, ThemePaperCut, ThemePop, ThemeRetro, ThemeSwiss, ThemeTech, ThemeWatercolor, ThemeY2K.
-Props: { title?: string, subtitle?: string } — headline and supporting text themed in the visual style.
-
---- 15. TRANSITIONS (between main chapters, duration: 20-30 frames) ---
-Components: TransitionBlinds, TransitionBoxReveal, TransitionCircleWipe, TransitionDiagonalSlice, TransitionFlash, TransitionGlitch, TransitionLineSweep, TransitionLiquidMorph, TransitionShutter, TransitionZoomBlur.
-Most accept: { labelA?: string, labelB?: string } — "before" and "after" labels.
-Special: TransitionBoxReveal: { title?: string, gridSize?: number }
-Note: Some transitions also accept visual-only props (direction, angle, flashColor, bladeCount, originX, originY, lineCount) for style control.
-
---- 16. UI COMPONENTS (interface element mockups) ---
-Components: UIButton, UICard, UIDropdown, UIForm, UILoading, UIModal, UINavigation, UITabs, UIToast, UIToggle.
-Props: { title?: string } — label text for the UI element.
+7. "divider": Animated line separator
+   - color: string (hex)
 
 Guidelines:
-- Choose the best components matching the prompt context across ALL 16 categories above. Vary your choices! Do not repeat the same component twice in a row.
-- Total scenes: between 5 to 20 scenes. Make the storyboard complete and narrative-driven.
-- Keep the visual tone premium (use colors like cyan "#00ffd2", magenta "#ff007f", electric blue, purple, dark gray background).
-- Generate optional narration scripts for each scene if the user wants voiceover.
-- CRITICAL: Fill EVERY scene's props with real content from the user's prompt. The props are what gets displayed on screen.
+- Keep the visual tone premium. Use harmonious colors (e.g., dark backgrounds like #0a0a0a or #1a1a2e, with vibrant accents like #6366f1, #00ffd2, #ff007f).
+- Total slides: between 5 to 15 slides. Make the storyboard complete and narrative-driven.
+- Generate optional narration scripts for each slide if the user wants voiceover.
+- Keep durationFrames between 60 to 150 per slide depending on content length.
 
 Give output in strict JSON format:
 {
   "shortTitle": "Title",
   "voiceoverEnabled": true,
-  "scenes": [
+  "slides": [
     {
-      "type": "TextGlitch",
-      "durationFrames": 90,
-      "props": { "text": "GO BIG" },
-      "narration": "Narration text for this scene."
+      "durationFrames": 120,
+      "narration": "AI is changing the world.",
+      "background": { "type": "mesh", "from": "#0a0a0a", "to": "#1a1a2e" },
+      "elements": [
+        { "type": "badge", "text": "INTRODUCTION", "color": "#00ffd2", "delay": 0 },
+        { "type": "title", "text": "AI Revolution", "animation": "slideUp", "color": "#ffffff", "delay": 15 },
+        { "type": "subtitle", "text": "Changing the world", "color": "#a1a1aa", "delay": 30 }
+      ]
     }
   ]
 }`;
@@ -277,7 +217,7 @@ Give output in strict JSON format:
   const parsed = JSON.parse(response.choices[0].message.content);
   const storyboard: MotionGraphicsStoryboard = {
     shortTitle: parsed.shortTitle || topic.substring(0, 30),
-    scenes: parsed.scenes || [],
+    slides: parsed.slides || [],
     audio: [],
   };
 
@@ -288,39 +228,58 @@ Give output in strict JSON format:
 
   let durationMs = 0;
 
-  // Process scenes sequentially
-  for (let i = 0; i < storyboard.scenes.length; i++) {
-    const scene = storyboard.scenes[i];
-    const sceneId = `${jobId}-mg-scene-${i}`;
+  // Process slides sequentially
+  for (let i = 0; i < storyboard.slides.length; i++) {
+    const slide = storyboard.slides[i];
+    const slideId = `${jobId}-mg-slide-${i}`;
+
+    // Calculate minimum frames needed for all elements to finish animating
+    let maxDelayFrames = 0;
+    if (slide.elements) {
+      for (const el of slide.elements) {
+        if (el.delay && el.delay > maxDelayFrames) {
+          maxDelayFrames = el.delay;
+        }
+      }
+    }
+    // Give at least 60 frames (2 seconds) after the last element starts animating
+    const minVisualFrames = maxDelayFrames + 60;
 
     // Default duration if there is no voiceover
-    let sceneDurationMs = Math.round((scene.durationFrames / 30) * 1000);
+    let slideDurationMs = Math.round((slide.durationFrames / 30) * 1000);
 
     // If voiceover is enabled and narration is present
-    if (parsed.voiceoverEnabled && scene.narration) {
-      const localAudioPath = path.join(tempDir, `${sceneId}.mp3`);
+    if (parsed.voiceoverEnabled && slide.narration) {
+      const localAudioPath = path.join(tempDir, `${slideId}.mp3`);
       try {
-        const wordTimestamps = await generateSpeechWithTimestamps(scene.narration, localAudioPath, selectedVoice);
+        const wordTimestamps = await generateSpeechWithTimestamps(slide.narration, localAudioPath, selectedVoice);
         const audioBuffer = fs.readFileSync(localAudioPath);
-        const audioUrl = await uploadAsset(audioBuffer, `${sceneId}.mp3`, "audio/mpeg");
+        const audioUrl = await uploadAsset(audioBuffer, `${slideId}.mp3`, "audio/mpeg");
 
         const lastWord = wordTimestamps[wordTimestamps.length - 1];
-        sceneDurationMs = Math.ceil((lastWord ? lastWord.end : 3) * 1000);
-
-        // Adjust durationFrames to match voiceover duration exactly
-        scene.durationFrames = Math.ceil((sceneDurationMs * 30) / 1000);
+        // Base voiceover length + 800ms padding
+        const voiceoverDurationMs = Math.ceil((lastWord ? lastWord.end : 3) * 1000) + 800;
+        
+        // Final frame count is whichever is longer: the voiceover, or the minimum visual time
+        slide.durationFrames = Math.max(Math.ceil((voiceoverDurationMs * 30) / 1000), minVisualFrames);
+        slideDurationMs = Math.ceil((slide.durationFrames / 30) * 1000);
 
         storyboard.audio!.push({
           startMs: durationMs,
-          endMs: durationMs + sceneDurationMs,
+          endMs: durationMs + Math.ceil((lastWord ? lastWord.end : 3) * 1000), // Original voice length
           audioUrl,
         });
       } catch (err) {
-        console.warn(`[MotionGraphics Pipeline] Failed to generate TTS for scene ${i}:`, err);
+        console.warn(`[MotionGraphics Pipeline] Failed to generate TTS for slide ${i}:`, err);
+        slide.durationFrames = Math.max(slide.durationFrames, minVisualFrames);
+        slideDurationMs = Math.ceil((slide.durationFrames / 30) * 1000);
       }
+    } else {
+      slide.durationFrames = Math.max(slide.durationFrames, minVisualFrames);
+      slideDurationMs = Math.ceil((slide.durationFrames / 30) * 1000);
     }
 
-    durationMs += sceneDurationMs;
+    durationMs += slideDurationMs;
   }
 
   // 4. Download and overlay background music track

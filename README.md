@@ -9,27 +9,34 @@ All assets (voiceovers, background images, and final rendered videos) are automa
 ## Video Generation Models (Compositions)
 
 ### 1. AI Storyboard Video (`videoType: "AIVideo"`)
-Produces highly engaging vertical story videos (9:16) using gpt-image-2 image generation.
+Produces highly engaging story videos in multiple aspect ratios (9:16, 16:9, 1:1) using gpt-image-2 image generation.
 * **GPT-4o-mini**: Writes a narrative story script and detailed visual scene descriptions.
-* **gpt-image-2**: Generates high-resolution vertical portrait illustrations for each scene.
+* **gpt-image-2**: Generates high-resolution illustrations for each scene.
 * **Deepgram Aura TTS & Nova-2 STT**: Synthesizes natural narration and transcribes word-level offsets for kinetic subtitle alignments.
 
 ### 2. Stock Video Short (`videoType: "StockVideo"`)
-Generates vertical videos (9:16) by sourcing stock clips from Pexels.
+Generates videos in multiple aspect ratios (9:16, 16:9, 1:1) by sourcing stock clips from Pexels.
 * **GPT-4o-mini**: Writes the script and outputs context-based search keywords.
-* **Pexels API**: Fetches relevant vertical stock video loops.
+* **Pexels API**: Fetches relevant stock video loops.
 * **Background Music**: Low-volume background tracks mixed under the voiceover.
 * **Deepgram TTS + STT**: Narrates and maps word captions.
 
-### 3. Typography/Layout Slide Videos (`videoType: "SocialMedia" | "Explainer" | "General" | "TextAnimation"`)
+### 3. Stock Image Short (`videoType: "StockImage"`)
+Generates videos in multiple aspect ratios (9:16, 16:9, 1:1) by sourcing stock images from Pixabay.
+* **GPT-4o-mini**: Writes the script and outputs context-based search keywords.
+* **Pixabay API**: Fetches relevant stock images.
+* **Background Music**: Low-volume background tracks mixed under the voiceover.
+* **Deepgram TTS + STT**: Narrates and maps word captions.
+
+### 4. Typography/Layout Slide Videos (`videoType: "SocialMedia" | "Explainer" | "General" | "TextAnimation"`)
 Clean layouts using modern typographic animations and styles.
 * **Claude/OpenAI**: Writes structured JSON scripts defining slide colors, text, and timing.
 * **Deepgram**: Overlays audio voiceovers.
 
-### 4. Motion Graphics & Data Visualizations (`videoType: "MotionGraphics"`)
-Produces premium, highly animated visual components such as charts, hacker text, neon typography, and mock UI interactions.
-* **OpenAI (GPT-4o-mini)**: Generates a complete storyboard containing glitch/neon/wave text, bar/pie/line charts, growth metrics, and simulated UI interactions (buttons, tabs, forms, modals).
-* **Deepgram & Background Music**: Synthesizes custom TTS narration for each scene and overlays background audio tracks.
+### 5. Motion Graphics & Data Visualizations (`videoType: "MotionGraphics"`)
+Produces premium, highly animated visual components using a dynamic, unified JSON slide renderer.
+* **OpenAI (GPT-4o-mini)**: Generates a complete storyboard containing glitch/neon/wave text, bar/pie/line charts, growth metrics, and dynamic background layouts in strict JSON.
+* **Deepgram & Background Music**: Synthesizes custom TTS narration for each slide and overlays background audio tracks.
 
 ---
 
@@ -94,6 +101,7 @@ All endpoints support the following root payload fields:
 * **`videoType`** (string, required): The video template mode. Must be one of:
   * `"AIVideo"`: AI Storyboard mode (gpt-image-2 images + voiceover).
   * `"StockVideo"`: Pexels stock footage mode (stock video loops + voiceover).
+  * `"StockImage"`: Pixabay stock image mode (stock images + voiceover).
   * `"SocialMedia"`: Kinetic typographic slide style (quotes/shorts).
   * `"Explainer"`: Multi-step layout slides supporting step numbers.
   * `"General"`: Simple slide layout transitions.
@@ -139,7 +147,20 @@ Produces shorts using context-matched Pexels stock video footage, Deepgram TTS v
   }
   ```
 
-#### Endpoint C: Typographic Slide Videos (`videoType` Options: `"SocialMedia" | "Explainer" | "General" | "TextAnimation"`)
+#### Endpoint C: Stock Image Short (`videoType: "StockImage"`)
+Produces shorts using context-matched Pixabay stock images, Deepgram TTS voiceover, and background music overlays.
+* **Example Payload**:
+  ```json
+  {
+    "prompt": "Why reading daily is key to success",
+    "videoType": "StockImage",
+    "topic": "Education",
+    "aspectRatio": "9:16",
+    "voice": "aura-2-aries-en"
+  }
+  ```
+
+#### Endpoint D: Typographic Slide Videos (`videoType` Options: `"SocialMedia" | "Explainer" | "General" | "TextAnimation"`)
 Outputs animated text slides with dynamic TTS voiceover. Layout automatically adapts font dimensions to the target aspect ratio.
 * **Example Payload**:
   ```json
@@ -155,8 +176,8 @@ Outputs animated text slides with dynamic TTS voiceover. Layout automatically ad
   }
   ```
 
-#### Endpoint D: Motion Graphics & Data Visualizations (`videoType: "MotionGraphics"`)
-Generates highly animated technical slides with data visualization layouts (bar charts, pie charts, line charts, gauge progress charts, process timelines, ranking lists) and simulated UI components (buttons, tabs, inputs, toggle switches, toast messages).
+#### Endpoint E: Motion Graphics & Data Visualizations (`videoType: "MotionGraphics"`)
+Generates highly animated technical slides with data visualization layouts (bar charts, pie charts) and animated typography (badges, glitch text, large stats) driven by a self-contained JSON schema.
 * **Example Payload**:
   ```json
   {
@@ -196,7 +217,18 @@ All requests must be sent as `POST` requests to:
 }
 ```
 
-#### 3. Social Media Typography Slide (`SocialMedia`)
+#### 3. Stock Image Video (`StockImage`)
+```json
+{
+  "prompt": "Why reading daily is key to success",
+  "videoType": "StockImage",
+  "topic": "Education",
+  "aspectRatio": "9:16",
+  "voice": "aura-2-aries-en"
+}
+```
+
+#### 4. Social Media Typography Slide (`SocialMedia`)
 ```json
 {
   "prompt": "A short piece of advice about starting a business today",
@@ -210,7 +242,7 @@ All requests must be sent as `POST` requests to:
 }
 ```
 
-#### 4. Explainer Presentation Slide (`Explainer`)
+#### 5. Explainer Presentation Slide (`Explainer`)
 ```json
 {
   "prompt": "3 steps to write clean code",
@@ -224,7 +256,7 @@ All requests must be sent as `POST` requests to:
 }
 ```
 
-#### 5. General Slide Layout (`General`)
+#### 6. General Slide Layout (`General`)
 ```json
 {
   "prompt": "A description of the scale of the solar system",
@@ -238,7 +270,7 @@ All requests must be sent as `POST` requests to:
 }
 ```
 
-#### 6. Text Animation / Kinetic Highlight (`TextAnimation`)
+#### 7. Text Animation / Kinetic Highlight (`TextAnimation`)
 ```json
 {
   "prompt": "A high energy quote about doing your best work",
@@ -252,7 +284,7 @@ All requests must be sent as `POST` requests to:
 }
 ```
 
-#### 7. Motion Graphics Video (`MotionGraphics`)
+#### 8. Motion Graphics Video (`MotionGraphics`)
 ```json
 {
   "prompt": "Show a comparison of the top 3 programming languages in 2026",
@@ -329,6 +361,32 @@ If you want to design a custom editor interface where the user manually controls
         "fontSize": 64,
         "animation": "typewriter",
         "audioUrl": "/assets-temp/scene-1.mp3"
+      }
+    ]
+  }
+}
+```
+
+#### C. Direct Render Mode for Motion Graphics (`timeline`)
+For `MotionGraphics`, you provide a `timeline` object instead of a `script` object, specifying dynamic `slides`:
+```json
+{
+  "videoType": "MotionGraphics",
+  "timeline": {
+    "shortTitle": "Manual Motion Graphics",
+    "slides": [
+      {
+        "durationFrames": 120,
+        "background": {
+          "type": "mesh",
+          "from": "#0a0a0a",
+          "to": "#1a1a2e"
+        },
+        "elements": [
+          { "type": "badge", "text": "INTRODUCTION", "color": "#00ffd2", "delay": 0 },
+          { "type": "title", "text": "AI Revolution", "animation": "slideUp", "color": "#ffffff", "delay": 15 },
+          { "type": "subtitle", "text": "Changing the world", "color": "#a1a1aa", "delay": 30 }
+        ]
       }
     ]
   }

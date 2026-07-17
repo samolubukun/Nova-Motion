@@ -5,13 +5,13 @@ import { SocialMedia, socialMediaSchema } from "./compositions/SocialMedia";
 import { Explainer, explainerSchema } from "./compositions/Explainer";
 import { AIVideo } from "./compositions/AIVideo";
 import { StockVideo } from "./compositions/StockVideo";
-import { MotionGraphics } from "./compositions/MotionGraphics";
+import { DynamicMotionGraphics } from "./compositions/DynamicMotionGraphics";
 import { z } from "zod";
 
 const motionGraphicsSchema = z.object({
   storyboard: z.object({
     shortTitle: z.string(),
-    scenes: z.array(z.any()),
+    slides: z.array(z.any()),
     audio: z.array(z.any()).optional(),
     music: z.array(z.any()).optional(),
     width: z.number().optional(),
@@ -295,7 +295,7 @@ export const RemotionRoot: React.FC = () => {
       />
       <Composition
         id="MotionGraphics"
-        component={MotionGraphics}
+        component={DynamicMotionGraphics}
         durationInFrames={300}
         fps={30}
         width={1080}
@@ -304,7 +304,7 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{
           storyboard: {
             shortTitle: "Default Motion Graphics",
-            scenes: [],
+            slides: [],
             audio: [],
             music: [],
             width: 1080,
@@ -313,12 +313,12 @@ export const RemotionRoot: React.FC = () => {
         }}
         calculateMetadata={({ props }) => {
           const { storyboard } = props;
-          if (!storyboard || !storyboard.scenes || !storyboard.scenes.length) {
+          if (!storyboard || !storyboard.slides || !storyboard.slides.length) {
             return { durationInFrames: 150 };
           }
           let totalFrames = 0;
-          for (const scene of storyboard.scenes) {
-            totalFrames += scene.durationFrames || 90;
+          for (const slide of storyboard.slides) {
+            totalFrames += slide.durationFrames || 90;
           }
           return {
             durationInFrames: totalFrames,
