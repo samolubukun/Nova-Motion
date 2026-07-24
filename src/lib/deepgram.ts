@@ -1,4 +1,9 @@
-import fs from "fs";
+import * as fs from "fs";
+import {
+  generateSpeechWithElevenLabs,
+  ELEVENLABS_VOICES,
+  DEFAULT_ELEVENLABS_VOICE_ID,
+} from "./elevenlabs";
 
 /**
  * Robust fetch wrapper with exponential backoff retries.
@@ -35,24 +40,44 @@ export const AURA_VOICES = [
   "aura-2-aries-en",
 ];
 
+export { ELEVENLABS_VOICES };
+
 /**
- * Generates speech using Deepgram Aura TTS and retrieves word alignment timestamps using Deepgram STT.
+ * Primary speech generation entry point.
+ * Prioritizes ElevenLabs TTS if ELEVENLABS_API_KEY is configured.
+ * Automatically falls back to Deepgram (TTS + STT) if ElevenLabs key is missing or fails.
  */
 export async function generateSpeechWithTimestamps(
   text: string,
   outputPath: string,
   voice?: string
 ): Promise<Array<{ word: string; start: number; end: number }>> {
-  const deepgramKey = process.env.DEEPGRAM_API_KEY;
-  if (!deepgramKey) {
-    throw new Error("DEEPGRAM_API_KEY environment variable is not set");
+  const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
+
+  if (elevenLabsKey) {
+    try {
+      console.log("[TTS] ELEVENLABS_API_KEY is active. Using ElevenLabs TTS with word timestamps...");
+      return await generateSpeechWithElevenLabs(text, outputPath, voice);
+    } catch (elevenErr) {
+      console.warn(`[TTS] ElevenLabs synthesis failed (${elevenErr}). Falling back to Deepgram...`);
+    }
+  } else {
+    console.log("[TTS] ELEVENLABS_API_KEY is not set. Using Deepgram TTS fallback...");
   }
 
-  // Use the passed voice, or fall back to picking a random one if not set
-  const selectedVoice = voice || AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
+  // Deepgram Fallback Path
+  const deepgramKey = process.env.DEEPGRAM_API_KEY;
+  if (!deepgramKey) {
+    throw new Error("Neither ELEVENLABS_API_KEY nor DEEPGRAM_API_KEY environment variable is configured.");
+  }
+
+  // Pick Deepgram voice if the provided voice isn't a Deepgram voice
+  const selectedVoice = (voice && AURA_VOICES.includes(voice))
+    ? voice
+    : AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
   console.log(`[Deepgram] Generating TTS using voice [${selectedVoice}] for text: "${text.substring(0, 60)}..."`);
 
-  // 1. Generate speech via TTS
+  // 1. Generate speech via Deepgram TTS
   const ttsResponse = await fetchWithRetry(
     `https://api.deepgram.com/v1/speak?model=${selectedVoice}`,
     {
@@ -74,7 +99,7 @@ export async function generateSpeechWithTimestamps(
   fs.writeFileSync(outputPath, audioBuffer);
   console.log(`[Deepgram] Audio file saved to ${outputPath}`);
 
-  // 2. Transcribe audio to get timestamps
+  // 2. Transcribe audio to get timestamps via Deepgram STT
   console.log("[Deepgram] Transcribing audio to get word-level timestamps...");
   const sttResponse = await fetchWithRetry(
     "https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&utterances=true",
@@ -114,3 +139,4 @@ export async function generateSpeechWithTimestamps(
     end: w.end,
   }));
 }
+
