@@ -1,23 +1,25 @@
 import * as fs from "fs";
 
 /**
- * Curated list of top ElevenLabs voices for video voiceovers.
- * Each voice includes unique tone and gender characteristics so AI/user can select best fit.
+ * Curated list of ElevenLabs default voice IDs confirmed to work on the free tier.
+ * IMPORTANT: These were verified against the live API (GET /v1/text-to-speech/{id}).
+ * Some other "default" voice IDs (Rachel, Domi, Liam, Drew, Clyde, Josh, Elli) return
+ * 402 paid_plan_required on free accounts, so they are excluded here.
  */
 export const ELEVENLABS_VOICES = [
-  { id: "21m00Tcm4TlvDq8ikWAM", name: "Rachel", gender: "female", tone: "calm, clear, natural, versatile" },
-  { id: "AZnzlk1XvdvUeBnXmlld", name: "Domi", gender: "female", tone: "emphatic, energetic, enthusiastic" },
   { id: "EXAVITQu4vr4xnSDxMaL", name: "Bella", gender: "female", tone: "soft, warm, friendly, expressive" },
   { id: "ErXwobaYiN019PkySvjV", name: "Antoni", gender: "male", tone: "well-rounded, engaging, clear" },
-  { id: "MF3mGyEYCl7XYWbV9V6O", name: "Elli", gender: "female", tone: "young, emotional, story-telling" },
-  { id: "TxGEqnHWrfWFTfGW9XjX", name: "Josh", gender: "male", tone: "deep, resonant, professional" },
   { id: "VR6AewLTigWG4xSOukaG", name: "Arnold", gender: "male", tone: "crisp, articulate, authoritative" },
   { id: "pNInz6obpgDQGcFmaJgB", name: "Adam", gender: "male", tone: "deep, smooth, documentary narration" },
   { id: "JBFqnCBsd6RMkjVDRZzb", name: "George", gender: "male", tone: "warm, British, captivating story-teller" },
   { id: "cgSgspJ2msm6clMCkdW9", name: "Jessica", gender: "female", tone: "playful, trendy, bright" },
 ];
 
-export const DEFAULT_ELEVENLABS_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // Rachel
+export const DEFAULT_ELEVENLABS_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"; // Bella
+
+// Hard allowlist of ElevenLabs default voice IDs. These are the only voices ever sent to the
+// API — library/shared voices require a paid plan and return 402 on free accounts.
+const FREE_TIER_VOICE_IDS = new Set(ELEVENLABS_VOICES.map((v) => v.id));
 
 export interface ElevenLabsAlignment {
   characters: string[];
@@ -95,7 +97,10 @@ export async function generateSpeechWithElevenLabs(
     const matchedVoice = ELEVENLABS_VOICES.find(
       (v) => v.id.toLowerCase() === voiceIdOrName.toLowerCase() || v.name.toLowerCase() === voiceIdOrName.toLowerCase()
     );
-    resolvedVoiceId = matchedVoice ? matchedVoice.id : voiceIdOrName;
+    // Never send a library/non-default voice to the API (free accounts get 402)
+    if (matchedVoice && FREE_TIER_VOICE_IDS.has(matchedVoice.id)) {
+      resolvedVoiceId = matchedVoice.id;
+    }
   }
 
   console.log(`[ElevenLabs] Generating TTS using voice ID [${resolvedVoiceId}] for text: "${text.substring(0, 60)}..."`);
