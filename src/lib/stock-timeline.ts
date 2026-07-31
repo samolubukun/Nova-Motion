@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
 import path from "path";
 import { generateSpeechWithTimestamps, AURA_VOICES } from "./deepgram";
+import { DEFAULT_ELEVENLABS_VOICE_ID } from "./elevenlabs";
 import { findStockVideo } from "./pexels";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
@@ -137,7 +138,12 @@ export async function generateStockVideoTimeline(
   aspectRatio = "9:16"
 ): Promise<StockTimelineAsset> {
   const jobId = uuidv4();
-  const selectedVoice = voice || AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
+  const hasElevenLabs = Boolean(process.env.ELEVENLABS_API_KEY);
+  let defaultVoice = AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
+  if (hasElevenLabs) {
+    // import { ELEVENLABS_VOICES } from "./elevenlabs"; // Need to ensure it's imported! 
+  }
+  const selectedVoice = voice || (hasElevenLabs ? DEFAULT_ELEVENLABS_VOICE_ID : defaultVoice);
   console.log(`[Stock Pipeline] Starting generation for topic [${topic}] using voice [${selectedVoice}] with prompt [${prompt}]`);
 
   // 1. Generate Story
