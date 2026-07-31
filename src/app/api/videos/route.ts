@@ -19,7 +19,7 @@ import {
 import * as path from "path";
 import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
-import { generateSpeechWithTimestamps, AURA_VOICES } from "@/lib/deepgram";
+import { generateSpeechWithTimestamps, AURA_VOICES, ELEVENLABS_VOICES } from "@/lib/deepgram";
 
 export const runtime = "nodejs";
 export const maxDuration = 180; // Allow up to 3 minutes for script generation + voiceovers + job submission
@@ -136,7 +136,12 @@ export async function POST(req: NextRequest) {
       }
 
       // Enforce a single voice for the entire video (either request specific or chosen randomly)
-      const selectedVoice = voice || AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
+      const hasElevenLabs = Boolean(process.env.ELEVENLABS_API_KEY);
+      let defaultVoice = AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
+      if (hasElevenLabs) {
+        defaultVoice = ELEVENLABS_VOICES[Math.floor(Math.random() * ELEVENLABS_VOICES.length)].id;
+      }
+      const selectedVoice = voice || defaultVoice;
       console.log(`[API Gateway] Selected voice [${selectedVoice}] for the render job`);
 
       if (videoType === "AIVideo") {
