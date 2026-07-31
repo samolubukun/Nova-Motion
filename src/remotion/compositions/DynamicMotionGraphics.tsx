@@ -417,8 +417,6 @@ const BarChartEl: React.FC<{ el: DynamicElement; frame: number; fps: number; bas
   frame,
   fps,
   base,
-  base,
-  base,
 }) => {
   const data = el.data ?? [];
   const delay = el.delay ?? 0;
