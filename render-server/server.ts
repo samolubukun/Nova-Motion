@@ -142,7 +142,7 @@ setRenderCallback(async (job) => {
 ensureVideosDir();
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`
 ╔════════════════════════════════════════════════════════════╗
 ║           Remotion Render Server                           ║
@@ -163,6 +163,13 @@ Endpoints:
 Ready to accept render requests!
 `);
 });
+
+// Long render jobs can starve the event loop and trip Node's default
+// 5s keep-alive / 60s headers timeouts, causing clients to see ECONNRESET.
+// Bump them so status polls survive busy renders.
+server.keepAliveTimeout = 65_000;
+server.headersTimeout = 70_000;
+server.requestTimeout = 70_000;
 
 // Run cleanup every hour
 setInterval(() => {
