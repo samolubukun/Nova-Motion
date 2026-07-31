@@ -15,6 +15,34 @@ function getRenderServerConfig() {
   return { url, secret };
 }
 
+// Fetch with retries — the render server can briefly drop keep-alive
+// connections while the event loop is busy rendering, which surfaces as
+// transient ECONNRESET errors. Retry idempotent GETs to smooth over those.
+async function fetchWithRetry(
+  url: string,
+  headers: Record<string, string>,
+  retries = 3
+): Promise<Response> {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      return await fetch(url, {
+        method: "GET",
+        headers,
+        cache: "no-store",
+        signal: AbortSignal.timeout(15000),
+      });
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[JobStatus] Fetch attempt ${attempt + 1}/${retries} failed: ${(err as Error).message}`);
+      if (attempt < retries - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
+      }
+    }
+  }
+  throw lastErr;
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ jobId: string }> }
@@ -36,12 +64,7 @@ export async function GET(
       headers["X-Render-Secret"] = secret;
     }
 
-    const response = await fetch(`${url}/render/${jobId}`, {
-      method: "GET",
-      headers,
-      // Don't cache status checks
-      cache: "no-store",
-    });
+    const response = await fetchWithRetry(`${url}/render/${jobId}`, headers);
 
     if (response.status === 404) {
       return NextResponse.json(
