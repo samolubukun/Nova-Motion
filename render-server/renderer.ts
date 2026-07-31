@@ -1,7 +1,6 @@
 import { bundle } from "@remotion/bundler";
 import { renderMedia, selectComposition } from "@remotion/renderer";
 import * as path from "path";
-import * as os from "os";
 import { RenderJob, updateJobStatus } from "./queue";
 import { getVideoPath, generateVideoFilename, getVideoUrlWithR2Fallback } from "./storage";
 
@@ -109,8 +108,11 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
       },
       // Optimize for quality/speed balance
       crf: 23,
-      // Use available CPU cores
-      concurrency: Math.max(1, Math.floor(os.cpus().length / 2)),
+      // Use a limited concurrency so the render doesn't starve the event
+      // loop and drop status-poll connections (override with RENDER_CONCURRENCY)
+      concurrency: Math.max(1, Number(process.env.RENDER_CONCURRENCY) || 2),
+      // Increase timeout for fetching heavy Pexels video clips and extracting frames
+      timeoutInMilliseconds: 120000,
     });
 
     // Calculate render time
