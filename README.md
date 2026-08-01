@@ -38,11 +38,20 @@ Produces premium, highly animated visual components using a dynamic, unified JSO
 * **OpenAI (GPT-4o-mini)**: Generates a complete storyboard containing glitch/neon/wave text, bar/pie/line charts, growth metrics, and dynamic background layouts in strict JSON.
 * **Deepgram & Background Music**: Synthesizes custom TTS narration for each slide and overlays background audio tracks.
 
+### 6. AI Text-to-Video (`videoType: "TextToVideo"`)
+Replicates the Text-To-Video-AI pipeline: generates the script, narrates it, then creates each B-roll segment with WaveSpeed's Seedance text-to-video model.
+* **OpenAI (GPT-4o-mini)**: Writes a short facts-style script from the topic.
+* **Deepgram/ElevenLabs TTS**: Narrates the script and returns native word-level timestamps.
+* **WaveSpeed Seedance**: Generates an AI video clip per timed B-roll segment using the segment's visual keywords. Resolution via `WAVESPEED_VIDEO_RESOLUTION` (default `480p`), clip length via `WAVESPEED_VIDEO_DURATION` (default `5s`, 3–10s); segments are sized to match the clip length so nothing is wasted.
+* **WaveSpeed Lyria**: Generates a cinematic background music bed (fallback to stock tracks).
+* **Pexels Fallback**: If WaveSpeed clip generation fails for a segment, a matching Pexels stock clip is used instead.
+* **Kinetic Captions**: The narration words are highlighted in sync with the voiceover.
+
 ---
 
 ## Tech Stack
 * **Framework**: Next.js 14, TypeScript, Tailwind CSS, shadcn/ui
-* **AI Engines**: OpenAI (GPT-4o-mini, gpt-image-2), Deepgram (Aura TTS, Nova-2 STT)
+* **AI Engines**: OpenAI (GPT-4o-mini, gpt-image-2), Deepgram (Aura TTS, Nova-2 STT), WaveSpeed (Seedance video, Lyria music)
 * **Stock Sourcing**: Pexels Video API
 * **Rendering**: Remotion Core, Express.js (render queue server)
 * **Cloud Storage**: DigitalOcean Spaces / Cloudflare R2 (S3-compatible)
@@ -107,6 +116,7 @@ All endpoints support the following root payload fields:
   * `"General"`: Simple slide layout transitions.
   * `"TextAnimation"`: Words with active highlighting animations.
   * `"MotionGraphics"`: Dynamic motion graphics, charts, and interactive UI component simulations.
+  * `"TextToVideo"`: AI-generated B-roll from WaveSpeed Seedance + TTS voiceover (Text-To-Video-AI replication).
 * **`aspectRatio`** (string, optional): Target video layout format. Must be one of:
   * `"9:16"`: Portrait (mobile vertical) - defaults to `1080x1920`.
   * `"16:9"`: Landscape (widescreen desktop) - defaults to `1920x1080`.
@@ -184,6 +194,21 @@ Generates highly animated technical slides with data visualization layouts (bar 
     "prompt": "Show a comparison of the top 3 programming languages in 2026",
     "videoType": "MotionGraphics",
     "topic": "Programming",
+    "aspectRatio": "9:16",
+    "voice": "aura-2-aries-en"
+  }
+  ```
+
+#### Endpoint F: AI Text-to-Video (`videoType: "TextToVideo"`)
+Generates a facts-style short using WaveSpeed Seedance AI clips for every timed B-roll segment, WaveSpeed Lyria background music, and kinetic word-level captions synced to the TTS voiceover.
+* **Requires `WAVESPEED_API_KEY`** (add to `.env.local`). Uses the `WAVESPEED_VIDEO_MODEL` model (default: `bytedance/seedance-v1-pro-fast/text-to-video`).
+* **Async**: Unlike other modes, the request returns immediately with a `jobId`. The script → TTS → WaveSpeed clips → music pipeline runs inside the render job on the render server; poll `GET /api/videos/{jobId}` for progress.
+* **Example Payload**:
+  ```json
+  {
+    "prompt": "Weird facts you don't know about the deep ocean",
+    "videoType": "TextToVideo",
+    "topic": "Marine Biology",
     "aspectRatio": "9:16",
     "voice": "aura-2-aries-en"
   }
@@ -294,6 +319,19 @@ All requests must be sent as `POST` requests to:
   "voice": "aura-2-aries-en"
 }
 ```
+
+#### 9. AI Text-to-Video (`TextToVideo`)
+```json
+{
+  "prompt": "Weird facts you don't know about the deep ocean",
+  "videoType": "TextToVideo",
+  "topic": "Marine Biology",
+  "aspectRatio": "9:16",
+  "voice": "aura-2-aries-en"
+}
+```
+
+* **Requires** `WAVESPEED_API_KEY` in `.env.local`. The B-roll model defaults to `bytedance/seedance-v1-pro-fast/text-to-video` and can be overridden with `WAVESPEED_VIDEO_MODEL`. This mode is **async**: the request returns a `jobId` immediately and the render server generates the whole pipeline (script → TTS → WaveSpeed clips → music) inside the job, reporting progress as it goes. Because each AI clip takes ~1-2 minutes to generate, the job stays in the `rendering` state for several minutes — poll `GET /api/videos/{jobId}` until `status` is `completed`.
 
 * **Response**:
   ```json
@@ -426,3 +464,4 @@ Polls the render queue status. Once rendering is completed, it uploads the final
 ### OpenAI/Deepgram API errors
 * Check that your API keys are active and have sufficient balance limits.
 * Monitor service statuses: [OpenAI Status](https://status.openai.com/), [Deepgram Status](https://status.deepgram.com/).
+
