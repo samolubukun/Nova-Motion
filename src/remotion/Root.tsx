@@ -5,6 +5,7 @@ import { SocialMedia, socialMediaSchema } from "./compositions/SocialMedia";
 import { Explainer, explainerSchema } from "./compositions/Explainer";
 import { AIVideo } from "./compositions/AIVideo";
 import { StockVideo } from "./compositions/StockVideo";
+import { WavespeedVideo } from "./compositions/WavespeedVideo";
 import { DynamicMotionGraphics } from "./compositions/DynamicMotionGraphics";
 import { z } from "zod";
 
@@ -24,6 +25,19 @@ const aiVideoPropsSchema = z.object({
     shortTitle: z.string(),
     elements: z.array(z.any()),
     text: z.array(z.any()),
+    audio: z.array(z.any()),
+    music: z.array(z.any()).optional(),
+    width: z.number().optional(),
+    height: z.number().optional(),
+  }),
+});
+
+const wavespeedVideoPropsSchema = z.object({
+  timeline: z.object({
+    shortTitle: z.string(),
+    elements: z.array(z.any()),
+    text: z.array(z.any()),
+    words: z.array(z.any()).optional(),
     audio: z.array(z.any()),
     music: z.array(z.any()).optional(),
     width: z.number().optional(),
@@ -61,6 +75,42 @@ export const RemotionRoot: React.FC = () => {
           const lastElement = timeline.elements[timeline.elements.length - 1];
           const lengthMs = lastElement.endMs || 0;
           const lengthFrames = Math.floor((lengthMs * 30) / 1000) + 30; // duration + 30 frames intro
+          return {
+            durationInFrames: lengthFrames,
+            fps: 30,
+            width: timeline.width || 1080,
+            height: timeline.height || 1920,
+          };
+        }}
+      />
+      <Composition
+        id="TextToVideo"
+        component={WavespeedVideo}
+        durationInFrames={300}
+        fps={30}
+        width={1080}
+        height={1920}
+        schema={wavespeedVideoPropsSchema}
+        defaultProps={{
+          timeline: {
+            shortTitle: "Default Text To Video",
+            elements: [],
+            text: [],
+            words: [],
+            audio: [],
+            music: [],
+            width: 1080,
+            height: 1920,
+          },
+        }}
+        calculateMetadata={({ props }) => {
+          const { timeline } = props;
+          if (!timeline || !timeline.elements.length) {
+            return { durationInFrames: 150 };
+          }
+          const lastElement = timeline.elements[timeline.elements.length - 1];
+          const lengthMs = lastElement.endMs || 0;
+          const lengthFrames = Math.floor((lengthMs * 30) / 1000) + 30; // duration + 30 frames outro
           return {
             durationInFrames: lengthFrames,
             fps: 30,
