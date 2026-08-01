@@ -5,6 +5,7 @@ import { generateSpeechWithTimestamps, AURA_VOICES } from "./deepgram";
 import { DEFAULT_ELEVENLABS_VOICE_ID } from "./elevenlabs";
 import { findStockVideo } from "./pexels";
 import { WavespeedClient } from "./wavespeed";
+import { getAspectRatioDimensions } from "../../shared/video-schema";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 const SPACES_ENABLED = Boolean(
@@ -139,6 +140,8 @@ export interface WavespeedTimelineAsset {
     startMs: number;
     endMs: number;
   }>;
+  width?: number;
+  height?: number;
 }
 
 export interface TimedSearchSegment {
@@ -564,12 +567,16 @@ export async function generateWavespeedVideoTimeline(
   const music = await generateBackgroundMusic(topic, tempDir, client);
   onProgress?.(1);
 
+  const { width, height } = getAspectRatioDimensions(aspectRatio);
+
   const timeline: WavespeedTimelineAsset = {
     shortTitle: prompt.substring(0, 30),
     elements,
     text,
     audio: [{ startMs: 0, endMs: totalDurationMs, audioUrl }],
     music,
+    width,
+    height,
     // Normalize TTS timestamps ({word,start,end} in seconds) to the caption
     // component's expected shape ({word,startMs,endMs} in ms).
     words: wordTimestamps.map((w) => ({

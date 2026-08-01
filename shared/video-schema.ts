@@ -68,13 +68,17 @@ export const RenderRequestSchema = z.object({
 });
 export type RenderRequest = z.infer<typeof RenderRequestSchema>;
 
+// All aspect ratios supported by the WaveSpeed seedance text-to-video model.
+export const ASPECT_RATIOS = ["21:9", "16:9", "4:3", "1:1", "3:4", "9:16"] as const;
+export type AspectRatio = (typeof ASPECT_RATIOS)[number];
+
 // === Generate Request Schema (what the frontend sends to generate endpoint) ===
 export const GenerateRequestSchema = z.object({
   prompt: z.string().min(1).max(2000),
   videoType: VideoType,
   durationSec: z.number().min(5).max(120).default(30),
   topic: z.string().optional(),
-  aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16").optional(),
+  aspectRatio: z.enum(ASPECT_RATIOS).default("9:16").optional(),
   webhookUrl: z.string().url().optional(),
   voice: z.string().optional(),
   style: z.object({
@@ -89,7 +93,7 @@ export type GenerateRequest = z.infer<typeof GenerateRequestSchema>;
 export const TextToVideoRequestSchema = z.object({
   prompt: z.string().min(1).max(2000),
   topic: z.string().optional(),
-  aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16").optional(),
+  aspectRatio: z.enum(ASPECT_RATIOS).default("9:16").optional(),
   voice: z.string().optional(),
   webhookUrl: z.string().url().optional(),
 });
@@ -213,6 +217,27 @@ export function getDefaultDimensions(videoType: VideoType): { width: number; hei
     case "Explainer":
     default:
       return { width: 1920, height: 1080 }; // 16:9 horizontal
+  }
+}
+
+/**
+ * Map an aspect ratio string to render dimensions (1080p-based grid).
+ */
+export function getAspectRatioDimensions(aspectRatio: string): { width: number; height: number } {
+  switch (aspectRatio) {
+    case "21:9":
+      return { width: 2520, height: 1080 };
+    case "16:9":
+      return { width: 1920, height: 1080 };
+    case "4:3":
+      return { width: 1440, height: 1080 };
+    case "3:4":
+      return { width: 1080, height: 1440 };
+    case "1:1":
+      return { width: 1080, height: 1080 };
+    case "9:16":
+    default:
+      return { width: 1080, height: 1920 };
   }
 }
 

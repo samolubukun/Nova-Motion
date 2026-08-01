@@ -15,6 +15,7 @@ import {
   RenderRequestSchema,
   VideoScript,
   VideoType,
+  getAspectRatioDimensions,
 } from "../../../../shared/video-schema";
 import * as path from "path";
 import * as fs from "fs";
@@ -157,15 +158,7 @@ export async function POST(req: NextRequest) {
       videoType = vt;
 
       // Compute aspect ratio dimensions
-      let width = 1080;
-      let height = 1920;
-      if (aspectRatio === "16:9") {
-        width = 1920;
-        height = 1080;
-      } else if (aspectRatio === "1:1") {
-        width = 1080;
-        height = 1080;
-      }
+      const { width, height } = getAspectRatioDimensions(aspectRatio || "9:16");
 
       // Enforce a single voice for the entire video (either request specific or chosen randomly)
       const hasElevenLabs = Boolean(process.env.ELEVENLABS_API_KEY);
