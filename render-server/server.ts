@@ -9,7 +9,7 @@ import cors from "cors";
 import { createJob, getJob, setRenderCallback, getQueueStats } from "./queue";
 import { renderVideo } from "./renderer";
 import { getVideosDirectory, cleanupOldVideos, ensureVideosDir } from "./storage";
-import { RenderRequestSchema } from "../shared/video-schema";
+import { RenderRequestSchema, TextToVideoRequestSchema } from "../shared/video-schema";
 
 const app = express();
 const PORT = process.env.RENDER_SERVER_PORT || 3001;
@@ -80,6 +80,45 @@ app.post("/render", authenticate, (req: Request, res: Response) => {
   }
 });
 
+// Submit a TextToVideo pipeline job (async: timeline is generated inside the job)
+app.post("/render/text-to-video", authenticate, (req: Request, res: Response) => {
+  try {
+    const validation = TextToVideoRequestSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        error: "Invalid request",
+        details: validation.error.issues.map((e) => ({
+          path: e.path.join("."),
+          message: e.message,
+        })),
+      });
+    }
+
+    const { prompt, topic, voice, aspectRatio, webhookUrl } = validation.data;
+
+    const job = createJob(
+      "TextToVideo",
+      undefined,
+      undefined,
+      webhookUrl,
+      { prompt, topic, voice, aspectRatio }
+    );
+
+    console.log(`TextToVideo job created: ${job.id}`);
+
+    res.status(201).json({
+      jobId: job.id,
+      status: job.status,
+      createdAt: job.createdAt.toISOString(),
+    });
+  } catch (err) {
+    console.error("Error creating TextToVideo job:", err);
+    res.status(500).json({
+      error: err instanceof Error ? err.message : "Internal server error",
+    });
+  }
+});
+
 // Get job status
 app.get("/render/:jobId", authenticate, (req: Request, res: Response) => {
   const jobId = req.params.jobId as string;
@@ -108,6 +147,12 @@ app.use("/videos", express.static(getVideosDirectory(), {
     // Set content type for video files
     res.setHeader("Content-Type", "video/mp4");
   },
+}));
+
+// Serve locally stored pipeline assets (audio, music) so the renderer can
+// fetch them while generating TextToVideo timelines in-process
+app.use("/assets-temp", express.static(path.join(process.cwd(), "public", "assets-temp"), {
+  maxAge: "1h",
 }));
 
 // Queue stats endpoint
@@ -153,12 +198,13 @@ const server = app.listen(PORT, () => {
 ╚════════════════════════════════════════════════════════════╝
 
 Endpoints:
-  POST /render        - Submit a render job
-  GET  /render/:id    - Get job status
-  GET  /videos/:file  - Serve rendered videos
-  GET  /health        - Health check
-  GET  /stats         - Queue statistics
-  POST /cleanup       - Clean up old videos
+  POST /render              - Submit a render job
+  POST /render/text-to-video - Submit an async TextToVideo pipeline job
+  GET  /render/:id          - Get job status
+  GET  /videos/:file        - Serve rendered videos
+  GET  /health              - Health check
+  GET  /stats               - Queue statistics
+  POST /cleanup             - Clean up old videos
 
 Ready to accept render requests!
 `);

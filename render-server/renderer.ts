@@ -3,6 +3,7 @@ import { renderMedia, selectComposition } from "@remotion/renderer";
 import * as path from "path";
 import { RenderJob, updateJobStatus } from "./queue";
 import { getVideoPath, generateVideoFilename, getVideoUrlWithR2Fallback } from "./storage";
+import { generateWavespeedVideoTimeline } from "../src/lib/wavespeed-timeline";
 
 // Cache the bundle URL to avoid rebundling on every render
 let cachedBundleUrl: string | null = null;
@@ -60,15 +61,36 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
   console.log(`Starting render for job ${job.id} (${job.videoType})`);
 
   try {
+    // For TextToVideo pipeline jobs, generate the timeline first (reports 0-20%)
+    if (job.videoType === "TextToVideo" && job.pipeline) {
+      const { prompt, topic, voice, aspectRatio } = job.pipeline;
+      console.log(`[TextToVideo] Generating timeline for job ${job.id}...`);
+      job.timeline = await generateWavespeedVideoTimeline(
+        prompt,
+        topic || prompt,
+        voice,
+        aspectRatio || "9:16",
+        {
+          onProgress: (progress) => {
+            const mapped = Math.round(progress * 20);
+            updateJobStatus(job.id, { progress: Math.max(0, Math.min(20, mapped)) });
+          },
+          assetBaseUrl: baseUrl,
+        }
+      );
+      console.log(`[TextToVideo] Timeline ready for job ${job.id}.`);
+    }
+
     // Get the bundle URL (cached or create new)
     const bundleUrl = await getBundleUrl();
 
-    // Update progress - bundling complete
-    updateJobStatus(job.id, { progress: 10 });
+    // Update progress - bundling complete (never go backwards: TextToVideo
+    // pipeline may already have reported up to 20%)
+    updateJobStatus(job.id, { progress: Math.max(job.progress, 10) });
 
     // Prepare input props
     let inputProps: any = {};
-    if (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage") {
+    if (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo") {
       inputProps = { timeline: job.timeline };
     } else if (job.videoType === "MotionGraphics") {
       inputProps = { storyboard: job.timeline };
@@ -84,7 +106,7 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
       inputProps,
     });
 
-    updateJobStatus(job.id, { progress: 20 });
+    updateJobStatus(job.id, { progress: Math.max(job.progress, 20) });
 
     // Generate output path
     const filename = generateVideoFilename(job.id);

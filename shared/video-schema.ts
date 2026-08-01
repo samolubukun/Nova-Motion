@@ -23,6 +23,7 @@ export const VideoType = z.enum([
   "StockVideo",
   "StockImage",
   "MotionGraphics",
+  "TextToVideo",
 ]);
 export type VideoType = z.infer<typeof VideoType>;
 
@@ -83,6 +84,16 @@ export const GenerateRequestSchema = z.object({
   }).optional(),
 });
 export type GenerateRequest = z.infer<typeof GenerateRequestSchema>;
+
+// === TextToVideo Pipeline Request Schema (async, render-server side) ===
+export const TextToVideoRequestSchema = z.object({
+  prompt: z.string().min(1).max(2000),
+  topic: z.string().optional(),
+  aspectRatio: z.enum(["9:16", "1:1", "16:9"]).default("9:16").optional(),
+  voice: z.string().optional(),
+  webhookUrl: z.string().url().optional(),
+});
+export type TextToVideoRequest = z.infer<typeof TextToVideoRequestSchema>;
 
 // === Job Status Types ===
 export const JobStatus = z.enum([

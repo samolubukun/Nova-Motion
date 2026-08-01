@@ -22,7 +22,7 @@ import { v4 as uuidv4 } from "uuid";
 import { generateSpeechWithTimestamps, AURA_VOICES, ELEVENLABS_VOICES } from "@/lib/deepgram";
 
 export const runtime = "nodejs";
-export const maxDuration = 180; // Allow up to 3 minutes for script generation + voiceovers + job submission
+export const maxDuration = 900; // Allow up to 15 minutes for script/voiceover/WaveSpeed AI clip generation
 
 import { generateAIVideoTimeline } from "@/lib/ai-timeline";
 import { generateStockVideoTimeline } from "@/lib/stock-timeline";
@@ -62,6 +62,38 @@ async function submitToRenderServer(
     method: "POST",
     headers,
     body: JSON.stringify({ videoType, script, timeline, webhookUrl }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: "Unknown error" }));
+    throw new Error(error.error || `Render server returned ${response.status}`);
+  }
+
+  return response.json();
+}
+
+// Submit a TextToVideo pipeline job (timeline is generated inside the render job)
+async function submitTextToVideoToRenderServer(
+  prompt: string,
+  topic: string,
+  voice?: string,
+  aspectRatio?: string,
+  webhookUrl?: string
+): Promise<{ jobId: string; status: string; createdAt: string }> {
+  const { url, secret } = getRenderServerConfig();
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (secret) {
+    headers["X-Render-Secret"] = secret;
+  }
+
+  const response = await fetch(`${url}/render/text-to-video`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ prompt, topic, voice, aspectRatio, webhookUrl }),
   });
 
   if (!response.ok) {
@@ -222,6 +254,36 @@ export async function POST(req: NextRequest) {
             videoUrl: el.videoUrl && el.videoUrl.startsWith("/") ? `${req.nextUrl.origin}${el.videoUrl}` : el.videoUrl,
           }));
         }
+      } else if (videoType === "TextToVideo") {
+        // Async pipeline: submit the job to the render server, which generates
+        // the WaveSpeed timeline (script -> TTS -> Seedance clips -> Lyria music)
+        // inside the job and then renders. Returns immediately with a jobId.
+        let renderResult;
+        try {
+          renderResult = await submitTextToVideoToRenderServer(
+            prompt,
+            topic || "Interesting Facts",
+            selectedVoice,
+            aspectRatio,
+            body.webhookUrl
+          );
+        } catch (renderErr: unknown) {
+          console.error("[API Gateway] Render server connection failed:", renderErr);
+          return NextResponse.json(
+            {
+              success: false,
+              error: "Unable to connect to render server. Please try again later.",
+            },
+            { status: 503 }
+          );
+        }
+
+        return NextResponse.json({
+          success: true,
+          jobId: renderResult.jobId,
+          status: renderResult.status,
+          createdAt: renderResult.createdAt,
+        });
       } else if (videoType === "MotionGraphics") {
         // Generate Motion Graphics Timeline using OpenAI and Deepgram
         timeline = await generateMotionGraphicsTimeline(prompt, topic || "Interesting Facts", selectedVoice, aspectRatio);

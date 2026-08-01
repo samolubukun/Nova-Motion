@@ -11,6 +11,13 @@ export interface RenderJob {
   videoUrl?: string;
   error?: string;
   webhookUrl?: string;
+  // Async pipeline params (used by TextToVideo: timeline is generated inside the job)
+  pipeline?: {
+    prompt: string;
+    topic?: string;
+    voice?: string;
+    aspectRatio?: string;
+  };
   createdAt: Date;
   startedAt?: Date;
   completedAt?: Date;
@@ -50,7 +57,8 @@ export function createJob(
   videoType: VideoType,
   script?: VideoScript,
   timeline?: any,
-  webhookUrl?: string
+  webhookUrl?: string,
+  pipeline?: RenderJob["pipeline"]
 ): RenderJob {
   const job: RenderJob = {
     id: uuidv4(),
@@ -60,6 +68,7 @@ export function createJob(
     status: "queued",
     progress: 0,
     webhookUrl,
+    pipeline,
     createdAt: new Date(),
   };
 
