@@ -55,6 +55,15 @@ Replicates the Open-AI-Micro-Drama-Generator pipeline: a full agentic story-to-v
 * **Two modes**: pass only `idea` (the AI writes the whole story) or pass a `script` (the raw script is used directly, skipping the screenwriter).
 * **Async**: the request returns a `jobId` immediately; the whole pipeline runs inside the render job and is polled via `GET /api/videos/{jobId}`.
 
+### 8. AI UGC Ad (`videoType: "UGC"`)
+Replicates the Open-AI-UGC studio (an Arcads / MakeUGC alternative) using the **WaveSpeed** API already configured in this project — no separate MuAPI key needed.
+* **Model picker**: Veo 3.1 (`google/veo3.1/*`), Seedance 2 (`bytedance/seedance-2.0/*`), Grok Video (`x-ai/grok-imagine-video/*`), and Happy Horse 1 (`alibaba/happyhorse-1.0/*`), each with text-to-video and image-to-video endpoints. Default model via `UGC_DEFAULT_MODEL` (default `seedance-2`).
+* **T2V vs I2V**: with no reference images, the model's text-to-video endpoint is used; with reference image(s), the image-to-video endpoint animates the image (e.g. an actor face) with **native audio** from the script.
+* **Reference images**: upload up to 7 images via `POST /api/upload` (returns a hosted URL) and reference them inline in the script as `@image1`, `@image2`, etc.
+* **Per-model controls**: aspect ratio, duration, resolution, and (Grok only) fun/normal/spicy mode.
+* **Async**: the request returns a `jobId` immediately; the WaveSpeed generation runs inside the render job, the finished mp4 is downloaded into `rendered-videos/`, uploaded to S3/R2/Spaces when configured, and polled via `GET /api/videos/{jobId}`.
+* **UI**: a full studio lives at `/ugc` (model cards, image upload with previews, script box, param pickers, live polling player).
+
 ---
 
 ## Tech Stack
@@ -126,6 +135,7 @@ All endpoints support the following root payload fields:
   * `"MotionGraphics"`: Dynamic motion graphics, charts, and interactive UI component simulations.
   * `"TextToVideo"`: AI-generated B-roll from WaveSpeed Seedance + TTS voiceover (Text-To-Video-AI replication).
   * `"MicroDrama"`: Full agentic pipeline — AI story, characters, storyboard, and Seedance I2V clips (Open-AI-Micro-Drama-Generator replication).
+  * `"UGC"`: AI UGC ad studio — script + optional reference images → Veo/Grok/Seedance/Happy Horse clip with native audio (Open-AI-UGC replication via WaveSpeed).
 * **`aspectRatio`** (string, optional): Target video layout format. Must be one of:
   * `"9:16"`: Portrait (mobile vertical) - defaults to `1080x1920`.
   * `"16:9"`: Landscape (widescreen desktop) - defaults to `1920x1080`.
@@ -244,6 +254,35 @@ Generates a micro-drama video through the full agentic pipeline. Pass just an `i
     "idea": "A detective in a rainy city discovers his partner was the mastermind all along",
     "script": "INT. PRECINCT - NIGHT\nDetective Mara stares at the evidence board...",
     "style": "Noir thriller, cold color grade, dramatic shadows"
+  }
+  ```
+
+#### Endpoint H: AI UGC Ad (`videoType: "UGC"`)
+Generates a UGC ad through WaveSpeed using any of the studio models (Veo 3.1, Seedance 2, Grok Video, Happy Horse 1). `prompt` is the script (reference images inline as `@image1`...). Optional `images` (hosted URLs from `POST /api/upload`) switches to image-to-video. `model`, `aspectRatio`, `duration`, `resolution`, and `mode` (Grok only) mirror the studio controls.
+* **Requires `WAVESPEED_API_KEY`**. Default model via `UGC_DEFAULT_MODEL` (default `seedance-2`).
+* **Async**: returns a `jobId` immediately; the WaveSpeed generation runs inside the job and the finished mp4 is persisted to storage. Poll `GET /api/videos/{jobId}` until `status` is `completed`.
+* **UI**: full studio at `/ugc` — model cards, reference image upload, script box, param pickers, live polling player.
+* **Example Payload (text-to-video)**:
+  ```json
+  {
+    "videoType": "UGC",
+    "prompt": "Hey! Here are 3 skincare mistakes you're making every morning. First, you're washing your face with hot water...",
+    "model": "veo-3-1",
+    "aspectRatio": "9:16",
+    "duration": 8,
+    "resolution": "1080p"
+  }
+  ```
+* **Example Payload (image-to-video with a reference face)**:
+  ```json
+  {
+    "videoType": "UGC",
+    "prompt": "@image1 here with the best hack for your morning routine. Trust me, this changes everything...",
+    "model": "grok-video",
+    "images": ["https://your-bucket.nyc3.digitaloceanspaces.com/images/abc123.jpg"],
+    "aspectRatio": "9:16",
+    "duration": 6,
+    "mode": "normal"
   }
   ```
 
@@ -388,6 +427,31 @@ All requests must be sent as `POST` requests to:
 ```
 
 * **Requires** `WAVESPEED_API_KEY` in `.env.local`. Replicates the Open-AI-Micro-Drama-Generator pipeline: the WaveSpeed LLM writes the story (or uses a supplied `script`), extracts consistent characters, generates per-scene scripts, and designs a shot-by-shot storyboard; Seedream generates character portraits and scene first-frames; Seedance I2V animates each frame into a ~5s clip with native audio. This mode is **async** like TextToVideo — submit and poll `GET /api/videos/{jobId}`. Model defaults can be overridden with `WAVESPEED_LLM_MODEL`, `WAVESPEED_PORTRAIT_MODEL`, `WAVESPEED_FRAME_MODEL`, and `WAVESPEED_I2V_MODEL`.
+
+* **Response** (same shape as TextToVideo):
+  ```json
+  {
+    "success": true,
+    "jobId": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
+    "status": "queued",
+    "createdAt": "2026-07-01T18:00:00.000Z"
+  }
+  ```
+
+#### 11. AI UGC Ad (`UGC`)
+```json
+{
+  "videoType": "UGC",
+  "prompt": "Hey! @image1 here with the best hack for your morning routine. Trust me, this changes everything...",
+  "model": "veo-3-1",
+  "images": ["https://your-bucket.nyc3.digitaloceanspaces.com/images/abc123.jpg"],
+  "aspectRatio": "9:16",
+  "duration": 8,
+  "resolution": "1080p"
+}
+```
+
+* **Requires** `WAVESPEED_API_KEY` in `.env.local`. Replicates the Open-AI-UGC studio: choose a model (`veo-3-1` | `seedance-2` | `grok-video` | `happy-horse`), optionally upload reference images, and pass a script that references them with `@imageN`. With images the model's image-to-video endpoint is used (I2V); without them, text-to-video (T2V). Native audio is generated by the video model (the AI actor speaks). Model defaults can be overridden with `UGC_DEFAULT_MODEL`. The finished mp4 is persisted to storage (S3/R2/Spaces when configured). **Async** — submit and poll `GET /api/videos/{jobId}`. A full studio UI is available at `/ugc`.
 
 * **Response** (same shape as TextToVideo):
   ```json
