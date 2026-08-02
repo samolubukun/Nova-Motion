@@ -29,6 +29,10 @@ export interface RenderJob {
     duration?: number;
     resolution?: string;
     mode?: string;
+    // Multi-scene UGC params
+    multiScene?: boolean;
+    targetDurationSec?: number;
+    lipSync?: boolean;
   };
   createdAt: Date;
   startedAt?: Date;

@@ -129,6 +129,15 @@ export const UGCRequestSchema = z.object({
   duration: z.number().min(3).max(30).optional(),
   resolution: z.string().max(20).optional(),
   mode: z.string().max(20).optional(),
+  // Multi-scene UGC (Arcads-style): script → LLM scene breakdown → one TTS
+  // voiceover → per-scene clips → timeline. Requires a TTS provider
+  // (ELEVENLABS_API_KEY or DEEPGRAM_API_KEY).
+  multiScene: z.boolean().optional(),
+  voice: z.string().max(100).optional(),
+  targetDurationSec: z.number().min(10).max(60).optional(),
+  // Lip-sync each scene's mouth to the TTS voiceover via WaveSpeed
+  // `sync/lipsync-2` (default on; adds ~$0.05/run + ~2min per scene).
+  lipSync: z.boolean().optional(),
   webhookUrl: z.string().url().optional(),
 });
 export type UGCRequest = z.infer<typeof UGCRequestSchema>;

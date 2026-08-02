@@ -7,6 +7,7 @@ import { getVideoPath, generateVideoFilename, getVideoUrlWithR2Fallback } from "
 import { generateWavespeedVideoTimeline } from "../src/lib/wavespeed-timeline";
 import { generateMicroDramaTimeline } from "../src/lib/micro-drama-timeline";
 import { generateUGCVideo } from "../src/lib/ugc-pipeline";
+import { generateUGCMultiSceneTimeline } from "../src/lib/ugc-multi-scene";
 
 // Cache the bundle URL to avoid rebundling on every render
 let cachedBundleUrl: string | null = null;
@@ -83,7 +84,7 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
     // For UGC pipeline jobs, the finished video is generated externally by
     // WaveSpeed (no Remotion render needed). Download it into the videos dir,
     // persist to storage, and mark the job complete.
-    if (job.videoType === "UGC" && job.pipeline) {
+    if (job.videoType === "UGC" && job.pipeline && !job.pipeline.multiScene) {
       const { prompt, images, model, aspectRatio, duration, resolution, mode } = job.pipeline;
       console.log(`[UGC] Generating video for job ${job.id}...`);
 
@@ -120,6 +121,34 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
       });
       console.log(`[UGC] Job ${job.id} completed in ${((Date.now() - startTime) / 1000).toFixed(1)}s.`);
       return;
+    }
+
+    // For multi-scene UGC pipeline jobs, build the scene-by-scene timeline
+    // (LLM scene breakdown → TTS voiceover → per-scene clips) inside the job,
+    // then render it with the `UGC` Remotion composition below (reports 0-35%).
+    if (job.videoType === "UGC" && job.pipeline && job.pipeline.multiScene) {
+      const { prompt, images, model, aspectRatio, resolution, voice, targetDurationSec, lipSync } = job.pipeline;
+      console.log(`[UGC Multi-Scene] Building timeline for job ${job.id}...`);
+      job.timeline = await generateUGCMultiSceneTimeline(
+        {
+          prompt: prompt || "",
+          images,
+          model,
+          aspectRatio,
+          resolution,
+          voice,
+          targetDurationSec,
+          lipSync,
+        },
+        {
+          onProgress: (progress) => {
+            const mapped = Math.round(progress * 35);
+            updateJobStatus(job.id, { progress: Math.max(0, Math.min(35, mapped)) });
+          },
+          assetBaseUrl: baseUrl,
+        }
+      );
+      console.log(`[UGC Multi-Scene] Timeline ready for job ${job.id}.`);
     }
 
     // For TextToVideo pipeline jobs, generate the timeline first (reports 0-20%)
@@ -170,7 +199,7 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
 
     // Prepare input props
     let inputProps: any = {};
-    if (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama") {
+    if (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama" || job.videoType === "UGC") {
       inputProps = { timeline: job.timeline };
     } else if (job.videoType === "MotionGraphics") {
       inputProps = { storyboard: job.timeline };

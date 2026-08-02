@@ -46,7 +46,7 @@ if (SPACES_ENABLED) {
 /**
  * Upload an asset buffer to cloud storage and return its public URL.
  */
-async function uploadAsset(
+export async function uploadAsset(
   buffer: Buffer,
   filename: string,
   contentType: string

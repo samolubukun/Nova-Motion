@@ -117,6 +117,10 @@ async function submitUGCToRenderServer(
     duration?: number;
     resolution?: string;
     mode?: string;
+    multiScene?: boolean;
+    voice?: string;
+    targetDurationSec?: number;
+    lipSync?: boolean;
   },
   webhookUrl?: string
 ): Promise<{ jobId: string; status: string; createdAt: string }> {
@@ -248,6 +252,10 @@ export async function POST(req: NextRequest) {
       else if (typeof body.durationSec === "number") candidate.duration = body.durationSec;
       if (typeof body.resolution === "string") candidate.resolution = body.resolution;
       if (typeof body.mode === "string") candidate.mode = body.mode;
+      if (typeof body.multiScene === "boolean") candidate.multiScene = body.multiScene;
+      if (typeof body.voice === "string") candidate.voice = body.voice;
+      if (typeof body.targetDurationSec === "number") candidate.targetDurationSec = body.targetDurationSec;
+      if (typeof body.lipSync === "boolean") candidate.lipSync = body.lipSync;
       if (typeof body.webhookUrl === "string") candidate.webhookUrl = body.webhookUrl;
 
       const validation = UGCRequestSchema.safeParse(candidate);
@@ -265,12 +273,12 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const { prompt, model, images, aspectRatio, duration, resolution, mode, webhookUrl } = validation.data;
+      const { prompt, model, images, aspectRatio, duration, resolution, mode, multiScene, voice, targetDurationSec, lipSync, webhookUrl } = validation.data;
 
       let renderResult;
       try {
         renderResult = await submitUGCToRenderServer(
-          { prompt, model, images, aspectRatio, duration, resolution, mode },
+          { prompt, model, images, aspectRatio, duration, resolution, mode, multiScene, voice, targetDurationSec, lipSync },
           webhookUrl
         );
       } catch (renderErr: unknown) {

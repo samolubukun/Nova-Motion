@@ -174,14 +174,14 @@ app.post("/render/ugc", authenticate, (req: Request, res: Response) => {
       });
     }
 
-    const { prompt, model, images, aspectRatio, duration, resolution, mode, webhookUrl } = validation.data;
+    const { prompt, model, images, aspectRatio, duration, resolution, mode, multiScene, voice, targetDurationSec, lipSync, webhookUrl } = validation.data;
 
     const job = createJob(
       "UGC",
       undefined,
       undefined,
       webhookUrl,
-      { prompt, model, images, aspectRatio, duration, resolution, mode }
+      { prompt, model, images, aspectRatio, duration, resolution, mode, multiScene, voice, targetDurationSec, lipSync }
     );
 
     console.log(`UGC job created: ${job.id}`);

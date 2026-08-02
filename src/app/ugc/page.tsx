@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { UGC_MODELS, getUGCModel } from "@/lib/ugc-models";
+import { ELEVENLABS_VOICES } from "@/lib/elevenlabs";
 
 interface UploadedImage {
   id: string;
@@ -36,6 +37,10 @@ export default function UGCPage() {
   const [duration, setDuration] = useState<number>(getUGCModel().defaultDuration);
   const [resolution, setResolution] = useState(getUGCModel().defaultResolution);
   const [mode, setMode] = useState(getUGCModel().defaultMode || "normal");
+  const [multiScene, setMultiScene] = useState(false);
+  const [voice, setVoice] = useState("");
+  const [targetDurationSec, setTargetDurationSec] = useState(30);
+  const [lipSync, setLipSync] = useState(true);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
@@ -163,9 +168,13 @@ export default function UGCPage() {
           model: selectedModel.id,
           images: readyImages.map((i) => i.url),
           aspectRatio,
-          duration,
+          duration: multiScene ? undefined : duration,
           resolution,
           mode: selectedModel.modes ? mode : undefined,
+          multiScene,
+          voice: multiScene ? voice : undefined,
+          targetDurationSec: multiScene ? targetDurationSec : undefined,
+          lipSync: multiScene ? lipSync : undefined,
         }),
       });
 
@@ -322,6 +331,48 @@ export default function UGCPage() {
                 />
               </div>
 
+              {/* Generation style */}
+              <div className="space-y-2">
+                <Label>Generation Style</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setMultiScene(false)}
+                    disabled={isGenerating}
+                    className={`rounded-lg border p-3 text-left transition-colors ${
+                      !multiScene
+                        ? "border-primary bg-primary/5 ring-1 ring-primary"
+                        : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    <span className="font-medium">Single clip</span>
+                    <p className="mt-1 text-xs text-muted-foreground">One continuous take with native audio.</p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMultiScene(true)}
+                    disabled={isGenerating}
+                    className={`rounded-lg border p-3 text-left transition-colors ${
+                      multiScene
+                        ? "border-primary bg-primary/5 ring-1 ring-primary"
+                        : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    <span className="font-medium">Multi-scene (Arcads-style)</span>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Script → LLM scene split → one TTS voiceover → per-scene clips, cut together.
+                    </p>
+                  </button>
+                </div>
+                {multiScene && (
+                  <p className="text-xs text-muted-foreground">
+                    Requires <code className="bg-muted px-1 rounded">ELEVENLABS_API_KEY</code> or{" "}
+                    <code className="bg-muted px-1 rounded">DEEPGRAM_API_KEY</code> for the voiceover. Reference
+                    images keep the same actor across every scene.
+                  </p>
+                )}
+              </div>
+
               {/* Settings */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -354,51 +405,115 @@ export default function UGCPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="ugc-duration">Duration</Label>
-                  <Select
-                    value={duration.toString()}
-                    onValueChange={(v) => setDuration(parseInt(v))}
-                    disabled={isGenerating}
-                  >
-                    <SelectTrigger id="ugc-duration">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: selectedModel.durationMax - selectedModel.durationMin + 1 }, (_, i) => {
-                        const d = selectedModel.durationMin + i;
-                        return (
-                          <SelectItem key={d} value={d.toString()}>
-                            {d}s
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                </div>
-                {selectedModel.modes ? (
-                  <div className="space-y-2">
-                    <Label htmlFor="ugc-mode">Mode</Label>
-                    <Select value={mode} onValueChange={setMode} disabled={isGenerating}>
-                      <SelectTrigger id="ugc-mode">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {selectedModel.modes.map((m) => (
-                          <SelectItem key={m} value={m}>
-                            {m}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                {multiScene ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="ugc-target">Target Length</Label>
+                      <Select
+                        value={targetDurationSec.toString()}
+                        onValueChange={(v) => setTargetDurationSec(parseInt(v))}
+                        disabled={isGenerating}
+                      >
+                        <SelectTrigger id="ugc-target">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[15, 20, 25, 30, 35, 40, 45, 50, 55, 60].map((d) => (
+                            <SelectItem key={d} value={d.toString()}>
+                              {d}s
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="ugc-voice">Voice</Label>
+                      <Select value={voice} onValueChange={setVoice} disabled={isGenerating}>
+                        <SelectTrigger id="ugc-voice">
+                          <SelectValue placeholder="Auto" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Auto</SelectItem>
+                          {ELEVENLABS_VOICES.map((v) => (
+                            <SelectItem key={v.id} value={v.id}>
+                              {v.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
                 ) : (
-                  <div className="space-y-2">
-                    <Label>Mode</Label>
-                    <div className="h-10 flex items-center text-sm text-muted-foreground">—</div>
-                  </div>
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="ugc-duration">Duration</Label>
+                      <Select
+                        value={duration.toString()}
+                        onValueChange={(v) => setDuration(parseInt(v))}
+                        disabled={isGenerating}
+                      >
+                        <SelectTrigger id="ugc-duration">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: selectedModel.durationMax - selectedModel.durationMin + 1 }, (_, i) => {
+                            const d = selectedModel.durationMin + i;
+                            return (
+                              <SelectItem key={d} value={d.toString()}>
+                                {d}s
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {selectedModel.modes ? (
+                      <div className="space-y-2">
+                        <Label htmlFor="ugc-mode">Mode</Label>
+                        <Select value={mode} onValueChange={setMode} disabled={isGenerating}>
+                          <SelectTrigger id="ugc-mode">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {selectedModel.modes.map((m) => (
+                              <SelectItem key={m} value={m}>
+                                {m}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <Label>Mode</Label>
+                        <div className="h-10 flex items-center text-sm text-muted-foreground">—</div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
+
+              {/* Lip-sync toggle (multi-scene only) */}
+              {multiScene && (
+                <button
+                  type="button"
+                  onClick={() => setLipSync((v) => !v)}
+                  disabled={isGenerating}
+                  className={`w-full rounded-lg border p-3 text-left transition-colors ${
+                    lipSync
+                      ? "border-primary bg-primary/5 ring-1 ring-primary"
+                      : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  <span className="font-medium">
+                    Lip-sync actor to voiceover {lipSync ? "• On" : "• Off"}
+                  </span>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Re-animates the actor&apos;s mouth to match the TTS (WaveSpeed sync/lipsync-2).
+                    Adds ~$0.05/scene and ~2 min per scene. Falls back to the raw clip if it fails.
+                  </p>
+                </button>
+              )}
 
               {/* Error */}
               {error && (
