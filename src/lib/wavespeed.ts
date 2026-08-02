@@ -100,6 +100,42 @@ export class WavespeedClient {
   }
 
   /**
+   * Trigger a text-to-image generation (e.g. Seedream portraits/frames).
+   * `size` uses the WaveSpeed "WIDTH*HEIGHT" format (e.g. "1024*1024").
+   * The model can be overridden via WAVESPEED_IMAGE_MODEL or passed directly.
+   */
+  async triggerImage(prompt: string, size = "2048*2048", model?: string) {
+    const selectedModel = model || process.env.WAVESPEED_IMAGE_MODEL || "bytedance/seedream-v4.5";
+    console.log(
+      `[WaveSpeed] Requesting ${selectedModel} image: size='${size}', prompt='${prompt.slice(0, 120)}...'`
+    );
+    return this.submit(`/api/v3/${selectedModel}`, {
+      prompt,
+      size,
+    });
+  }
+
+  /**
+   * Trigger an image-to-video generation from a first-frame image (Seedance 2.0).
+   * Payload matches the WaveSpeed docs example for image-to-video models.
+   * The model can be overridden via WAVESPEED_I2V_MODEL or passed directly.
+   */
+  async triggerImageToVideo(prompt: string, imageUrl: string, durationSec = 5, resolution = "720p", model?: string) {
+    const selectedModel = model || process.env.WAVESPEED_I2V_MODEL || "bytedance/seedance-2.0/image-to-video";
+    const duration = Math.min(15, Math.max(4, durationSec));
+    console.log(
+      `[WaveSpeed] Requesting ${selectedModel} image-to-video: duration=${duration}s, resolution='${resolution}', prompt='${prompt.slice(0, 120)}...'`
+    );
+    return this.submit(`/api/v3/${selectedModel}`, {
+      prompt,
+      image: imageUrl,
+      duration,
+      resolution,
+      generate_audio: true,
+    });
+  }
+
+  /**
    * Trigger WaveSpeed Lyria background music generation.
    */
   async triggerMusic(prompt: string) {
