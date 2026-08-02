@@ -47,6 +47,14 @@ Replicates the Text-To-Video-AI pipeline: generates the script, narrates it, the
 * **Pexels Fallback**: If WaveSpeed clip generation fails for a segment, a matching Pexels stock clip is used instead.
 * **Kinetic Captions**: The narration words are highlighted in sync with the voiceover.
 
+### 7. Micro Drama (`videoType: "MicroDrama"`)
+Replicates the Open-AI-Micro-Drama-Generator pipeline: a full agentic story-to-video workflow where the AI acts as screenwriter, casting director, storyboard artist, and cinematographer.
+* **WaveSpeed LLM** (`WAVESPEED_LLM_MODEL`, default `deepseek/deepseek-v4-flash`): Writes the story from an idea (or consumes a supplied script), extracts consistent characters, writes per-scene scripts, and designs a shot-by-shot storyboard (visual + motion + audio descriptions).
+* **WaveSpeed Seedream T2I**: Generates character portraits (`WAVESPEED_PORTRAIT_MODEL`) and a scene first-frame image per shot (`WAVESPEED_FRAME_MODEL`).
+* **WaveSpeed Seedance I2V** (`WAVESPEED_I2V_MODEL`): Animates each shot's first-frame into a clip (default 5s, 720p) with **native audio** (ambient SFX — no TTS voiceover).
+* **Two modes**: pass only `idea` (the AI writes the whole story) or pass a `script` (the raw script is used directly, skipping the screenwriter).
+* **Async**: the request returns a `jobId` immediately; the whole pipeline runs inside the render job and is polled via `GET /api/videos/{jobId}`.
+
 ---
 
 ## Tech Stack
@@ -117,6 +125,7 @@ All endpoints support the following root payload fields:
   * `"TextAnimation"`: Words with active highlighting animations.
   * `"MotionGraphics"`: Dynamic motion graphics, charts, and interactive UI component simulations.
   * `"TextToVideo"`: AI-generated B-roll from WaveSpeed Seedance + TTS voiceover (Text-To-Video-AI replication).
+  * `"MicroDrama"`: Full agentic pipeline — AI story, characters, storyboard, and Seedance I2V clips (Open-AI-Micro-Drama-Generator replication).
 * **`aspectRatio`** (string, optional): Target video layout format. Must be one of:
   * `"9:16"`: Portrait (mobile vertical) - defaults to `1080x1920`.
   * `"16:9"`: Landscape (widescreen desktop) - defaults to `1920x1080`.
@@ -211,6 +220,30 @@ Generates a facts-style short using WaveSpeed Seedance AI clips for every timed 
     "topic": "Marine Biology",
     "aspectRatio": "9:16",
     "voice": "aura-2-aries-en"
+  }
+  ```
+
+#### Endpoint G: Micro Drama (`videoType: "MicroDrama"`)
+Generates a micro-drama video through the full agentic pipeline. Pass just an `idea` (story is written for you) or include a `script` to use your own text directly. Optional `style` guides the visual style and `requirement` adds extra constraints (e.g. runtime, mood).
+* **Requires `WAVESPEED_API_KEY`**. Uses `WAVESPEED_LLM_MODEL` (default `deepseek/deepseek-v4-flash`), `WAVESPEED_PORTRAIT_MODEL`/`WAVESPEED_FRAME_MODEL` (default `bytedance/seedream-v4.5`), and `WAVESPEED_I2V_MODEL` (default `bytedance/seedance-2.0/image-to-video`).
+* **Async**: returns a `jobId` immediately; the story → characters → scene scripts → storyboard → portraits → frames → I2V clips → render pipeline runs inside the job. Each AI clip takes ~1-2 minutes, so poll `GET /api/videos/{jobId}` until `status` is `completed`.
+* **Example Payload (idea only)**:
+  ```json
+  {
+    "videoType": "MicroDrama",
+    "idea": "A detective in a rainy city discovers his partner was the mastermind all along",
+    "style": "Noir thriller, cold color grade, dramatic shadows",
+    "requirement": "Keep the story under 45 seconds with a twist ending",
+    "aspectRatio": "16:9"
+  }
+  ```
+* **Example Payload (with script — script2video mode)**:
+  ```json
+  {
+    "videoType": "MicroDrama",
+    "idea": "A detective in a rainy city discovers his partner was the mastermind all along",
+    "script": "INT. PRECINCT - NIGHT\nDetective Mara stares at the evidence board...",
+    "style": "Noir thriller, cold color grade, dramatic shadows"
   }
   ```
 
@@ -334,6 +367,29 @@ All requests must be sent as `POST` requests to:
 * **Requires** `WAVESPEED_API_KEY` in `.env.local`. The B-roll model defaults to `bytedance/seedance-v1-pro-fast/text-to-video` and can be overridden with `WAVESPEED_VIDEO_MODEL`. This mode is **async**: the request returns a `jobId` immediately and the render server generates the whole pipeline (script → TTS → WaveSpeed clips → music) inside the job, reporting progress as it goes. Because each AI clip takes ~1-2 minutes to generate, the job stays in the `rendering` state for several minutes — poll `GET /api/videos/{jobId}` until `status` is `completed`.
 
 * **Response**:
+  ```json
+  {
+    "success": true,
+    "jobId": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
+    "status": "queued",
+    "createdAt": "2026-07-01T18:00:00.000Z"
+  }
+  ```
+
+#### 10. Micro Drama (`MicroDrama`)
+```json
+{
+  "videoType": "MicroDrama",
+  "idea": "A detective in a rainy city discovers his partner was the mastermind all along",
+  "style": "Noir thriller, cold color grade, dramatic shadows",
+  "requirement": "Keep the story under 45 seconds with a twist ending",
+  "aspectRatio": "16:9"
+}
+```
+
+* **Requires** `WAVESPEED_API_KEY` in `.env.local`. Replicates the Open-AI-Micro-Drama-Generator pipeline: the WaveSpeed LLM writes the story (or uses a supplied `script`), extracts consistent characters, generates per-scene scripts, and designs a shot-by-shot storyboard; Seedream generates character portraits and scene first-frames; Seedance I2V animates each frame into a ~5s clip with native audio. This mode is **async** like TextToVideo — submit and poll `GET /api/videos/{jobId}`. Model defaults can be overridden with `WAVESPEED_LLM_MODEL`, `WAVESPEED_PORTRAIT_MODEL`, `WAVESPEED_FRAME_MODEL`, and `WAVESPEED_I2V_MODEL`.
+
+* **Response** (same shape as TextToVideo):
   ```json
   {
     "success": true,
