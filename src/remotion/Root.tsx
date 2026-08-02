@@ -120,6 +120,42 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
       <Composition
+        id="MicroDrama"
+        component={WavespeedVideo}
+        durationInFrames={300}
+        fps={30}
+        width={1920}
+        height={1080}
+        schema={wavespeedVideoPropsSchema}
+        defaultProps={{
+          timeline: {
+            shortTitle: "Default Micro Drama",
+            elements: [],
+            text: [],
+            words: [],
+            audio: [],
+            music: [],
+            width: 1920,
+            height: 1080,
+          },
+        }}
+        calculateMetadata={({ props }) => {
+          const { timeline } = props;
+          if (!timeline || !timeline.elements.length) {
+            return { durationInFrames: 150 };
+          }
+          const lastElement = timeline.elements[timeline.elements.length - 1];
+          const lengthMs = lastElement.endMs || 0;
+          const lengthFrames = Math.floor((lengthMs * 30) / 1000) + 30; // duration + 30 frames outro
+          return {
+            durationInFrames: lengthFrames,
+            fps: 30,
+            width: timeline.width || 1920,
+            height: timeline.height || 1080,
+          };
+        }}
+      />
+      <Composition
         id="StockImage"
         component={AIVideo}
         durationInFrames={300}
