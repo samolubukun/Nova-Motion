@@ -25,6 +25,7 @@ export const VideoType = z.enum([
   "MotionGraphics",
   "TextToVideo",
   "MicroDrama",
+  "UGC",
 ]);
 export type VideoType = z.infer<typeof VideoType>;
 
@@ -113,6 +114,24 @@ export const MicroDramaRequestSchema = z.object({
   webhookUrl: z.string().url().optional(),
 });
 export type MicroDramaRequest = z.infer<typeof MicroDramaRequestSchema>;
+
+// === UGC Pipeline Request Schema (async, render-server side) ===
+// Replicates the Open-AI-UGC studio (Arcads / MakeUGC alternative) using
+// WaveSpeed as the video provider.
+// `prompt` is the UGC script and may reference uploaded reference images with
+// `@image1`, `@image2`, ... tokens. When `images` is provided, the chosen
+// model's image-to-video endpoint is used (I2V); otherwise text-to-video (T2V).
+export const UGCRequestSchema = z.object({
+  prompt: z.string().min(1).max(2000),
+  model: z.string().max(100).optional(),
+  images: z.array(z.string().url()).max(7).optional(),
+  aspectRatio: z.enum(ASPECT_RATIOS).default("9:16").optional(),
+  duration: z.number().min(3).max(30).optional(),
+  resolution: z.string().max(20).optional(),
+  mode: z.string().max(20).optional(),
+  webhookUrl: z.string().url().optional(),
+});
+export type UGCRequest = z.infer<typeof UGCRequestSchema>;
 
 // === Job Status Types ===
 export const JobStatus = z.enum([
