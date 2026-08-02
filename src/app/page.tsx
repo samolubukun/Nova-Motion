@@ -38,6 +38,7 @@ const VIDEO_TYPES: { value: VideoType; label: string; description: string }[] = 
   { value: "StockVideo", label: "Stock Video", description: "Generated story with Pexels videos and voiceover" },
   { value: "StockImage", label: "Stock Image", description: "Generated story with Pixabay images and voiceover" },
   { value: "MicroDrama", label: "Micro Drama", description: "Full agentic pipeline: AI story, characters, storyboard, and Seedance clips" },
+  { value: "UGC", label: "UGC Ad", description: "AI UGC ad studio: script + reference images → Veo/Grok/Seedance/Happy Horse clip. Full studio at /ugc" },
 ];
 
 // Duration options
