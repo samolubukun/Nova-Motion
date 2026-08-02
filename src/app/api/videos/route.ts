@@ -16,6 +16,7 @@ import {
   VideoScript,
   VideoType,
   getAspectRatioDimensions,
+  MicroDramaRequestSchema,
 } from "../../../../shared/video-schema";
 import * as path from "path";
 import * as fs from "fs";
@@ -105,9 +106,95 @@ async function submitTextToVideoToRenderServer(
   return response.json();
 }
 
+// Submit a MicroDrama pipeline job (timeline is generated inside the render job)
+async function submitMicroDramaToRenderServer(
+  idea: string,
+  options: { script?: string; style?: string; requirement?: string; aspectRatio?: string },
+  webhookUrl?: string
+): Promise<{ jobId: string; status: string; createdAt: string }> {
+  const { url, secret } = getRenderServerConfig();
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (secret) {
+    headers["X-Render-Secret"] = secret;
+  }
+
+  const response = await fetch(`${url}/render/micro-drama`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ idea, ...options, webhookUrl }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: "Unknown error" }));
+    throw new Error(error.error || `Render server returned ${response.status}`);
+  }
+
+  return response.json();
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    // MicroDrama async pipeline submission (idea → story → scenes → I2V clips,
+    // all generated inside the render job, then rendered).
+    // Accepts either `idea` (preferred) or `prompt` (used by the web UI).
+    if (body && body.videoType === "MicroDrama" && ("idea" in body || "prompt" in body)) {
+      const candidate: Record<string, unknown> = {
+        idea: body.idea ?? body.prompt,
+      };
+      if (typeof body.script === "string") candidate.script = body.script;
+      if (typeof body.style === "string") candidate.style = body.style;
+      if (typeof body.requirement === "string") candidate.requirement = body.requirement;
+      if (typeof body.aspectRatio === "string") candidate.aspectRatio = body.aspectRatio;
+      if (typeof body.webhookUrl === "string") candidate.webhookUrl = body.webhookUrl;
+
+      const validation = MicroDramaRequestSchema.safeParse(candidate);
+      if (!validation.success) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Invalid MicroDrama request",
+            details: validation.error.issues.map((e) => ({
+              path: e.path.join("."),
+              message: e.message,
+            })),
+          },
+          { status: 400 }
+        );
+      }
+
+      const { idea, script, style, requirement, aspectRatio, webhookUrl } = validation.data;
+
+      let renderResult;
+      try {
+        renderResult = await submitMicroDramaToRenderServer(
+          idea,
+          { script, style, requirement, aspectRatio },
+          webhookUrl
+        );
+      } catch (renderErr: unknown) {
+        console.error("[API Gateway] Render server connection failed:", renderErr);
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Unable to connect to render server. Please try again later.",
+          },
+          { status: 503 }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        jobId: renderResult.jobId,
+        status: renderResult.status,
+        createdAt: renderResult.createdAt,
+      });
+    }
 
     // Check if this is a direct render request (with script/timeline) or a generate request (with prompt)
     const hasScript = ("script" in body && body.script) || ("timeline" in body && body.timeline);
