@@ -4,6 +4,7 @@ import * as path from "path";
 import { RenderJob, updateJobStatus } from "./queue";
 import { getVideoPath, generateVideoFilename, getVideoUrlWithR2Fallback } from "./storage";
 import { generateWavespeedVideoTimeline } from "../src/lib/wavespeed-timeline";
+import { generateMicroDramaTimeline } from "../src/lib/micro-drama-timeline";
 
 // Cache the bundle URL to avoid rebundling on every render
 let cachedBundleUrl: string | null = null;
@@ -66,8 +67,8 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
       const { prompt, topic, voice, aspectRatio } = job.pipeline;
       console.log(`[TextToVideo] Generating timeline for job ${job.id}...`);
       job.timeline = await generateWavespeedVideoTimeline(
-        prompt,
-        topic || prompt,
+        prompt || "",
+        topic || prompt || "",
         voice,
         aspectRatio || "9:16",
         {
@@ -81,6 +82,25 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
       console.log(`[TextToVideo] Timeline ready for job ${job.id}.`);
     }
 
+    // For MicroDrama pipeline jobs, generate the story → clips timeline first
+    // (reports 0-25%)
+    if (job.videoType === "MicroDrama" && job.pipeline) {
+      const { idea, script, style, requirement, aspectRatio } = job.pipeline;
+      console.log(`[MicroDrama] Generating timeline for job ${job.id}...`);
+      job.timeline = await generateMicroDramaTimeline(
+        { idea: idea!, script, style, requirement },
+        {
+          aspectRatio: aspectRatio || "16:9",
+          onProgress: (progress) => {
+            const mapped = Math.round(progress * 25);
+            updateJobStatus(job.id, { progress: Math.max(0, Math.min(25, mapped)) });
+          },
+          assetBaseUrl: baseUrl,
+        }
+      );
+      console.log(`[MicroDrama] Timeline ready for job ${job.id}.`);
+    }
+
     // Get the bundle URL (cached or create new)
     const bundleUrl = await getBundleUrl();
 
@@ -90,7 +110,7 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
 
     // Prepare input props
     let inputProps: any = {};
-    if (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo") {
+    if (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama") {
       inputProps = { timeline: job.timeline };
     } else if (job.videoType === "MotionGraphics") {
       inputProps = { storyboard: job.timeline };
