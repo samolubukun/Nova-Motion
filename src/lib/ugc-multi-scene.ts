@@ -54,7 +54,8 @@ export interface UGCScene {
 }
 
 // Deterministic fallback: chunk the script into scenes by sentence so the
-// pipeline still works if the LLM is unreachable.
+// pipeline still works if the LLM is unreachable. Scenes follow the standard
+// UGC beat structure (Hook → Problem → Product → Demo → Outcome → CTA).
 function fallbackScenes(script: string): UGCScene[] {
   const sentences = script
     .split(/(?<=[.!?])\s+|\n+/)
@@ -73,9 +74,11 @@ function fallbackScenes(script: string): UGCScene[] {
   }
   const clamped = groups.slice(0, 6);
 
+  const beatTitles = ["Hook", "Problem", "Product", "Demo", "Outcome", "CTA"];
+
   return clamped.map((g, i) => ({
     idx: i,
-    title: i === 0 ? "Hook" : i === clamped.length - 1 ? "CTA" : `Beat ${i + 1}`,
+    title: beatTitles[i] || `Beat ${i + 1}`,
     lines: g.join(" "),
     visual: [
       "A person talking energetically to the camera in a selfie-style vertical shot.",
@@ -181,7 +184,11 @@ async function breakDownScenes(
   targetDurationSec: number,
   aspectRatio: string
 ): Promise<UGCScene[]> {
-  const userPrompt = `Split this UGC ad script into 2-6 scenes.
+  const userPrompt = `Split this UGC ad script into 2-6 scenes that follow the standard UGC beat structure:
+1. Hook (punchy first 1-3 seconds) → 2. Relatable problem → 3. Product appears
+→ 4. Simple demo → 5. Believable outcome → 6. Natural CTA.
+Adapt the number of beats to the script (a 2-scene ad = Hook + CTA; a 3-scene ad
+= Hook, Product+Demo, CTA; 4-6 scenes distribute the full structure).
 
 Script:
 ${script}
@@ -194,7 +201,7 @@ Return a JSON object with this exact structure:
 {
   "scenes": [
     {
-      "title": "Hook | Problem | Product | Social Proof | CTA (or custom)",
+      "title": "Hook | Problem | Product | Demo | Outcome | CTA",
       "lines": "Exactly what the actor says aloud in this scene. Keep it 2-4 sentences and the FULL text needed; it will be spoken by TTS.",
       "visual": "One detailed prompt for the video model: actor appearance/pose, setting, camera angle/movement, lighting, mood. 25-60 words. Do not mention 'text to video' or 'UGC'.",
       "durationSec": 5
@@ -205,8 +212,9 @@ Return a JSON object with this exact structure:
 Rules:
 - 2 to 6 scenes total. The sum of durationSec should roughly equal ${targetDurationSec} seconds.
 - The spoken lines across all scenes must together preserve the full meaning of the script (you may tighten wording).
-- Hook first (punchy), strong CTA last.
+- Hook first (punchy), strong CTA last. Product should appear by the midpoint at the latest.
 - Every scene's visual should keep the same actor consistent (same person, outfit, style).
+- Keep claims honest: do NOT introduce fake testimonials, guaranteed results, income/medical claims, or fake expert endorsements that are not in the script.
 - durationSec per scene: 3-8 seconds, scaled so faster speech = shorter, and total matches the target.`;
 
   const data = await llmJSON<{ scenes?: Array<{ title?: string; lines?: string; visual?: string; durationSec?: number }> }>(

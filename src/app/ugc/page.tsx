@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { UGC_MODELS, getUGCModel } from "@/lib/ugc-models";
+import { UGC_TEMPLATES } from "@/lib/ugc-templates";
 import { ELEVENLABS_VOICES } from "@/lib/elevenlabs";
 
 interface UploadedImage {
@@ -32,6 +33,7 @@ const MAX_IMAGES = 7;
 export default function UGCPage() {
   const [selectedModelId, setSelectedModelId] = useState<string>(getUGCModel().id);
   const [prompt, setPrompt] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState("");
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [aspectRatio, setAspectRatio] = useState(getUGCModel().defaultAspectRatio);
   const [duration, setDuration] = useState<number>(getUGCModel().defaultDuration);
@@ -316,6 +318,47 @@ export default function UGCPage() {
                   Upload an actor face or product (up to {MAX_IMAGES}). Reference them in your script with{" "}
                   <code className="bg-muted px-1 rounded">@image1</code>, <code className="bg-muted px-1 rounded">@image2</code>, etc.
                 </p>
+              </div>
+
+              {/* Template library */}
+              <div className="space-y-2">
+                <Label>Template Library</Label>
+                <p className="text-xs text-muted-foreground">
+                  Start from a proven UGC structure. Click one to load a ready-to-speak script.
+                </p>
+                <div className="grid grid-cols-2 gap-2 max-h-52 overflow-y-auto pr-1">
+                  {UGC_TEMPLATES.map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedTemplate(t.id);
+                        setPrompt(t.script);
+                      }}
+                      disabled={isGenerating}
+                      className={`rounded-lg border p-2 text-left transition-colors ${
+                        selectedTemplate === t.id
+                          ? "border-primary bg-primary/5 ring-1 ring-primary"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <span className="text-sm font-medium">{t.category}</span>
+                      <p className="mt-0.5 text-[11px] leading-tight text-muted-foreground">{t.bestFor}</p>
+                    </button>
+                  ))}
+                </div>
+                {selectedTemplate && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedTemplate("");
+                      setPrompt("");
+                    }}
+                    className="text-xs text-muted-foreground underline hover:text-primary"
+                  >
+                    Clear template
+                  </button>
+                )}
               </div>
 
               {/* Script */}
