@@ -11,8 +11,8 @@ export interface RenderJob {
   videoUrl?: string;
   error?: string;
   webhookUrl?: string;
-  // Async pipeline params (used by TextToVideo/MicroDrama: the timeline is
-  // generated inside the job before rendering)
+  // Async pipeline params (used by TextToVideo/MicroDrama/UGC: the timeline or
+  // final video is generated inside the job before rendering)
   pipeline?: {
     prompt?: string;
     topic?: string;
@@ -23,6 +23,12 @@ export interface RenderJob {
     script?: string;
     style?: string;
     requirement?: string;
+    // UGC params
+    model?: string;
+    images?: string[];
+    duration?: number;
+    resolution?: string;
+    mode?: string;
   };
   createdAt: Date;
   startedAt?: Date;
