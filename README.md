@@ -60,9 +60,10 @@ Replicates the Open-AI-UGC studio (an Arcads / MakeUGC alternative) using the **
 * **Model picker**: Veo 3.1 (`google/veo3.1/*`), Seedance 2 (`bytedance/seedance-2.0/*`), Grok Video (`x-ai/grok-imagine-video/*`), and Happy Horse 1 (`alibaba/happyhorse-1.0/*`), each with text-to-video and image-to-video endpoints. Default model via `UGC_DEFAULT_MODEL` (default `seedance-2`).
 * **T2V vs I2V**: with no reference images, the model's text-to-video endpoint is used; with reference image(s), the image-to-video endpoint animates the image (e.g. an actor face) with **native audio** from the script.
 * **Reference images**: upload up to 7 images via `POST /api/upload` (returns a hosted URL) and reference them inline in the script as `@image1`, `@image2`, etc.
-* **Per-model controls**: aspect ratio, duration, resolution, and (Grok only) fun/normal/spicy mode.
+* **Per-model controls**: aspect ratio, duration, and resolution (Grok clips are 6 or 10s and limited to 16:9 / 1:1 / 9:16 per WaveSpeed's contract; no mode presets are available).
+* **Multi-scene (Arcads-style)**: with `multiScene: true` the script is broken into 2-6 scenes by the WaveSpeed LLM, a single TTS voiceover (ElevenLabs preferred, Deepgram fallback) is generated for the whole ad, each scene is generated as its own clip (I2V with a reference image to keep the same actor, T2V otherwise), and the clips are cut together into one timeline with kinetic captions — played by the `UGC` Remotion composition. `voice` selects the voiceover, `targetDurationSec` (10-60) hints the total length. **Lip-sync** (`lipSync`, default on) re-animates each clip's mouth to match the TTS via WaveSpeed `sync/lipsync-2` (~$0.05/run + ~2 min per scene, non-fatal fallback; requires the TTS audio to be publicly reachable via `RENDER_SERVER_BASE_URL`). Requires `ELEVENLABS_API_KEY` or `DEEPGRAM_API_KEY`.
 * **Async**: the request returns a `jobId` immediately; the WaveSpeed generation runs inside the render job, the finished mp4 is downloaded into `rendered-videos/`, uploaded to S3/R2/Spaces when configured, and polled via `GET /api/videos/{jobId}`.
-* **UI**: a full studio lives at `/ugc` (model cards, image upload with previews, script box, param pickers, live polling player).
+* **UI**: a full studio lives at `/ugc` (model cards, image upload with previews, script box, param pickers, generation-style toggle, live polling player).
 
 ---
 
@@ -258,10 +259,11 @@ Generates a micro-drama video through the full agentic pipeline. Pass just an `i
   ```
 
 #### Endpoint H: AI UGC Ad (`videoType: "UGC"`)
-Generates a UGC ad through WaveSpeed using any of the studio models (Veo 3.1, Seedance 2, Grok Video, Happy Horse 1). `prompt` is the script (reference images inline as `@image1`...). Optional `images` (hosted URLs from `POST /api/upload`) switches to image-to-video. `model`, `aspectRatio`, `duration`, `resolution`, and `mode` (Grok only) mirror the studio controls.
+Generates a UGC ad through WaveSpeed using any of the studio models (Veo 3.1, Seedance 2, Grok Video, Happy Horse 1). `prompt` is the script (reference images inline as `@image1`...). Optional `images` (hosted URLs from `POST /api/upload`) switches to image-to-video. `model`, `aspectRatio`, `duration`, and `resolution` mirror the studio controls.
 * **Requires `WAVESPEED_API_KEY`**. Default model via `UGC_DEFAULT_MODEL` (default `seedance-2`).
+* **Multi-scene** (`multiScene: true`): the WaveSpeed LLM breaks the script into 2-6 scenes, one TTS voiceover covers the whole ad (`voice` picks it, default auto), each scene is generated as its own clip (I2V with a reference image keeps the same actor), and the clips are assembled into a single timeline with kinetic captions. `targetDurationSec` (10-60) hints total length. **Lip-sync** (`lipSync`, default on) warps each clip's mouth to the TTS via WaveSpeed `sync/lipsync-2`; set `lipSync: false` to skip it for cost/speed. Requires `ELEVENLABS_API_KEY` or `DEEPGRAM_API_KEY`.
 * **Async**: returns a `jobId` immediately; the WaveSpeed generation runs inside the job and the finished mp4 is persisted to storage. Poll `GET /api/videos/{jobId}` until `status` is `completed`.
-* **UI**: full studio at `/ugc` — model cards, reference image upload, script box, param pickers, live polling player.
+* **UI**: full studio at `/ugc` — model cards, reference image upload, script box, param pickers, generation-style toggle, live polling player.
 * **Example Payload (text-to-video)**:
   ```json
   {
@@ -273,6 +275,20 @@ Generates a UGC ad through WaveSpeed using any of the studio models (Veo 3.1, Se
     "resolution": "1080p"
   }
   ```
+* **Example Payload (multi-scene)**:
+  ```json
+  {
+    "videoType": "UGC",
+    "prompt": "Tired of brittle nails? Here's the 3-step routine I swear by... grab this kit while it's 40% off.",
+    "model": "seedance-2",
+    "images": ["https://your-bucket.nyc3.digitaloceanspaces.com/images/actor.jpg"],
+    "aspectRatio": "9:16",
+    "resolution": "1080p",
+    "multiScene": true,
+    "voice": "pNInz6obpgDQGcFmaJgB",
+    "targetDurationSec": 30
+  }
+  ```
 * **Example Payload (image-to-video with a reference face)**:
   ```json
   {
@@ -281,8 +297,7 @@ Generates a UGC ad through WaveSpeed using any of the studio models (Veo 3.1, Se
     "model": "grok-video",
     "images": ["https://your-bucket.nyc3.digitaloceanspaces.com/images/abc123.jpg"],
     "aspectRatio": "9:16",
-    "duration": 6,
-    "mode": "normal"
+    "duration": 6
   }
   ```
 
