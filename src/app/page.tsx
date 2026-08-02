@@ -37,6 +37,7 @@ const VIDEO_TYPES: { value: VideoType; label: string; description: string }[] = 
   { value: "AIVideo", label: "AI Video (Generated)", description: "Generated story with AI images and voiceover" },
   { value: "StockVideo", label: "Stock Video", description: "Generated story with Pexels videos and voiceover" },
   { value: "StockImage", label: "Stock Image", description: "Generated story with Pixabay images and voiceover" },
+  { value: "MicroDrama", label: "Micro Drama", description: "Full agentic pipeline: AI story, characters, storyboard, and Seedance clips" },
 ];
 
 // Duration options
