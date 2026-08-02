@@ -1,10 +1,12 @@
 import { bundle } from "@remotion/bundler";
 import { renderMedia, selectComposition } from "@remotion/renderer";
 import * as path from "path";
+import * as fs from "fs";
 import { RenderJob, updateJobStatus } from "./queue";
 import { getVideoPath, generateVideoFilename, getVideoUrlWithR2Fallback } from "./storage";
 import { generateWavespeedVideoTimeline } from "../src/lib/wavespeed-timeline";
 import { generateMicroDramaTimeline } from "../src/lib/micro-drama-timeline";
+import { generateUGCVideo } from "../src/lib/ugc-pipeline";
 
 // Cache the bundle URL to avoid rebundling on every render
 let cachedBundleUrl: string | null = null;
@@ -55,6 +57,22 @@ export function invalidateBundleCache() {
 }
 
 /**
+ * Download a file (e.g. a generated video clip) into the videos directory.
+ */
+async function downloadToVideosDir(url: string, filename: string): Promise<string> {
+  const response = await fetch(url, {
+    signal: AbortSignal.timeout(180000),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to download generated video: ${response.status} ${response.statusText}`);
+  }
+  const buffer = Buffer.from(await response.arrayBuffer());
+  const outputPath = getVideoPath(filename);
+  fs.writeFileSync(outputPath, buffer);
+  return outputPath;
+}
+
+/**
  * Render a video from a job
  */
 export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void> {
@@ -62,6 +80,48 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
   console.log(`Starting render for job ${job.id} (${job.videoType})`);
 
   try {
+    // For UGC pipeline jobs, the finished video is generated externally by
+    // WaveSpeed (no Remotion render needed). Download it into the videos dir,
+    // persist to storage, and mark the job complete.
+    if (job.videoType === "UGC" && job.pipeline) {
+      const { prompt, images, model, aspectRatio, duration, resolution, mode } = job.pipeline;
+      console.log(`[UGC] Generating video for job ${job.id}...`);
+
+      const result = await generateUGCVideo(
+        {
+          prompt: prompt || "",
+          images,
+          model,
+          aspectRatio,
+          duration,
+          resolution,
+          mode,
+        },
+        {
+          onProgress: (progress) => {
+            const mapped = Math.round(progress * 90);
+            updateJobStatus(job.id, { progress: Math.max(0, Math.min(90, mapped)) });
+          },
+        }
+      );
+
+      const filename = generateVideoFilename(job.id);
+      await downloadToVideosDir(result.videoUrl, filename);
+      console.log(`[UGC] Downloaded clip for job ${job.id} to ${filename}.`);
+
+      updateJobStatus(job.id, { progress: 95 });
+
+      const videoUrl = await getVideoUrlWithR2Fallback(filename, baseUrl);
+      updateJobStatus(job.id, {
+        status: "completed",
+        progress: 100,
+        videoUrl,
+        completedAt: new Date(),
+      });
+      console.log(`[UGC] Job ${job.id} completed in ${((Date.now() - startTime) / 1000).toFixed(1)}s.`);
+      return;
+    }
+
     // For TextToVideo pipeline jobs, generate the timeline first (reports 0-20%)
     if (job.videoType === "TextToVideo" && job.pipeline) {
       const { prompt, topic, voice, aspectRatio } = job.pipeline;
