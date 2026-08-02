@@ -17,6 +17,7 @@ import {
   VideoType,
   getAspectRatioDimensions,
   MicroDramaRequestSchema,
+  UGCRequestSchema,
 } from "../../../../shared/video-schema";
 import * as path from "path";
 import * as fs from "fs";
@@ -106,6 +107,43 @@ async function submitTextToVideoToRenderServer(
   return response.json();
 }
 
+// Submit a UGC pipeline job (the WaveSpeed clip is generated inside the render job)
+async function submitUGCToRenderServer(
+  options: {
+    prompt: string;
+    model?: string;
+    images?: string[];
+    aspectRatio?: string;
+    duration?: number;
+    resolution?: string;
+    mode?: string;
+  },
+  webhookUrl?: string
+): Promise<{ jobId: string; status: string; createdAt: string }> {
+  const { url, secret } = getRenderServerConfig();
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (secret) {
+    headers["X-Render-Secret"] = secret;
+  }
+
+  const response = await fetch(`${url}/render/ugc`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ ...options, webhookUrl }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: "Unknown error" }));
+    throw new Error(error.error || `Render server returned ${response.status}`);
+  }
+
+  return response.json();
+}
+
 // Submit a MicroDrama pipeline job (timeline is generated inside the render job)
 async function submitMicroDramaToRenderServer(
   idea: string,
@@ -175,6 +213,64 @@ export async function POST(req: NextRequest) {
         renderResult = await submitMicroDramaToRenderServer(
           idea,
           { script, style, requirement, aspectRatio },
+          webhookUrl
+        );
+      } catch (renderErr: unknown) {
+        console.error("[API Gateway] Render server connection failed:", renderErr);
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Unable to connect to render server. Please try again later.",
+          },
+          { status: 503 }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        jobId: renderResult.jobId,
+        status: renderResult.status,
+        createdAt: renderResult.createdAt,
+      });
+    }
+
+    // UGC async pipeline submission (Open-AI-UGC replication via WaveSpeed).
+    // `prompt` is the UGC script; optional `images`, `model`, `aspectRatio`,
+    // `duration`, `resolution`, and `mode` mirror the UGC studio's controls.
+    if (body && body.videoType === "UGC" && typeof body.prompt === "string") {
+      const candidate: Record<string, unknown> = {
+        prompt: body.prompt,
+      };
+      if (typeof body.model === "string") candidate.model = body.model;
+      if (Array.isArray(body.images)) candidate.images = body.images;
+      if (typeof body.aspectRatio === "string") candidate.aspectRatio = body.aspectRatio;
+      if (typeof body.duration === "number") candidate.duration = body.duration;
+      else if (typeof body.durationSec === "number") candidate.duration = body.durationSec;
+      if (typeof body.resolution === "string") candidate.resolution = body.resolution;
+      if (typeof body.mode === "string") candidate.mode = body.mode;
+      if (typeof body.webhookUrl === "string") candidate.webhookUrl = body.webhookUrl;
+
+      const validation = UGCRequestSchema.safeParse(candidate);
+      if (!validation.success) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Invalid UGC request",
+            details: validation.error.issues.map((e) => ({
+              path: e.path.join("."),
+              message: e.message,
+            })),
+          },
+          { status: 400 }
+        );
+      }
+
+      const { prompt, model, images, aspectRatio, duration, resolution, mode, webhookUrl } = validation.data;
+
+      let renderResult;
+      try {
+        renderResult = await submitUGCToRenderServer(
+          { prompt, model, images, aspectRatio, duration, resolution, mode },
           webhookUrl
         );
       } catch (renderErr: unknown) {
