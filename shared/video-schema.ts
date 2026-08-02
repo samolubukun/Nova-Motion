@@ -24,6 +24,7 @@ export const VideoType = z.enum([
   "StockImage",
   "MotionGraphics",
   "TextToVideo",
+  "MicroDrama",
 ]);
 export type VideoType = z.infer<typeof VideoType>;
 
@@ -98,6 +99,20 @@ export const TextToVideoRequestSchema = z.object({
   webhookUrl: z.string().url().optional(),
 });
 export type TextToVideoRequest = z.infer<typeof TextToVideoRequestSchema>;
+
+// === MicroDrama Pipeline Request Schema (async, render-server side) ===
+// Replicates the Open-AI-Micro-Drama-Generator idea2video / script2video modes.
+// `idea` is required; if `script` is provided, story development is skipped
+// and the raw script is used directly (script2video mode).
+export const MicroDramaRequestSchema = z.object({
+  idea: z.string().min(1).max(2000),
+  script: z.string().max(4000).optional(),
+  style: z.string().max(200).optional(),
+  requirement: z.string().max(1000).optional(),
+  aspectRatio: z.enum(ASPECT_RATIOS).default("16:9").optional(),
+  webhookUrl: z.string().url().optional(),
+});
+export type MicroDramaRequest = z.infer<typeof MicroDramaRequestSchema>;
 
 // === Job Status Types ===
 export const JobStatus = z.enum([
