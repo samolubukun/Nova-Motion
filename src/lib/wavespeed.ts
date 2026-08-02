@@ -80,6 +80,18 @@ export class WavespeedClient {
   }
 
   /**
+   * Trigger any WaveSpeed model by its full model id (e.g.
+   * `google/veo3.1/text-to-video`, `x-ai/grok-imagine-video/image-to-video`).
+   * Used by the UGC mode to drive any model from the shared model registry.
+   */
+  async triggerModel(modelId: string, payload: Record<string, unknown>) {
+    console.log(
+      `[WaveSpeed] Requesting ${modelId}: ${JSON.stringify(payload).slice(0, 240)}`
+    );
+    return this.submit(`/api/v3/${modelId}`, payload);
+  }
+
+  /**
    * Trigger a text-to-video generation (defaults to Seedance v1 Pro Fast).
    * Payload matches the WaveSpeed docs example for this model.
    * Duration is clamped to the model's supported 3-10s range.
