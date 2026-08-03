@@ -39,6 +39,7 @@ const VIDEO_TYPES: { value: VideoType; label: string; description: string }[] = 
   { value: "StockImage", label: "Stock Image", description: "Generated story with Pixabay images and voiceover" },
   { value: "MicroDrama", label: "Micro Drama", description: "Full agentic pipeline: AI story, characters, storyboard, and Seedance clips" },
   { value: "UGC", label: "UGC Ad", description: "AI UGC ad studio: script + reference images → Veo/Grok/Seedance/Happy Horse clip. Full studio at /ugc" },
+  { value: "AgenticVideoGenerator", label: "Agentic Video", description: "Concept to screenplay, casting, storyboard, AI scenes, audio, and final platform-ready video" },
 ];
 
 // Duration options
@@ -57,6 +58,11 @@ export default function Home() {
   const [duration, setDuration] = useState(30);
   const [primaryColor, setPrimaryColor] = useState("#1a1a2e");
   const [textColor, setTextColor] = useState("#ffffff");
+  const [targetAudience, setTargetAudience] = useState("General audience");
+  const [language, setLanguage] = useState("English");
+  const [tone, setTone] = useState("Professional and cinematic");
+  const [platform, setPlatform] = useState("standard");
+  const [agenticModel, setAgenticModel] = useState("seedanceStandard");
 
   // Generation state
   const [isGenerating, setIsGenerating] = useState(false);
@@ -132,7 +138,17 @@ export default function Home() {
       const response = await fetch("/api/videos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(videoType === "AgenticVideoGenerator" ? {
+          videoType,
+          title: prompt.trim().slice(0, 200),
+          brief: prompt.trim(),
+          targetAudience,
+          durationSeconds: duration,
+          language,
+          tone,
+          platform,
+          videoModel: agenticModel,
+        } : {
           prompt: prompt.trim(),
           videoType,
           durationSec: duration,
@@ -226,6 +242,53 @@ export default function Home() {
                   rows={4}
                 />
               </div>
+
+              {videoType === "AgenticVideoGenerator" && (
+                <div className="space-y-4 rounded-lg border p-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="agentic-audience">Target Audience</Label>
+                    <Input id="agentic-audience" value={targetAudience} onChange={(e) => setTargetAudience(e.target.value)} disabled={isGenerating} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="agentic-language">Language</Label>
+                      <Input id="agentic-language" value={language} onChange={(e) => setLanguage(e.target.value)} disabled={isGenerating} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="agentic-tone">Tone</Label>
+                      <Input id="agentic-tone" value={tone} onChange={(e) => setTone(e.target.value)} disabled={isGenerating} />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Platform</Label>
+                      <Select value={platform} onValueChange={setPlatform} disabled={isGenerating}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="standard">Standard 16:9</SelectItem>
+                          <SelectItem value="youtube">YouTube</SelectItem>
+                          <SelectItem value="linkedin">LinkedIn</SelectItem>
+                          <SelectItem value="instagram_reels">Instagram Reels</SelectItem>
+                          <SelectItem value="tiktok">TikTok</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Video Model</Label>
+                      <Select value={agenticModel} onValueChange={setAgenticModel} disabled={isGenerating}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="seedanceStandard">Seedance 2.0</SelectItem>
+                          <SelectItem value="seedanceFast">Seedance 2.0 Fast</SelectItem>
+                          <SelectItem value="veoFastReference">Veo 3.1 Fast Reference</SelectItem>
+                          <SelectItem value="minimaxImage">MiniMax H3 Image</SelectItem>
+                          <SelectItem value="minimaxReference">MiniMax H3 Reference</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Video Type */}
               <div className="space-y-2">
