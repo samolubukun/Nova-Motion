@@ -10,6 +10,7 @@ export interface RenderJob {
   progress: number;
   videoUrl?: string;
   error?: string;
+  currentStage?: string;
   webhookUrl?: string;
   // Async pipeline params (used by TextToVideo/MicroDrama/UGC: the timeline or
   // final video is generated inside the job before rendering)
@@ -33,6 +34,20 @@ export interface RenderJob {
     multiScene?: boolean;
     targetDurationSec?: number;
     lipSync?: boolean;
+    // AgenticVideoGenerator params
+    title?: string;
+    brief?: string;
+    targetAudience?: string;
+    durationSeconds?: number;
+    language?: string;
+    tone?: string;
+    keyMessages?: string[];
+    callToAction?: string;
+    platform?: string;
+    characterDescription?: string;
+    referenceImages?: string[];
+    videoModel?: string;
+    videoResolution?: string;
   };
   createdAt: Date;
   startedAt?: Date;
@@ -58,6 +73,12 @@ const JOB_TTL_MS = 60 * 60 * 1000;
 // Callback for when a job should start rendering
 type RenderCallback = (job: RenderJob) => Promise<void>;
 let onRenderStart: RenderCallback | null = null;
+
+export function enqueueExistingJob(job: RenderJob): void {
+  if (!jobs.has(job.id)) jobs.set(job.id, job);
+  if (!pendingQueue.includes(job.id)) pendingQueue.push(job.id);
+  processQueue();
+}
 
 /**
  * Register the render callback
@@ -109,7 +130,7 @@ export function getJob(jobId: string): RenderJob | undefined {
  */
 export function updateJobStatus(
   jobId: string,
-  updates: Partial<Pick<RenderJob, "status" | "progress" | "videoUrl" | "error" | "startedAt" | "completedAt">>
+  updates: Partial<Pick<RenderJob, "status" | "progress" | "videoUrl" | "error" | "currentStage" | "startedAt" | "completedAt">>
 ) {
   const job = jobs.get(jobId);
   if (!job) return;
