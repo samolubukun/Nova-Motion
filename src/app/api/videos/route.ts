@@ -18,6 +18,7 @@ import {
   getAspectRatioDimensions,
   MicroDramaRequestSchema,
   UGCRequestSchema,
+  AgenticVideoRequestSchema,
 } from "../../../../shared/video-schema";
 import * as path from "path";
 import * as fs from "fs";
@@ -178,9 +179,73 @@ async function submitMicroDramaToRenderServer(
   return response.json();
 }
 
+async function submitAgenticVideoToRenderServer(
+  payload: Record<string, unknown>
+): Promise<{ jobId: string; status: string; createdAt: string }> {
+  const { url, secret } = getRenderServerConfig();
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (secret) headers["X-Render-Secret"] = secret;
+
+  const response = await fetch(`${url}/render/agentic-video`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: "Unknown error" }));
+    throw new Error(error.error || `Render server returned ${response.status}`);
+  }
+  return response.json();
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    if (body?.videoType === "AgenticVideoGenerator") {
+      const candidate = {
+        title: body.title ?? body.prompt,
+        brief: body.brief ?? body.prompt,
+        targetAudience: body.targetAudience ?? "General audience",
+        durationSeconds: body.durationSeconds ?? body.durationSec,
+        language: body.language,
+        tone: body.tone,
+        keyMessages: body.keyMessages,
+        callToAction: body.callToAction,
+        platform: body.platform,
+        aspectRatio: body.aspectRatio,
+        voice: body.voice,
+        style: typeof body.style === "string" ? body.style : undefined,
+        videoModel: body.videoModel,
+        videoResolution: body.videoResolution,
+        characterDescription: body.characterDescription,
+        referenceImages: body.referenceImages,
+        lipSync: body.lipSync,
+        webhookUrl: body.webhookUrl,
+      };
+      const validation = AgenticVideoRequestSchema.safeParse(candidate);
+      if (!validation.success) {
+        return NextResponse.json({
+          success: false,
+          error: "Invalid AgenticVideoGenerator request",
+          details: validation.error.issues.map((e) => ({
+            path: e.path.join("."),
+            message: e.message,
+          })),
+        }, { status: 400 });
+      }
+
+      try {
+        const renderResult = await submitAgenticVideoToRenderServer(validation.data);
+        return NextResponse.json({ success: true, ...renderResult });
+      } catch (renderErr) {
+        console.error("[API Gateway] Agentic render submission failed:", renderErr);
+        return NextResponse.json({
+          success: false,
+          error: "Unable to connect to render server. Please try again later.",
+        }, { status: 503 });
+      }
+    }
 
     // MicroDrama async pipeline submission (idea → story → scenes → I2V clips,
     // all generated inside the render job, then rendered).
