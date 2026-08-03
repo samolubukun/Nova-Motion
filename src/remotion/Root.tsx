@@ -193,6 +193,33 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
       <Composition
+        id="AgenticVideoGenerator"
+        component={WavespeedVideo}
+        durationInFrames={300}
+        fps={30}
+        width={1920}
+        height={1080}
+        schema={wavespeedVideoPropsSchema}
+        defaultProps={{
+          timeline: {
+            shortTitle: "Default Agentic Video",
+            elements: [], text: [], words: [], audio: [], music: [], width: 1920, height: 1080,
+          },
+        }}
+        calculateMetadata={({ props }) => {
+          const { timeline } = props;
+          const lastElement = timeline.elements[timeline.elements.length - 1];
+          const lastAudio = timeline.audio[timeline.audio.length - 1];
+          const contentEndMs = Math.max(lastElement?.endMs || 0, lastAudio?.endMs || 0);
+          return {
+            durationInFrames: contentEndMs ? Math.floor((contentEndMs * 30) / 1000) + 30 : 150,
+            fps: 30,
+            width: timeline.width || 1920,
+            height: timeline.height || 1080,
+          };
+        }}
+      />
+      <Composition
         id="StockImage"
         component={AIVideo}
         durationInFrames={300}
