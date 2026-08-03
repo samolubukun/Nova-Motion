@@ -6,10 +6,11 @@ dotenv.config({ path: path.join(process.cwd(), ".env.local") });
 
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
-import { createJob, getJob, setRenderCallback, getQueueStats } from "./queue";
+import { createJob, getJob, setRenderCallback, getQueueStats, enqueueExistingJob } from "./queue";
 import { renderVideo } from "./renderer";
 import { getVideosDirectory, cleanupOldVideos, ensureVideosDir } from "./storage";
-import { RenderRequestSchema, TextToVideoRequestSchema, MicroDramaRequestSchema, UGCRequestSchema } from "../shared/video-schema";
+import { AgenticVideoRequestSchema, RenderRequestSchema, TextToVideoRequestSchema, MicroDramaRequestSchema, UGCRequestSchema } from "../shared/video-schema";
+import { listAgenticCheckpoints } from "../src/lib/agentic-checkpoints";
 
 const app = express();
 const PORT = process.env.RENDER_SERVER_PORT || 3001;
@@ -199,6 +200,42 @@ app.post("/render/ugc", authenticate, (req: Request, res: Response) => {
   }
 });
 
+app.post("/render/agentic-video", authenticate, (req: Request, res: Response) => {
+  try {
+    const validation = AgenticVideoRequestSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        error: "Invalid request",
+        details: validation.error.issues.map((e) => ({
+          path: e.path.join("."),
+          message: e.message,
+        })),
+      });
+    }
+
+    const { webhookUrl, ...pipeline } = validation.data;
+    const job = createJob(
+      "AgenticVideoGenerator",
+      undefined,
+      undefined,
+      webhookUrl,
+      pipeline
+    );
+
+    console.log(`AgenticVideoGenerator job created: ${job.id}`);
+    res.status(201).json({
+      jobId: job.id,
+      status: job.status,
+      createdAt: job.createdAt.toISOString(),
+    });
+  } catch (err) {
+    console.error("Error creating AgenticVideoGenerator job:", err);
+    res.status(500).json({
+      error: err instanceof Error ? err.message : "Internal server error",
+    });
+  }
+});
+
 // Get job status
 app.get("/render/:jobId", authenticate, (req: Request, res: Response) => {
   const jobId = req.params.jobId as string;
@@ -214,6 +251,7 @@ app.get("/render/:jobId", authenticate, (req: Request, res: Response) => {
     progress: job.progress,
     videoUrl: job.videoUrl,
     error: job.error,
+    currentStage: job.currentStage,
     createdAt: job.createdAt.toISOString(),
     startedAt: job.startedAt?.toISOString(),
     completedAt: job.completedAt?.toISOString(),
@@ -263,6 +301,19 @@ setRenderCallback(async (job) => {
   await renderVideo(job, baseUrl);
 });
 
+for (const checkpoint of listAgenticCheckpoints()) {
+  if (checkpoint.timeline || !checkpoint.input || checkpoint.error) continue;
+  enqueueExistingJob({
+    id: checkpoint.jobId,
+    videoType: "AgenticVideoGenerator",
+    status: "queued",
+    progress: checkpoint.progress,
+    currentStage: checkpoint.currentStage,
+    pipeline: checkpoint.input as never,
+    createdAt: new Date(checkpoint.updatedAt),
+  });
+}
+
 // Ensure videos directory exists
 ensureVideosDir();
 
@@ -282,6 +333,7 @@ Endpoints:
   POST /render/text-to-video - Submit an async TextToVideo pipeline job
   POST /render/micro-drama  - Submit an async MicroDrama pipeline job
   POST /render/ugc          - Submit an async UGC pipeline job
+  POST /render/agentic-video - Submit an end-to-end agentic video job
   GET  /render/:id          - Get job status
   GET  /videos/:file        - Serve rendered videos
   GET  /health              - Health check
