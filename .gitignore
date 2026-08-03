@@ -50,3 +50,6 @@ next-env.d.ts
 
 # Temporary assets cache
 /public/assets-temp/
+
+# OpenCode local configuration
+/opencode.json
