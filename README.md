@@ -65,6 +65,40 @@ Replicates the Open-AI-UGC studio (an Arcads / MakeUGC alternative) using the **
 * **Async**: the request returns a `jobId` immediately; the WaveSpeed generation runs inside the render job, the finished mp4 is downloaded into `rendered-videos/`, uploaded to S3/R2/Spaces when configured, and polled via `GET /api/videos/{jobId}`.
 * **UI**: a full studio lives at `/ugc` (model cards, image upload with previews, **template library** with 18 proven UGC scripts — meal planning, beauty, SaaS, pet, local service, etc. — that load into the script box, param pickers, generation-style toggle, live polling player).
 
+### 9. Agentic Video Generator (`videoType: "AgenticVideoGenerator"`)
+Implements the end-to-end workflow described by the AI Video Generation Pipeline reference project, replacing its placeholder clients and fake output paths with the working services in this repository.
+* **Production agents**: WaveSpeed LLM develops a screenplay, extracts characters, plans scenes, and writes visual, camera, and sound direction.
+* **Character and scene generation**: WaveSpeed `bytedance/seedream-v5.0-pro` generates shot keyframes; verified video options are Seedance 2.0 (`bytedance/seedance-2.0/image-to-video`), Seedance 2.0 Fast (`bytedance/seedance-2.0-fast/image-to-video`), Veo 3.1 Fast Reference (`google/veo3.1-fast/reference-to-video`), MiniMax H3 Image-to-Video (`minimax/h3/image-to-video`), and MiniMax H3 Reference-to-Video (`minimax/h3/reference-to-video`).
+* **Strict model execution**: this mode has no Pexels, stock, or alternate-provider fallback. It validates the selected model's ratios, duration, resolution, and reference-image limits before submission. A provider failure fails the job with the provider error.
+* **Talking scenes**: when `lipSync` is enabled, ElevenLabs audio is sent to verified WaveSpeed `wavespeed-ai/infinitetalk`. No lip-sync fallback is used.
+* **Assembly and export**: the generated clips are assembled by Remotion, persisted through the existing local/S3/R2 storage layer, and returned through the standard async job API.
+* **Platform presets**: `youtube`, `linkedin`, and `standard` default to 16:9; `instagram_reels` and `tiktok` default to 9:16. An explicit `aspectRatio` overrides the platform preset.
+* **Async**: the endpoint returns a `jobId` immediately. Poll `GET /api/videos/{jobId}` for progress and the final URL.
+
+Verified payload constraints:
+* Seedance I2V uses `prompt`, `image`, `aspect_ratio`, `resolution`, `duration` from 4-15 seconds, and `generate_audio`.
+* Veo Fast Reference uses `prompt`, 1-3 `images`, `16:9` or `9:16`, `720p` or `1080p`, and fixed 8-second output.
+* MiniMax H3 I2V uses `image`, `prompt`, `resolution: "2k"`, and duration from 5-15 seconds.
+* MiniMax H3 Reference uses `prompt`, 1-9 `reference_images`, supported `aspect_ratio`, `resolution: "2k"`, and duration from 5-15 seconds.
+* Seedream V5 Pro uses `prompt`, `aspect_ratio`, `resolution` of `1k` or `2k`, and `output_format` of `jpeg` or `png`.
+* InfiniteTalk uses `image`, `audio`, optional `prompt`, `resolution` of `480p` or `720p`, and `seed`.
+
+```json
+{
+  "videoType": "AgenticVideoGenerator",
+  "title": "AI Manufacturing Copilot",
+  "brief": "Introduce an AI copilot that helps factory teams diagnose downtime and improve throughput.",
+  "targetAudience": "Manufacturing executives",
+  "durationSeconds": 45,
+  "language": "English",
+  "tone": "Professional and optimistic",
+  "keyMessages": ["Faster diagnosis", "Safer decisions", "Measurable throughput"],
+  "callToAction": "Book a factory assessment",
+  "platform": "linkedin",
+  "style": "Premium industrial documentary, realistic lighting"
+}
+```
+
 ---
 
 ## Tech Stack
