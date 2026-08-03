@@ -26,6 +26,7 @@ export const VideoType = z.enum([
   "TextToVideo",
   "MicroDrama",
   "UGC",
+  "AgenticVideoGenerator",
 ]);
 export type VideoType = z.infer<typeof VideoType>;
 
@@ -142,6 +143,47 @@ export const UGCRequestSchema = z.object({
 });
 export type UGCRequest = z.infer<typeof UGCRequestSchema>;
 
+export const AgenticPlatform = z.enum([
+  "youtube",
+  "instagram_reels",
+  "linkedin",
+  "tiktok",
+  "standard",
+]);
+export type AgenticPlatform = z.infer<typeof AgenticPlatform>;
+export const AgenticVideoModel = z.enum([
+  "seedanceStandard",
+  "seedanceFast",
+  "veoFastReference",
+  "minimaxImage",
+  "minimaxReference",
+]);
+export type AgenticVideoModel = z.infer<typeof AgenticVideoModel>;
+
+// End-to-end concept-to-video mode based on the feature set described by the
+// AI Video Generation Pipeline reference project.
+export const AgenticVideoRequestSchema = z.object({
+  title: z.string().min(1).max(200),
+  brief: z.string().min(10).max(5000),
+  targetAudience: z.string().min(1).max(500),
+  durationSeconds: z.number().min(10).max(180).default(60),
+  language: z.string().min(1).max(80).default("English"),
+  tone: z.string().min(1).max(100).default("professional"),
+  keyMessages: z.array(z.string().min(1).max(500)).max(10).optional(),
+  callToAction: z.string().max(500).optional(),
+  platform: AgenticPlatform.default("standard"),
+  aspectRatio: z.enum(ASPECT_RATIOS).optional(),
+  voice: z.string().max(100).optional(),
+  style: z.string().max(500).optional(),
+  videoModel: AgenticVideoModel.default("seedanceStandard"),
+  videoResolution: z.enum(["480p", "720p", "1080p", "2k", "4k"]).optional(),
+  characterDescription: z.string().max(1000).optional(),
+  referenceImages: z.array(z.string().url()).max(7).optional(),
+  lipSync: z.boolean().default(false).optional(),
+  webhookUrl: z.string().url().optional(),
+});
+export type AgenticVideoRequest = z.infer<typeof AgenticVideoRequestSchema>;
+
 // === Job Status Types ===
 export const JobStatus = z.enum([
   "queued",
@@ -157,6 +199,7 @@ export const JobResponseSchema = z.object({
   progress: z.number().min(0).max(100).optional(),
   videoUrl: z.string().url().optional(),
   error: z.string().optional(),
+  currentStage: z.string().optional(),
   createdAt: z.string().datetime().optional(),
   completedAt: z.string().datetime().optional(),
 });
