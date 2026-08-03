@@ -8,6 +8,10 @@ import { generateWavespeedVideoTimeline } from "../src/lib/wavespeed-timeline";
 import { generateMicroDramaTimeline } from "../src/lib/micro-drama-timeline";
 import { generateUGCVideo } from "../src/lib/ugc-pipeline";
 import { generateUGCMultiSceneTimeline } from "../src/lib/ugc-multi-scene";
+import { generateAgenticVideoTimeline } from "../src/lib/agentic-video-pipeline";
+import type { AgenticVideoInput } from "../src/lib/agentic-video-pipeline";
+import type { AgenticStage } from "../src/lib/agentic-checkpoints";
+import { loadAgenticCheckpoint, saveAgenticCheckpoint } from "../src/lib/agentic-checkpoints";
 
 // Cache the bundle URL to avoid rebundling on every render
 let cachedBundleUrl: string | null = null;
@@ -190,6 +194,39 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
       console.log(`[MicroDrama] Timeline ready for job ${job.id}.`);
     }
 
+    if (job.videoType === "AgenticVideoGenerator" && job.pipeline) {
+      console.log(`[AgenticVideoGenerator] Running concept-to-video pipeline for job ${job.id}...`);
+      const pipeline = job.pipeline;
+      const input: AgenticVideoInput = {
+        title: pipeline.title || pipeline.prompt || "Untitled video",
+        brief: pipeline.brief || pipeline.prompt || "",
+        targetAudience: pipeline.targetAudience || "General audience",
+        durationSeconds: pipeline.durationSeconds || 60,
+        language: pipeline.language || "English",
+        tone: pipeline.tone || "professional",
+        keyMessages: pipeline.keyMessages,
+        callToAction: pipeline.callToAction,
+        platform: pipeline.platform || "standard",
+        aspectRatio: pipeline.aspectRatio,
+        voice: pipeline.voice,
+        style: pipeline.style,
+        videoModel: pipeline.videoModel,
+        videoResolution: pipeline.videoResolution,
+        characterDescription: pipeline.characterDescription,
+        referenceImages: pipeline.referenceImages,
+        lipSync: pipeline.lipSync,
+      };
+      job.timeline = await generateAgenticVideoTimeline(input, {
+        jobId: job.id,
+        assetBaseUrl: baseUrl,
+        onProgress: (progress) => updateJobStatus(job.id, { progress: Math.round(progress * 25) }),
+        onStage: (stage: AgenticStage) => {
+          updateJobStatus(job.id, { currentStage: stage });
+        },
+      });
+      console.log(`[AgenticVideoGenerator] Timeline ready for job ${job.id}.`);
+    }
+
     // Get the bundle URL (cached or create new)
     const bundleUrl = await getBundleUrl();
 
@@ -199,7 +236,7 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
 
     // Prepare input props
     let inputProps: any = {};
-    if (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama" || job.videoType === "UGC") {
+    if (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama" || job.videoType === "UGC" || job.videoType === "AgenticVideoGenerator") {
       inputProps = { timeline: job.timeline };
     } else if (job.videoType === "MotionGraphics") {
       inputProps = { storyboard: job.timeline };
@@ -259,6 +296,7 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
       progress: 100,
       videoUrl,
       completedAt: new Date(),
+      currentStage: job.videoType === "AgenticVideoGenerator" ? "complete" : job.currentStage,
     });
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "Unknown render error";
@@ -269,5 +307,19 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
       error: errorMessage,
       completedAt: new Date(),
     });
+    if (job.videoType === "AgenticVideoGenerator") {
+      const existing = loadAgenticCheckpoint(job.id);
+      saveAgenticCheckpoint({
+        jobId: job.id,
+        input: job.pipeline,
+        currentStage: (job.currentStage || "planning") as AgenticStage,
+        completedStages: existing?.completedStages || [],
+        progress: job.progress,
+        artifacts: existing?.artifacts || { timeline: job.timeline },
+        providerTasks: existing?.providerTasks || {},
+        updatedAt: new Date().toISOString(),
+        error: errorMessage,
+      });
+    }
   }
 }
