@@ -12,6 +12,8 @@ import { generateAgenticVideoTimeline } from "../src/lib/agentic-video-pipeline"
 import type { AgenticVideoInput } from "../src/lib/agentic-video-pipeline";
 import type { AgenticStage } from "../src/lib/agentic-checkpoints";
 import { loadAgenticCheckpoint, saveAgenticCheckpoint } from "../src/lib/agentic-checkpoints";
+import { generateLumaVideoTimeline } from "../src/lib/luma-pipeline";
+import type { LumaVideoInput } from "../src/lib/luma-pipeline";
 
 // Cache the bundle URL to avoid rebundling on every render
 let cachedBundleUrl: string | null = null;
@@ -194,7 +196,7 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
       console.log(`[MicroDrama] Timeline ready for job ${job.id}.`);
     }
 
-    if (job.videoType === "AgenticVideoGenerator" && job.pipeline) {
+if (job.videoType === "AgenticVideoGenerator" && job.pipeline) {
       console.log(`[AgenticVideoGenerator] Running concept-to-video pipeline for job ${job.id}...`);
       const pipeline = job.pipeline;
       const input: AgenticVideoInput = {
@@ -227,6 +229,41 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
       console.log(`[AgenticVideoGenerator] Timeline ready for job ${job.id}.`);
     }
 
+    if (job.videoType === "Luma" && job.pipeline) {
+      console.log(`[Luma] Running Ray 3.2 pipeline for job ${job.id}...`);
+      const pipeline = job.pipeline;
+      const input: LumaVideoInput = {
+        prompt: pipeline.prompt || "",
+        title: pipeline.title,
+        useCase: pipeline.useCase as LumaVideoInput["useCase"],
+        targetAudience: pipeline.targetAudience,
+        targetDurationSeconds: pipeline.targetDurationSeconds,
+        language: pipeline.language,
+        tone: pipeline.tone,
+        style: pipeline.style,
+        referenceImages: pipeline.referenceImages,
+        sourceVideoUrl: pipeline.sourceVideoUrl,
+        sourceVideoFileId: pipeline.sourceVideoFileId,
+        explicitOperation: pipeline.explicitOperation as LumaVideoInput["explicitOperation"],
+        aspectRatio: pipeline.aspectRatio,
+        resolution: pipeline.resolution,
+        duration: (pipeline.videoDuration || (pipeline.duration ? `${pipeline.duration}s` : undefined)) as LumaVideoInput["duration"],
+        hdr: pipeline.hdr,
+        loop: pipeline.loop,
+        editStrength: pipeline.editStrength,
+        multiKeyframes: pipeline.multiKeyframes,
+        voice: pipeline.voice,
+        generateAudio: pipeline.generateAudio,
+        sceneCount: pipeline.sceneCount,
+      };
+      job.timeline = await generateLumaVideoTimeline(input, {
+        assetBaseUrl: baseUrl,
+        onProgress: (progress) => updateJobStatus(job.id, { progress: Math.round(progress * 25) }),
+        onStage: (stage: string) => updateJobStatus(job.id, { currentStage: stage }),
+      });
+      console.log(`[Luma] Timeline ready for job ${job.id}.`);
+    }
+
     // Get the bundle URL (cached or create new)
     const bundleUrl = await getBundleUrl();
 
@@ -236,7 +273,7 @@ export async function renderVideo(job: RenderJob, baseUrl: string): Promise<void
 
     // Prepare input props
     let inputProps: any = {};
-    if (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama" || job.videoType === "UGC" || job.videoType === "AgenticVideoGenerator") {
+    if (job.videoType === "AIVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama" || job.videoType === "UGC" || job.videoType === "AgenticVideoGenerator" || job.videoType === "Luma") {
       inputProps = { timeline: job.timeline };
     } else if (job.videoType === "MotionGraphics") {
       inputProps = { storyboard: job.timeline };
