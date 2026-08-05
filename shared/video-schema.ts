@@ -27,6 +27,7 @@ export const VideoType = z.enum([
   "MicroDrama",
   "UGC",
   "AgenticVideoGenerator",
+  "Luma",
 ]);
 export type VideoType = z.infer<typeof VideoType>;
 
@@ -183,6 +184,66 @@ export const AgenticVideoRequestSchema = z.object({
   webhookUrl: z.string().url().optional(),
 });
 export type AgenticVideoRequest = z.infer<typeof AgenticVideoRequestSchema>;
+
+// === Luma (Ray 3.2) Pipeline Request Schema (async, render-server side) ===
+// One mode that covers every Ray 3.2 use-case: text-to-video, image-to-video,
+// multi-keyframe, loop, extend, video edit, and video reframe. Optionally adds
+// ElevenLabs voiceover + word captions (Ray produces silent video).
+export const LumaUseCase = z.enum([
+  "ugc_post",
+  "product_ad",
+  "product_launch",
+  "real_estate",
+  "event_promo",
+  "education",
+  "nonprofit",
+  "social_generic",
+  "custom",
+]);
+export type LumaUseCase = z.infer<typeof LumaUseCase>;
+
+export const LumaExplicitOperation = z.enum(["edit", "reframe", "image_to_video"]);
+export type LumaExplicitOperation = z.infer<typeof LumaExplicitOperation>;
+
+export const LumaVideoDuration = z.enum(["5s", "10s"]);
+export type LumaVideoDuration = z.infer<typeof LumaVideoDuration>;
+
+export const LumaResolution = z.enum(["360p", "540p", "720p", "1080p"]);
+export type LumaResolution = z.infer<typeof LumaResolution>;
+
+export const LumaEditStrength = z.enum([
+  "adhere_1", "adhere_2", "adhere_3",
+  "flex_1", "flex_2", "flex_3",
+  "reimagine_1", "reimagine_2", "reimagine_3",
+]);
+export type LumaEditStrength = z.infer<typeof LumaEditStrength>;
+
+export const LumaRequestSchema = z.object({
+  prompt: z.string().min(1).max(6000),
+  title: z.string().max(200).optional(),
+  useCase: LumaUseCase.default("custom").optional(),
+  targetAudience: z.string().max(500).optional(),
+  targetDurationSeconds: z.number().min(5).max(180).optional(),
+  language: z.string().max(80).optional(),
+  tone: z.string().max(100).optional(),
+  style: z.string().max(500).optional(),
+  referenceImages: z.array(z.string().url()).max(10).optional(),
+  sourceVideoUrl: z.string().url().optional(),
+  sourceVideoFileId: z.string().max(100).optional(),
+  explicitOperation: LumaExplicitOperation.optional(),
+  aspectRatio: z.enum(ASPECT_RATIOS).optional(),
+  resolution: LumaResolution.default("720p").optional(),
+  duration: LumaVideoDuration.default("5s").optional(),
+  hdr: z.boolean().default(false).optional(),
+  loop: z.boolean().default(false).optional(),
+  editStrength: LumaEditStrength.optional(),
+  multiKeyframes: z.boolean().default(false).optional(),
+  voice: z.string().max(100).optional(),
+  generateAudio: z.boolean().default(false).optional(),
+  sceneCount: z.number().min(1).max(6).optional(),
+  webhookUrl: z.string().url().optional(),
+});
+export type LumaRequest = z.infer<typeof LumaRequestSchema>;
 
 // === Job Status Types ===
 export const JobStatus = z.enum([
