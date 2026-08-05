@@ -536,6 +536,9 @@ All requests must be sent as `POST` requests to:
   ```
 
 #### 12. Luma Ray 3.2 Video (`Luma`)
+The `Luma` mode automatically detects the right Ray 3.2 endpoint based on the media attachments you provide, or you can set `explicitOperation` manually. If `useCase` is omitted, it defaults to `"custom"` and generates video directly.
+
+##### Example A: Text-to-Video / Multi-Scene Ad (Scenario Picker)
 ```json
 {
   "videoType": "Luma",
@@ -544,13 +547,53 @@ All requests must be sent as `POST` requests to:
   "aspectRatio": "16:9",
   "resolution": "720p",
   "duration": "5s",
-  "hdr": false,
   "generateAudio": true,
   "voice": "EXAVITQu4vr4xnSDxMaL"
 }
 ```
 
-* **Requires** `LUMA_AGENTS_API_KEY` in `.env.local`. Dispatches to Luma's Ray 3.2 API (`agents.lumalabs.ai`). Supports all Ray operations (Text-to-Video, Image-to-Video, Loop, Extend, Video Edit, Video Reframe) with multi-scene screenplay planning, extend chaining (`start_frame: { generation_id }`), and layered ElevenLabs TTS + kinetic word-level captions.
+##### Example B: Image-to-Video with Image Attachments (`referenceImages`)
+Animates uploaded images as starting/guide keyframes:
+```json
+{
+  "videoType": "Luma",
+  "prompt": "Animate this product photo with gentle steam rising and soft lighting movement",
+  "referenceImages": ["https://your-cdn.com/product-photo.jpg"],
+  "explicitOperation": "image_to_video",
+  "aspectRatio": "9:16",
+  "resolution": "1080p",
+  "duration": "5s"
+}
+```
+
+##### Example C: Video Editing / Restyling Uploaded Video (`sourceVideoUrl`)
+Re-renders an uploaded video clip under a new prompt and edit strength (`adhere_1-3`, `flex_1-3`, `reimagine_1-3`):
+```json
+{
+  "videoType": "Luma",
+  "prompt": "Transform this video into a moonlit cyberpunk scene with neon highlights",
+  "sourceVideoUrl": "https://your-cdn.com/user-footage.mp4",
+  "explicitOperation": "edit",
+  "editStrength": "flex_2",
+  "resolution": "720p"
+}
+```
+
+##### Example D: Video Reframing / Outpainting (`sourceVideoUrl` + `aspectRatio`)
+Outpaints an existing video into a new platform-native shape (e.g., 16:9 landscape $\rightarrow$ 9:16 vertical Reel):
+```json
+{
+  "videoType": "Luma",
+  "prompt": "Extend the background into cinematic vertical portrait space",
+  "sourceVideoUrl": "https://your-cdn.com/landscape-clip.mp4",
+  "explicitOperation": "reframe",
+  "aspectRatio": "9:16",
+  "resolution": "720p"
+}
+```
+
+* **Requires** `LUMA_AGENTS_API_KEY` in `.env.local`. Dispatches to Luma's Ray 3.2 API (`agents.lumalabs.ai`). Automatically handles single-shot operations or multi-scene screenplay planning with extend chaining (`start_frame: { generation_id }`) and layered ElevenLabs TTS + kinetic word-level captions.
+* **Default Behavior**: When no `useCase` is passed, it defaults to `"custom"` (pure prompt generation). When media attachments (`sourceVideoUrl` / `referenceImages`) are attached without an `explicitOperation`, it auto-detects the right operation (`edit` for video files, `image_to_video` for images).
 * **Async** — returns a `jobId` immediately; poll `GET /api/videos/{jobId}` until completed.
 
 * **Response**:
