@@ -19,6 +19,7 @@ import {
   MicroDramaRequestSchema,
   UGCRequestSchema,
   AgenticVideoRequestSchema,
+  LumaRequestSchema,
 } from "../../../../shared/video-schema";
 import * as path from "path";
 import * as fs from "fs";
@@ -198,6 +199,25 @@ async function submitAgenticVideoToRenderServer(
   return response.json();
 }
 
+async function submitLumaToRenderServer(
+  payload: Record<string, unknown>
+): Promise<{ jobId: string; status: string; createdAt: string }> {
+  const { url, secret } = getRenderServerConfig();
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (secret) headers["X-Render-Secret"] = secret;
+
+  const response = await fetch(`${url}/render/luma`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: "Unknown error" }));
+    throw new Error(error.error || `Render server returned ${response.status}`);
+  }
+  return response.json();
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -240,6 +260,48 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true, ...renderResult });
       } catch (renderErr) {
         console.error("[API Gateway] Agentic render submission failed:", renderErr);
+        return NextResponse.json({
+          success: false,
+          error: "Unable to connect to render server. Please try again later.",
+        }, { status: 503 });
+      }
+    }
+
+    // Luma (Ray 3.2) mode submission — one mode, every Ray use-case. The
+    // pipeline (single-shot edit/reframe/i2v, or screenplay -> scenes with
+    // extend chaining + optional TTS/captions) runs inside the render job.
+    if (body?.videoType === "Luma" && typeof body.prompt === "string") {
+      const candidate: Record<string, unknown> = {
+        prompt: body.prompt,
+      };
+      const lumaFields = [
+        "title", "useCase", "targetAudience", "targetDurationSeconds", "language",
+        "tone", "style", "referenceImages", "sourceVideoUrl", "sourceVideoFileId",
+        "explicitOperation", "aspectRatio", "resolution", "duration", "hdr",
+        "loop", "editStrength", "multiKeyframes", "voice", "generateAudio",
+        "sceneCount", "webhookUrl",
+      ] as const;
+      for (const field of lumaFields) {
+        if (body[field] !== undefined) candidate[field] = body[field];
+      }
+
+      const validation = LumaRequestSchema.safeParse(candidate);
+      if (!validation.success) {
+        return NextResponse.json({
+          success: false,
+          error: "Invalid Luma request",
+          details: validation.error.issues.map((e) => ({
+            path: e.path.join("."),
+            message: e.message,
+          })),
+        }, { status: 400 });
+      }
+
+      try {
+        const renderResult = await submitLumaToRenderServer(validation.data);
+        return NextResponse.json({ success: true, ...renderResult });
+      } catch (renderErr) {
+        console.error("[API Gateway] Luma render submission failed:", renderErr);
         return NextResponse.json({
           success: false,
           error: "Unable to connect to render server. Please try again later.",
