@@ -40,6 +40,7 @@ const VIDEO_TYPES: { value: VideoType; label: string; description: string }[] = 
   { value: "MicroDrama", label: "Micro Drama", description: "Full agentic pipeline: AI story, characters, storyboard, and Seedance clips" },
   { value: "UGC", label: "UGC Ad", description: "AI UGC ad studio: script + reference images → Veo/Grok/Seedance/Happy Horse clip. Full studio at /ugc" },
   { value: "AgenticVideoGenerator", label: "Agentic Video", description: "Concept to screenplay, casting, storyboard, AI scenes, audio, and final platform-ready video" },
+  { value: "Luma", label: "Luma AI (Ray 3.2)", description: "All Ray 3.2 capabilities in one mode: T2V, I2V, loop, extend, video edit, reframe + TTS" },
 ];
 
 // Duration options
@@ -63,6 +64,15 @@ export default function Home() {
   const [tone, setTone] = useState("Professional and cinematic");
   const [platform, setPlatform] = useState("standard");
   const [agenticModel, setAgenticModel] = useState("seedanceStandard");
+
+  // Luma state
+  const [lumaUseCase, setLumaUseCase] = useState("custom");
+  const [lumaOperation, setLumaOperation] = useState("auto");
+  const [lumaResolution, setLumaResolution] = useState("720p");
+  const [lumaHdr, setLumaHdr] = useState(false);
+  const [lumaLoop, setLumaLoop] = useState(false);
+  const [lumaGenerateAudio, setLumaGenerateAudio] = useState(true);
+  const [lumaSourceVideo, setLumaSourceVideo] = useState("");
 
   // Generation state
   const [isGenerating, setIsGenerating] = useState(false);
@@ -148,6 +158,18 @@ export default function Home() {
           tone,
           platform,
           videoModel: agenticModel,
+        } : videoType === "Luma" ? {
+          videoType,
+          prompt: prompt.trim(),
+          title: prompt.trim().slice(0, 200),
+          useCase: lumaUseCase,
+          resolution: lumaResolution,
+          duration: `${duration <= 5 ? 5 : 10}s`,
+          hdr: lumaHdr,
+          loop: lumaLoop,
+          generateAudio: lumaGenerateAudio,
+          sourceVideoUrl: lumaSourceVideo.trim() || undefined,
+          explicitOperation: lumaOperation === "auto" ? undefined : lumaOperation,
         } : {
           prompt: prompt.trim(),
           videoType,
@@ -286,6 +308,102 @@ export default function Home() {
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {videoType === "Luma" && (
+                <div className="space-y-4 rounded-lg border p-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Use Case Scenario</Label>
+                      <Select value={lumaUseCase} onValueChange={setLumaUseCase} disabled={isGenerating}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="custom">Custom / General</SelectItem>
+                          <SelectItem value="ugc_post">UGC Product Post</SelectItem>
+                          <SelectItem value="product_ad">Product Showcase Ad</SelectItem>
+                          <SelectItem value="product_launch">Product Reveal</SelectItem>
+                          <SelectItem value="real_estate">Real Estate Tour</SelectItem>
+                          <SelectItem value="event_promo">Event Promo</SelectItem>
+                          <SelectItem value="education">Educational / Tutorial</SelectItem>
+                          <SelectItem value="nonprofit">Nonprofit / Awareness</SelectItem>
+                          <SelectItem value="social_generic">Social Media Reel</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Operation Mode</Label>
+                      <Select value={lumaOperation} onValueChange={setLumaOperation} disabled={isGenerating}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="auto">Auto (Detect from inputs)</SelectItem>
+                          <SelectItem value="image_to_video">Image-to-Video</SelectItem>
+                          <SelectItem value="edit">Video Edit (Restyle Footage)</SelectItem>
+                          <SelectItem value="reframe">Video Reframe (Outpaint Crop)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Resolution</Label>
+                      <Select value={lumaResolution} onValueChange={setLumaResolution} disabled={isGenerating}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="360p">360p (Fast Draft)</SelectItem>
+                          <SelectItem value="540p">540p</SelectItem>
+                          <SelectItem value="720p">720p (HD Default)</SelectItem>
+                          <SelectItem value="1080p">1080p (Full HD)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="luma-source-video">Source Video URL (Edit/Reframe)</Label>
+                      <Input
+                        id="luma-source-video"
+                        placeholder="https://... (Optional)"
+                        value={lumaSourceVideo}
+                        onChange={(e) => setLumaSourceVideo(e.target.value)}
+                        disabled={isGenerating}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-4 pt-2">
+                    <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={lumaHdr}
+                        onChange={(e) => setLumaHdr(e.target.checked)}
+                        disabled={isGenerating}
+                        className="rounded border-gray-300"
+                      />
+                      <span>HDR Output</span>
+                    </label>
+
+                    <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={lumaLoop}
+                        onChange={(e) => setLumaLoop(e.target.checked)}
+                        disabled={isGenerating}
+                        className="rounded border-gray-300"
+                      />
+                      <span>Seamless Loop</span>
+                    </label>
+
+                    <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={lumaGenerateAudio}
+                        onChange={(e) => setLumaGenerateAudio(e.target.checked)}
+                        disabled={isGenerating}
+                        className="rounded border-gray-300"
+                      />
+                      <span>Generate TTS Voiceover</span>
+                    </label>
                   </div>
                 </div>
               )}
