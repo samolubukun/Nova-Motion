@@ -48,6 +48,19 @@ export interface RenderJob {
     referenceImages?: string[];
     videoModel?: string;
     videoResolution?: string;
+    // Luma (Ray 3.2) params
+    useCase?: string;
+    targetDurationSeconds?: number;
+    sourceVideoUrl?: string;
+    sourceVideoFileId?: string;
+    explicitOperation?: string;
+    videoDuration?: string;
+    hdr?: boolean;
+    loop?: boolean;
+    editStrength?: string;
+    multiKeyframes?: boolean;
+    generateAudio?: boolean;
+    sceneCount?: number;
   };
   createdAt: Date;
   startedAt?: Date;
