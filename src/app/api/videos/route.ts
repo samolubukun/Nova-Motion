@@ -473,7 +473,7 @@ export async function POST(req: NextRequest) {
       }
 
       const { prompt, videoType: vt, durationSec, style, topic, aspectRatio, webhookUrl, voice } = validation.data;
-      videoType = vt;
+      videoType = vt === "AIVideo" ? "AIStoryboardVideo" : vt;
 
       // Compute aspect ratio dimensions
       const { width, height } = getAspectRatioDimensions(aspectRatio || "9:16");
@@ -487,7 +487,7 @@ export async function POST(req: NextRequest) {
       const selectedVoice = voice || defaultVoice;
       console.log(`[API Gateway] Selected voice [${selectedVoice}] for the render job`);
 
-      if (videoType === "AIVideo") {
+      if (videoType === "AIStoryboardVideo") {
         // Generate AI Storyboard Video Timeline using OpenAI and Deepgram
         timeline = await generateAIVideoTimeline(prompt, topic || "Interesting Facts", selectedVoice, aspectRatio);
         timeline.width = width;
