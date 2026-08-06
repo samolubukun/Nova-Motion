@@ -120,6 +120,27 @@ Implements every core capability of Luma's Ray 3.2 model in a single unified mod
 }
 ```
 
+### 11. Vox Collage Explainer (`videoType: "VoxVideo"`)
+Replicates the Vox-style paper-collage explainer generator using the APIs already in this project.
+* **Beat map**: A hook-led, arc-driven narrative structure (6 arcs) is written by the WaveSpeed LLM, with per-beat headlines, narration, scene specs, and element motion.
+* **Collage posters**: Each beat is generated as a finished torn-paper collage poster by Seedream using a strict 5-part Vox prompt formula (style block, scene, background, headline banner, technical) across 4 visual themes (American Retro, Swiss Modern, Punk Zine, Chinese Ink).
+* **Motion**: Each poster is animated into a clip by Seedance image-to-video using the beat's camera move + element-motion prompt.
+* **Voice & captions**: ElevenLabs (preferred) / Deepgram TTS narration with word-level kinetic captions, plus optional Lyria background music — all assembled by the `WavespeedVideo` composition.
+* **Async**: Returns a `jobId` immediately. Poll `GET /api/videos/{jobId}` for render status.
+
+```json
+{
+  "videoType": "VoxVideo",
+  "prompt": "A brief history of coffee",
+  "theme": "american-retro",
+  "arc": "timeline",
+  "targetDurationSeconds": 30,
+  "aspectRatio": "9:16",
+  "generateAudio": true,
+  "music": true
+}
+```
+
 ---
 
 ## Tech Stack
@@ -234,6 +255,7 @@ All endpoints support the following root payload fields:
   * `"UGC"`: AI UGC ad studio — script + optional reference images → Veo/Grok/Seedance/Happy Horse clip with native audio (Open-AI-UGC replication via WaveSpeed).
   * `"AgenticVideoGenerator"`: Concept to screenplay, casting, storyboard, AI scenes, audio, and platform-ready video.
   * `"Luma"`: Unified Luma Ray 3.2 mode — text-to-video, image-to-video, loop, extend, video edit, reframe + TTS voiceover & kinetic captions.
+  * `"VoxVideo"`: Vox-style paper-collage explainer — LLM beat map → Seedream collage posters → Seedance animated clips + TTS voiceover, captions & music.
 * **`aspectRatio`** (string, optional): Target video layout format. Must be one of:
   * `"9:16"`: Portrait (mobile vertical) - defaults to `1080x1920`.
   * `"16:9"`: Landscape (widescreen desktop) - defaults to `1920x1080`.
@@ -634,6 +656,37 @@ Outpaints an existing video into a new platform-native shape (e.g., 16:9 landsca
 
 * **Requires** `LUMA_AGENTS_API_KEY` in `.env.local`. Dispatches to Luma's Ray 3.2 API (`agents.lumalabs.ai`). Automatically handles single-shot operations or multi-scene screenplay planning with extend chaining (`start_frame: { generation_id }`) and layered ElevenLabs TTS + kinetic word-level captions.
 * **Default Behavior**: When no `useCase` is passed, it defaults to `"custom"` (pure prompt generation). When media attachments (`sourceVideoUrl` / `referenceImages`) are attached without an `explicitOperation`, it auto-detects the right operation (`edit` for video files, `image_to_video` for images).
+* **Async** — returns a `jobId` immediately; poll `GET /api/videos/{jobId}` until completed.
+
+* **Response**:
+  ```json
+  {
+    "success": true,
+    "jobId": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
+    "status": "queued",
+    "createdAt": "2026-07-01T18:00:00.000Z"
+  }
+  ```
+
+#### 13. Vox Collage Explainer (`VoxVideo`)
+Replicates the Vox-style paper-collage explainer generator on top of the APIs this project already uses. A single topic flows through: **LLM narrative beat map** (hook-led, arc-driven, cadence every ~4-6s) → one **Seedream collage poster** per beat (strict 5-part Vox prompt formula + theme preset) → **Seedance I2V** animates each poster into a clip → **ElevenLabs/Deepgram TTS** voiceover with kinetic word captions → optional **Lyria** background music → assembled by the `WavespeedVideo` Remotion composition into a finished mp4.
+
+```json
+{
+  "videoType": "VoxVideo",
+  "prompt": "A brief history of coffee",
+  "theme": "american-retro",
+  "arc": "timeline",
+  "targetDurationSeconds": 30,
+  "aspectRatio": "9:16",
+  "generateAudio": true,
+  "music": true
+}
+```
+
+* **Themes** (`theme`): `swiss-modern` · `american-retro` · `punk-zine` · `chinese-ink` (default `american-retro`).
+* **Arcs** (`arc`): `hook_payoff` · `timeline` · `how_it_works` · `pas` · `bab` · `man_in_hole` (default `hook_payoff`).
+* **Requires** `WAVESPEED_API_KEY` (posters + clips + music) and a TTS key (`ELEVENLABS_API_KEY` preferred or `DEEPGRAM_API_KEY`). The beat-map LLM uses `VOX_LLM_URL`/`VOX_LLM_MODEL` (defaults to the WaveSpeed LLM, fallback key `OPENAI_API_KEY`).
 * **Async** — returns a `jobId` immediately; poll `GET /api/videos/{jobId}` until completed.
 
 * **Response**:
