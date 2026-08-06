@@ -34,20 +34,25 @@
 
 ## What is Nova Motion?
 
-Nova Motion is a production-grade video generation engine built on Next.js and Remotion. A single `POST /api/videos` request kicks off an agentic pipeline that writes the script, plans the shots, generates the visuals, narrates the voiceover, and assembles the final cut - all asynchronously through a dedicated Express render queue.
+Nova Motion is an AI video generation engine. Post a prompt and a mode to `POST /api/videos`, and the pipeline writes the script, generates the visuals, narrates the voiceover, and renders a finished mp4 with Remotion - asynchronously, through a dedicated Express render queue.
 
-Thirteen creation engines live behind one API contract: AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, and Vox collage explainers. Every mode follows the same flow - submit a prompt, poll `GET /api/videos/{jobId}` as the job progresses, and download the rendered mp4.
+Thirteen creation engines sit behind that one endpoint: AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, and Vox collage explainers. Every mode shares the same flow - submit, poll `GET /api/videos/{jobId}`, download the render.
 
-All assets (voiceovers, background images, and final rendered videos) are automatically uploaded to DigitalOcean Spaces or Cloudflare R2, returning public URLs.
+Voiceovers, images, and finished videos are uploaded to DigitalOcean Spaces or Cloudflare R2 and returned as public URLs.
 
 ### Highlights
 
-- **13 composition modes** - AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, and Vox collage explainers.
-- **Agentic pipelines** - LLMs write scripts, cast characters, plan storyboards, and direct every shot inside the job queue.
-- **Word-level kinetic captions** - ElevenLabs / Deepgram TTS narration with subtitles synced to the voiceover.
-- **AI-generated assets** - Seedream collage posters, Seedance text/image-to-video clips, Lyria background music, and gpt-image illustrations.
-- **Async job queue** - submit once, poll `GET /api/videos/{jobId}`, and get back a public mp4 URL.
-- **Cloud-native storage** - local disk by default, DigitalOcean Spaces or Cloudflare R2 when configured.
+**13 modes, one API.** AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, and Vox collage explainers - all behind a single endpoint.
+
+**Agentic pipelines.** LLMs write scripts, cast characters, plan storyboards, and direct every shot inside the job queue.
+
+**Word-level kinetic captions.** ElevenLabs / Deepgram TTS narration with subtitles synced to the voiceover.
+
+**AI-generated assets.** Seedream collage posters, Seedance text/image-to-video clips, Lyria background music, and gpt-image illustrations.
+
+**Async by design.** Submit once, poll `GET /api/videos/{jobId}`, download the finished mp4.
+
+**Cloud-native storage.** Local disk by default; DigitalOcean Spaces or Cloudflare R2 when configured.
 
 ### Tech Stack
 
