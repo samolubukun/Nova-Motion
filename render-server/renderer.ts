@@ -14,6 +14,8 @@ import type { AgenticStage } from "../src/lib/agentic-checkpoints";
 import { loadAgenticCheckpoint, saveAgenticCheckpoint } from "../src/lib/agentic-checkpoints";
 import { generateLumaVideoTimeline } from "../src/lib/luma-pipeline";
 import type { LumaVideoInput } from "../src/lib/luma-pipeline";
+import { generateVoxVideoTimeline } from "../src/lib/vox-pipeline";
+import type { VoxVideoInput } from "../src/lib/vox-pipeline";
 
 // Cache the bundle URL to avoid rebundling on every render
 let cachedBundleUrl: string | null = null;
@@ -264,6 +266,32 @@ if (job.videoType === "AgenticVideoGenerator" && job.pipeline) {
       console.log(`[Luma] Timeline ready for job ${job.id}.`);
     }
 
+    if (job.videoType === "VoxVideo" && job.pipeline) {
+      console.log(`[VoxVideo] Running paper-collage pipeline for job ${job.id}...`);
+      const pipeline = job.pipeline;
+      const input: VoxVideoInput = {
+        prompt: pipeline.prompt || "",
+        title: pipeline.title,
+        theme: pipeline.theme,
+        arc: pipeline.arc,
+        targetDurationSeconds: pipeline.targetDurationSeconds,
+        language: pipeline.language,
+        tone: pipeline.tone,
+        aspectRatio: pipeline.aspectRatio,
+        voice: pipeline.voice,
+        generateAudio: pipeline.generateAudio,
+        music: pipeline.music,
+        sceneCount: pipeline.sceneCount,
+      };
+      job.timeline = await generateVoxVideoTimeline(input, {
+        jobId: job.id,
+        assetBaseUrl: baseUrl,
+        onProgress: (progress) => updateJobStatus(job.id, { progress: Math.round(progress * 25) }),
+        onStage: (stage: string) => updateJobStatus(job.id, { currentStage: stage }),
+      });
+      console.log(`[VoxVideo] Timeline ready for job ${job.id}.`);
+    }
+
     // Get the bundle URL (cached or create new)
     const bundleUrl = await getBundleUrl();
 
@@ -273,7 +301,7 @@ if (job.videoType === "AgenticVideoGenerator" && job.pipeline) {
 
     // Prepare input props
     let inputProps: any = {};
-    if (job.videoType === "AIStoryboardVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama" || job.videoType === "UGC" || job.videoType === "AgenticVideoGenerator" || job.videoType === "Luma") {
+    if (job.videoType === "AIStoryboardVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama" || job.videoType === "UGC" || job.videoType === "AgenticVideoGenerator" || job.videoType === "Luma" || job.videoType === "VoxVideo") {
       inputProps = { timeline: job.timeline };
     } else if (job.videoType === "MotionGraphics") {
       inputProps = { storyboard: job.timeline };
