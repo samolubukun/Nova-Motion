@@ -19,7 +19,8 @@ export const VideoType = z.enum([
   "TextAnimation",
   "SocialMedia",
   "Explainer",
-  "AIVideo",
+  "AIVideo", // legacy alias for AIStoryboardVideo
+  "AIStoryboardVideo",
   "StockVideo",
   "StockImage",
   "MotionGraphics",
