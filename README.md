@@ -42,17 +42,42 @@ Voiceovers, images, and finished videos are uploaded to DigitalOcean Spaces or C
 
 ### Highlights
 
-**13 modes, one API.** AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, and Vox collage explainers - all behind a single endpoint.
-
-**Agentic pipelines.** LLMs write scripts, cast characters, plan storyboards, and direct every shot inside the job queue.
-
-**Word-level kinetic captions.** ElevenLabs / Deepgram TTS narration with subtitles synced to the voiceover.
-
-**AI-generated assets.** Seedream collage posters, Seedance text/image-to-video clips, Lyria background music, and gpt-image illustrations.
-
-**Async by design.** Submit once, poll `GET /api/videos/{jobId}`, download the finished mp4.
-
-**Cloud-native storage.** Local disk by default; DigitalOcean Spaces or Cloudflare R2 when configured.
+<table align="center">
+  <tr>
+    <td width="33%" align="center" valign="top" style="border:1px solid #30363d;border-radius:10px;padding:16px;margin:4px;">
+      <div style="font-size:26px;line-height:1.2;">&#127916;</div>
+      <b>13 modes, one API</b><br />
+      <span style="color:#8b949e;">AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, and Vox collage explainers.</span>
+    </td>
+    <td width="33%" align="center" valign="top" style="border:1px solid #30363d;border-radius:10px;padding:16px;margin:4px;">
+      <div style="font-size:26px;line-height:1.2;">&#129504;</div>
+      <b>Agentic pipelines</b><br />
+      <span style="color:#8b949e;">LLMs write scripts, cast characters, plan storyboards, and direct every shot inside the job queue.</span>
+    </td>
+    <td width="33%" align="center" valign="top" style="border:1px solid #30363d;border-radius:10px;padding:16px;margin:4px;">
+      <div style="font-size:26px;line-height:1.2;">&#128172;</div>
+      <b>Word-level kinetic captions</b><br />
+      <span style="color:#8b949e;">ElevenLabs / Deepgram TTS narration with subtitles synced to the voiceover.</span>
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center" valign="top" style="border:1px solid #30363d;border-radius:10px;padding:16px;margin:4px;">
+      <div style="font-size:26px;line-height:1.2;">&#127912;</div>
+      <b>AI-generated assets</b><br />
+      <span style="color:#8b949e;">Seedream collage posters, Seedance text/image-to-video clips, Lyria background music, and gpt-image illustrations.</span>
+    </td>
+    <td width="33%" align="center" valign="top" style="border:1px solid #30363d;border-radius:10px;padding:16px;margin:4px;">
+      <div style="font-size:26px;line-height:1.2;">&#9889;</div>
+      <b>Async by design</b><br />
+      <span style="color:#8b949e;">Submit once, poll <code>GET /api/videos/{jobId}</code>, download the finished mp4.</span>
+    </td>
+    <td width="33%" align="center" valign="top" style="border:1px solid #30363d;border-radius:10px;padding:16px;margin:4px;">
+      <div style="font-size:26px;line-height:1.2;">&#9729;</div>
+      <b>Cloud-native storage</b><br />
+      <span style="color:#8b949e;">Local disk by default; DigitalOcean Spaces or Cloudflare R2 when configured.</span>
+    </td>
+  </tr>
+</table>
 
 ### Tech Stack
 
