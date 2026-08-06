@@ -923,5 +923,5 @@ Contributions are welcome. Please open an issue first to discuss what you would 
 ## Support
 
 - Star the repository if you find it useful.
-- Report bugs or request features via [GitHub Issues](https://github.com/samolubukun/Content-Nova-Video-Generator/issues).
+- Report bugs or request features via [GitHub Issues](https://github.com/samolubukun/Nova-Motion/issues).
 
