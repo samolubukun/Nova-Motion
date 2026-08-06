@@ -1,8 +1,70 @@
-# Content Nova Video Engine
+<p align="center">
+  <img src="./public/novamotion.png" alt="Nova Motion" width="260" />
+</p>
 
-A unified automated video generation API service. This project merges several short-form video creation engines into a single Next.js API gateway and Express queue rendering backend. It generates high-quality videos using OpenAI, Deepgram, Pexels, and Remotion.
+<h1 align="center">Nova Motion</h1>
+
+<p align="center">
+  <em>An AI-powered video generation engine that turns a single prompt into finished, platform-ready videos — AI storyboards, Vox collage explainers, micro dramas, UGC ads, and motion graphics — rendered by Remotion.</em>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/Remotion-000000?style=for-the-badge&logo=remotion&logoColor=white" alt="Remotion" />
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
+  <img src="https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white" alt="OpenAI" />
+  <img src="https://img.shields.io/badge/ElevenLabs-5751F2?style=for-the-badge&logo=elevenlabs&logoColor=white" alt="ElevenLabs" />
+  <img src="https://img.shields.io/badge/Deepgram-19C4A1?style=for-the-badge&logo=deepgram&logoColor=white" alt="Deepgram" />
+  <img src="https://img.shields.io/badge/WaveSpeed-7C3AED?style=for-the-badge" alt="WaveSpeed" />
+  <img src="https://img.shields.io/badge/Pexels-05A081?style=for-the-badge&logo=pexels&logoColor=white" alt="Pexels" />
+  <img src="https://img.shields.io/badge/Pixabay-2EC66D?style=for-the-badge&logo=pixabay&logoColor=white" alt="Pixabay" />
+  <img src="https://img.shields.io/badge/DigitalOcean-0080FF?style=for-the-badge&logo=digitalocean&logoColor=white" alt="DigitalOcean Spaces" />
+  <img src="https://img.shields.io/badge/Cloudflare%20R2-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare R2" />
+</p>
+
+---
+
+## What is Nova Motion?
+
+Nova Motion merges several short-form video creation engines into a single Next.js API gateway and Express queue rendering backend. You submit a prompt and a composition mode; the pipeline writes the script, generates the AI visuals, narrates it, and renders the finished mp4 with Remotion.
 
 All assets (voiceovers, background images, and final rendered videos) are automatically uploaded to DigitalOcean Spaces or Cloudflare R2, returning public URLs.
+
+### Highlights
+
+- **13 composition modes** — AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, and Vox collage explainers.
+- **Agentic pipelines** — LLMs write scripts, cast characters, plan storyboards, and direct every shot inside the job queue.
+- **Word-level kinetic captions** — ElevenLabs / Deepgram TTS narration with subtitles synced to the voiceover.
+- **AI-generated assets** — Seedream collage posters, Seedance text/image-to-video clips, Lyria background music, and gpt-image illustrations.
+- **Async job queue** — submit once, poll `GET /api/videos/{jobId}`, and get back a public mp4 URL.
+- **Cloud-native storage** — local disk by default, DigitalOcean Spaces or Cloudflare R2 when configured.
+
+### Project Structure
+
+```text
+├── src/                     # Next.js API gateway + Remotion compositions + studio UI
+│   ├── app/                 #   API routes (POST /api/videos, GET /api/videos/:jobId, /ugc)
+│   ├── lib/                 #   Generation pipelines (vox, wavespeed, luma, ugc, ...)
+│   ├── remotion/            #   Remotion compositions (WavespeedVideo, ...)
+│   └── components/          #   Studio UI components
+├── render-server/           # Express queue rendering backend (headless Chromium)
+│   ├── server.ts            #   POST /render/* endpoints
+│   ├── renderer.ts          #   Pipeline dispatch + Remotion rendering
+│   ├── queue.ts             #   Job queue state
+│   └── storage.ts           #   Local / S3 storage layer
+├── shared/                  # Shared request & response schemas
+├── public/                  # Static assets (incl. the Nova Motion logo)
+├── .env.local.example       # Every environment variable documented
+└── package.json
+```
 
 ---
 
@@ -820,4 +882,34 @@ Polls the render queue status. Once rendering is completed, it uploads the final
 ### OpenAI/Deepgram API errors
 * Check that your API keys are active and have sufficient balance limits.
 * Monitor service statuses: [OpenAI Status](https://status.openai.com/), [Deepgram Status](https://status.deepgram.com/).
+
+---
+
+## Roadmap
+
+- Multi-voice narration tracks and character dialogue
+- Template marketplace for reusable scene packs
+- Cloud rendering worker pool (horizontal scaling of the render queue)
+- Streaming progress events via WebSockets
+
+## Acknowledgements
+
+Nova Motion builds on the work of several open projects and APIs:
+
+- [Remotion](https://remotion.dev) — React-based programmatic video rendering
+- [WaveSpeed](https://wavespeed.ai) — Seedream, Seedance, and Lyria media models
+- [OpenAI](https://openai.com) — GPT-4o-mini scripting and gpt-image-2 illustrations
+- [ElevenLabs](https://elevenlabs.io) & [Deepgram](https://deepgram.com) — neural TTS and speech-to-text
+- [Luma](https://lumalabs.ai) — Ray 3.2 video generation
+- [Pexels](https://pexels.com) & [Pixabay](https://pixabay.com) — stock media APIs
+- [DigitalOcean](https://digitalocean.com) & [Cloudflare R2](https://cloudflare.com) — S3-compatible storage
+
+## Contributing
+
+Contributions are welcome. Please open an issue first to discuss what you would like to change, then submit a pull request.
+
+## Support
+
+- Star the repository if you find it useful.
+- Report bugs or request features via [GitHub Issues](https://github.com/samolubukun/Content-Nova-Video-Generator/issues).
 
