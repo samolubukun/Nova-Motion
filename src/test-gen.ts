@@ -227,8 +227,8 @@ async function run() {
   console.log(`\n🚀 Starting test runner in mode: [${mode}] (Mock Scripts enabled to save credits)`);
 
   try {
-    if (mode === "AIVideo") {
-      // 1. Test Endpoint A: AIVideo (gpt-image-2 image generation + Deepgram TTS/STT)
+    if (mode === "AIStoryboardVideo" || mode === "AIVideo") {
+      // 1. Test Endpoint A: AIStoryboardVideo (gpt-image-2 image generation + Deepgram TTS/STT)
       const jobId = uuidv4();
       const timeline: any = {
         shortTitle: "Legend of Wisdom",
@@ -245,7 +245,7 @@ async function run() {
       let durationMs = 0;
 
       const selectedVoice = AURA_VOICES[Math.floor(Math.random() * AURA_VOICES.length)];
-      console.log(`[Test Client] Selected voice [${selectedVoice}] for AIVideo test`);
+      console.log(`[Test Client] Selected voice [${selectedVoice}] for AIStoryboardVideo test`);
 
       for (let i = 0; i < mockAIScenes.length; i++) {
         const scene = mockAIScenes[i];
@@ -310,8 +310,8 @@ async function run() {
         durationMs += sceneDurationMs;
       }
 
-      console.log(`[Test Client] Submitted AIVideo job...`);
-      const serverJobId = await submitJob("AIVideo", { timeline });
+      console.log(`[Test Client] Submitted AIStoryboardVideo job...`);
+      const serverJobId = await submitJob("AIStoryboardVideo", { timeline });
       await pollJobStatus(serverJobId);
 
     } else if (mode === "StockVideo") {
