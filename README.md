@@ -8,7 +8,7 @@ All assets (voiceovers, background images, and final rendered videos) are automa
 
 ## Video Generation Models (Compositions)
 
-### 1. AI Storyboard Video (`videoType: "AIVideo"`)
+### 1. AI Storyboard Video (`videoType: "AIStoryboardVideo"`)
 Produces highly engaging story videos in multiple aspect ratios (9:16, 16:9, 1:1) using gpt-image-2 image generation.
 * **GPT-4o-mini**: Writes a narrative story script and detailed visual scene descriptions.
 * **gpt-image-2**: Generates high-resolution illustrations for each scene.
@@ -181,7 +181,7 @@ Submits a prompt to generate and render a new video.
 All endpoints support the following root payload fields:
 * **`prompt`** (string, required): The core instruction, script, topic, or concept to generate.
 * **`videoType`** (string, required): The video template mode. Must be one of:
-  * `"AIVideo"`: AI Storyboard mode (gpt-image-2 images + voiceover).
+  * `"AIStoryboardVideo"`: AI Storyboard mode (gpt-image-2 images + voiceover).
   * `"StockVideo"`: Pexels stock footage mode (stock video loops + voiceover).
   * `"StockImage"`: Pixabay stock image mode (stock images + voiceover).
   * `"SocialMedia"`: Kinetic typographic slide style (quotes/shorts).
@@ -208,13 +208,13 @@ All endpoints support the following root payload fields:
 
 ---
 
-#### Endpoint A: AI Storyboard Video (`videoType: "AIVideo"`)
+#### Endpoint A: AI Storyboard Video (`videoType: "AIStoryboardVideo"`)
 Produces animated vertical or landscape shorts using **`gpt-image-2`** base64 illustration generation and Deepgram TTS voiceover.
 * **Example Payload**:
   ```json
   {
     "prompt": "The mystery of the Oak Island money pit",
-    "videoType": "AIVideo",
+    "videoType": "AIStoryboardVideo",
     "topic": "History",
     "aspectRatio": "16:9",
     "voice": "aura-2-aries-en"
@@ -364,11 +364,11 @@ Generates a UGC ad through WaveSpeed using any of the studio models (Veo 3.1, Se
 All requests must be sent as `POST` requests to:
 `http://localhost:3000/api/videos`
 
-#### 1. AI Storyboard Video (`AIVideo`)
+#### 1. AI Storyboard Video (`AIStoryboardVideo`)
 ```json
 {
   "prompt": "Explain how black holes are formed in space",
-  "videoType": "AIVideo",
+  "videoType": "AIStoryboardVideo",
   "topic": "Space Science",
   "aspectRatio": "16:9",
   "voice": "aura-2-aries-en"
