@@ -40,12 +40,12 @@ All assets (voiceovers, background images, and final rendered videos) are automa
 
 ### Highlights
 
-- **13 composition modes** — AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, and Vox collage explainers.
-- **Agentic pipelines** — LLMs write scripts, cast characters, plan storyboards, and direct every shot inside the job queue.
-- **Word-level kinetic captions** — ElevenLabs / Deepgram TTS narration with subtitles synced to the voiceover.
-- **AI-generated assets** — Seedream collage posters, Seedance text/image-to-video clips, Lyria background music, and gpt-image illustrations.
-- **Async job queue** — submit once, poll `GET /api/videos/{jobId}`, and get back a public mp4 URL.
-- **Cloud-native storage** — local disk by default, DigitalOcean Spaces or Cloudflare R2 when configured.
+- **13 composition modes** - AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, and Vox collage explainers.
+- **Agentic pipelines** - LLMs write scripts, cast characters, plan storyboards, and direct every shot inside the job queue.
+- **Word-level kinetic captions** - ElevenLabs / Deepgram TTS narration with subtitles synced to the voiceover.
+- **AI-generated assets** - Seedream collage posters, Seedance text/image-to-video clips, Lyria background music, and gpt-image illustrations.
+- **Async job queue** - submit once, poll `GET /api/videos/{jobId}`, and get back a public mp4 URL.
+- **Cloud-native storage** - local disk by default, DigitalOcean Spaces or Cloudflare R2 when configured.
 
 ### Project Structure
 
