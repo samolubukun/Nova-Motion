@@ -5,7 +5,7 @@
 <h1 align="center">Nova Motion</h1>
 
 <p align="center">
-  <em>One prompt. One pipeline. A finished, platform-ready video - scripted, generated, narrated, and rendered by AI.</em>
+  <em>One prompt. One pipeline. Scripted, generated, narrated, and rendered into a finished, platform-ready video.</em>
 </p>
 
 <p align="center">
