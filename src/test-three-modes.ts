@@ -101,8 +101,8 @@ async function runTest() {
   const commonPrompt = "Create a high-impact promotional short for a brand trying to push out consistent video content, gain audience engagement, and drive customer conversion rates.";
 
   try {
-    // 1. Generate AIVideo (Image generation mode)
-    const aiVideoUrl = await generateAndPoll("AIVideo", commonPrompt, {
+    // 1. Generate AIStoryboardVideo (Image generation mode)
+    const aiVideoUrl = await generateAndPoll("AIStoryboardVideo", commonPrompt, {
       topic: "Marketing Strategy",
       aspectRatio: "16:9"
     });
@@ -118,7 +118,7 @@ async function runTest() {
 
     console.log("\n==================================================");
     console.log("🎉 ALL TESTS RUN SUCCESSFULLY!");
-    console.log(`1. AIVideo (Image Gen):     ${aiVideoUrl}`);
+    console.log(`1. AIStoryboardVideo (Image Gen):     ${aiVideoUrl}`);
     console.log(`2. StockVideo (Stock footage): ${stockVideoUrl}`);
     console.log(`3. Typographic Slide Video: ${slideVideoUrl}`);
     console.log("==================================================");
