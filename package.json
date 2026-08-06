@@ -10,7 +10,8 @@
     "remotion:studio": "remotion studio src/remotion/index.ts",
     "remotion:render": "remotion render src/remotion/index.ts General out/video.mp4",
     "render-server": "tsx render-server/server.ts",
-    "render-server:dev": "tsx watch render-server/server.ts"
+    "render-server:dev": "tsx watch render-server/server.ts",
+    "smoke:vox": "tsx src/smoke-vox.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.975.0",
