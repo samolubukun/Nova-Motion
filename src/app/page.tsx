@@ -34,7 +34,7 @@ const VIDEO_TYPES: { value: VideoType; label: string; description: string }[] = 
   { value: "TextAnimation", label: "Text Animation", description: "Kinetic typography with word-by-word animations" },
   { value: "SocialMedia", label: "Social Media", description: "Vertical 9:16 format for TikTok, Reels, Shorts" },
   { value: "Explainer", label: "Explainer", description: "Educational content with step indicators" },
-  { value: "AIVideo", label: "AI Video (Generated)", description: "Generated story with AI images and voiceover" },
+  { value: "AIStoryboardVideo", label: "AI Storyboard (Generated)", description: "Generated story with AI images and voiceover" },
   { value: "StockVideo", label: "Stock Video", description: "Generated story with Pexels videos and voiceover" },
   { value: "StockImage", label: "Stock Image", description: "Generated story with Pixabay images and voiceover" },
   { value: "MicroDrama", label: "Micro Drama", description: "Full agentic pipeline: AI story, characters, storyboard, and Seedance clips" },
