@@ -139,24 +139,64 @@ npm install
 ```
 
 ### 2. Set Up Environment Variables
-Create a `.env.local` file in the root of the project:
+Create a `.env.local` file in the root of the project (copy from `.env.local.example`):
 ```env
-# AI API Keys
+# ============ AI API KEYS (Required) ============
+# AIStoryboardVideo (gpt-4o-mini + gpt-image-2) + Luma LLM fallback
 OPENAI_API_KEY=your-openai-api-key
+# Primary TTS (native word timestamps) — used by almost every mode
+ELEVENLABS_API_KEY=your-elevenlabs-api-key
+# Fallback TTS + STT word timestamps when ElevenLabs is absent
 DEEPGRAM_API_KEY=your-deepgram-api-key
+# StockVideo mode (Pexels stock loops)
 PEXELS_API_KEY=your-pexels-api-key
+# StockImage mode (Pixabay stock images)
+PIXABAY_API_KEY=your-pixabay-api-key
+# TextToVideo, MicroDrama, UGC modes (Seedance/Seedream/Lyria) + Luma LLM fallback
+WAVESPEED_API_KEY=your-wavespeed-api-key
+# Luma mode (Ray 3.2 video generation)
+LUMA_AGENTS_API_KEY=your-luma-agents-api-key
 
-# Render Server Configuration
+# ============ Render Server ============
 RENDER_SERVER_URL=http://localhost:3001
+RENDER_SERVER_BASE_URL=http://localhost:3001
 RENDER_SERVER_SECRET=your-secret-string
+RENDER_SERVER_PORT=3001
+RENDER_CONCURRENCY=2
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 
-# DigitalOcean Spaces Storage (Optional - falls back to local files)
+# ============ WaveSpeed model defaults (optional) ============
+WAVESPEED_VIDEO_MODEL=bytedance/seedance-v1-pro-fast/text-to-video
+WAVESPEED_VIDEO_RESOLUTION=480p
+WAVESPEED_VIDEO_DURATION=5
+WAVESPEED_LLM_MODEL=deepseek/deepseek-v4-flash
+WAVESPEED_IMAGE_MODEL=bytedance/seedream-v4.5
+WAVESPEED_PORTRAIT_MODEL=bytedance/seedream-v4.5
+WAVESPEED_FRAME_MODEL=bytedance/seedream-v4.5
+WAVESPEED_I2V_MODEL=bytedance/seedance-2.0/image-to-video
+UGC_DEFAULT_MODEL=seedance-2
+
+# ============ Luma LLM defaults (optional) ============
+LUMA_LLM_URL=https://llm.wavespeed.ai/v1/chat/completions
+LUMA_LLM_MODEL=deepseek/deepseek-v4-flash
+
+# ============ Storage (optional — local disk fallback) ============
+# DigitalOcean Spaces
 SPACES_ENDPOINT=https://nyc3.digitaloceanspaces.com
 SPACES_KEY=your-do-access-key
 SPACES_SECRET=your-do-secret-key
 SPACES_BUCKET_NAME=your-bucket-name
 SPACES_PUBLIC_URL=https://your-custom-cdn.com
+# Cloudflare R2 (alternative)
+R2_ACCOUNT_ID=your-r2-account-id
+R2_ACCESS_KEY_ID=your-r2-access-key-id
+R2_SECRET_ACCESS_KEY=your-r2-secret-access-key
+R2_BUCKET_NAME=your-bucket-name
+R2_PUBLIC_URL=https://your-account-id.r2.dev/your-bucket-name
+R2_DELETE_LOCAL_AFTER_UPLOAD=false
 ```
+
+A complete reference with per-key comments and setup links lives in `.env.local.example`. Each API key unlocks the modes it documents above; without a key the corresponding mode returns an error at submission time.
 
 ### 3. Start the Render Server
 The rendering backend handles the queue and runs chromium in headless mode to render the video files.
