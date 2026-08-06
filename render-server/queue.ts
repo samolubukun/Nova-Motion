@@ -61,6 +61,10 @@ export interface RenderJob {
     multiKeyframes?: boolean;
     generateAudio?: boolean;
     sceneCount?: number;
+    // Vox (paper-collage explainer) params
+    theme?: string;
+    arc?: string;
+    music?: boolean;
   };
   createdAt: Date;
   startedAt?: Date;
