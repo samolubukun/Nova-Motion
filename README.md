@@ -5,7 +5,7 @@
 <h1 align="center">Nova Motion</h1>
 
 <p align="center">
-  <em>An AI-powered video generation engine that turns a single prompt into finished, platform-ready videos — AI storyboards, Vox collage explainers, micro dramas, UGC ads, and motion graphics — rendered by Remotion.</em>
+  <em>One prompt. One pipeline. A finished, platform-ready video - scripted, generated, narrated, and rendered by AI.</em>
 </p>
 
 <p align="center">
@@ -34,7 +34,9 @@
 
 ## What is Nova Motion?
 
-Nova Motion merges several short-form video creation engines into a single Next.js API gateway and Express queue rendering backend. You submit a prompt and a composition mode; the pipeline writes the script, generates the AI visuals, narrates it, and renders the finished mp4 with Remotion.
+Nova Motion is a production-grade video generation engine built on Next.js and Remotion. A single `POST /api/videos` request kicks off an agentic pipeline that writes the script, plans the shots, generates the visuals, narrates the voiceover, and assembles the final cut - all asynchronously through a dedicated Express render queue.
+
+Thirteen creation engines live behind one API contract: AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, and Vox collage explainers. Every mode follows the same flow - submit a prompt, poll `GET /api/videos/{jobId}` as the job progresses, and download the rendered mp4.
 
 All assets (voiceovers, background images, and final rendered videos) are automatically uploaded to DigitalOcean Spaces or Cloudflare R2, returning public URLs.
 
@@ -46,6 +48,20 @@ All assets (voiceovers, background images, and final rendered videos) are automa
 - **AI-generated assets** - Seedream collage posters, Seedance text/image-to-video clips, Lyria background music, and gpt-image illustrations.
 - **Async job queue** - submit once, poll `GET /api/videos/{jobId}`, and get back a public mp4 URL.
 - **Cloud-native storage** - local disk by default, DigitalOcean Spaces or Cloudflare R2 when configured.
+
+### Tech Stack
+
+| Category | Technologies |
+| --- | --- |
+| Frontend | Next.js 14, React, TypeScript, Tailwind CSS, shadcn/ui |
+| Video rendering | Remotion, Express.js render queue, headless Chromium |
+| LLMs | OpenAI GPT-4o-mini, WaveSpeed LLM |
+| Image generation | OpenAI gpt-image-2, WaveSpeed Seedream |
+| Video generation | WaveSpeed Seedance, Luma Ray 3.2, Veo 3.1, Grok Video, Happy Horse |
+| Music | WaveSpeed Lyria |
+| TTS / STT | ElevenLabs, Deepgram (Aura TTS, Nova-2 STT) |
+| Stock media | Pexels, Pixabay |
+| Storage | Local disk, DigitalOcean Spaces, Cloudflare R2 (S3-compatible) |
 
 ### Project Structure
 
@@ -202,15 +218,6 @@ Replicates the Vox-style paper-collage explainer generator using the APIs alread
   "music": true
 }
 ```
-
----
-
-## Tech Stack
-* **Framework**: Next.js 14, TypeScript, Tailwind CSS, shadcn/ui
-* **AI Engines**: OpenAI (GPT-4o-mini, gpt-image-2), Deepgram (Aura TTS, Nova-2 STT), WaveSpeed (Seedance video, Lyria music)
-* **Stock Sourcing**: Pexels Video API
-* **Rendering**: Remotion Core, Express.js (render queue server)
-* **Cloud Storage**: DigitalOcean Spaces / Cloudflare R2 (S3-compatible)
 
 ---
 
