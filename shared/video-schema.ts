@@ -29,6 +29,7 @@ export const VideoType = z.enum([
   "UGC",
   "AgenticVideoGenerator",
   "Luma",
+  "VoxVideo",
 ]);
 export type VideoType = z.infer<typeof VideoType>;
 
@@ -245,6 +246,42 @@ export const LumaRequestSchema = z.object({
   webhookUrl: z.string().url().optional(),
 });
 export type LumaRequest = z.infer<typeof LumaRequestSchema>;
+
+// === Vox (Vox-style paper-collage explainer) Request Schema ===
+export const VoxTheme = z.enum([
+  "swiss-modern",
+  "american-retro",
+  "punk-zine",
+  "chinese-ink",
+]);
+export type VoxTheme = z.infer<typeof VoxTheme>;
+
+export const VoxArc = z.enum([
+  "hook_payoff",
+  "pas",
+  "bab",
+  "how_it_works",
+  "timeline",
+  "man_in_hole",
+]);
+export type VoxArc = z.infer<typeof VoxArc>;
+
+export const VoxRequestSchema = z.object({
+  prompt: z.string().min(1).max(6000),
+  title: z.string().max(200).optional(),
+  theme: VoxTheme.default("american-retro").optional(),
+  arc: VoxArc.default("hook_payoff").optional(),
+  targetDurationSeconds: z.number().min(10).max(120).optional(),
+  language: z.string().max(80).optional(),
+  tone: z.string().max(100).optional(),
+  aspectRatio: z.enum(ASPECT_RATIOS).default("9:16").optional(),
+  voice: z.string().max(100).optional(),
+  generateAudio: z.boolean().default(true).optional(),
+  music: z.boolean().default(true).optional(),
+  sceneCount: z.number().min(2).max(6).optional(),
+  webhookUrl: z.string().url().optional(),
+});
+export type VoxRequest = z.infer<typeof VoxRequestSchema>;
 
 // === Job Status Types ===
 export const JobStatus = z.enum([
