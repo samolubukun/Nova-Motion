@@ -41,6 +41,7 @@ const VIDEO_TYPES: { value: VideoType; label: string; description: string }[] = 
   { value: "UGC", label: "UGC Ad", description: "AI UGC ad studio: script + reference images → Veo/Grok/Seedance/Happy Horse clip. Full studio at /ugc" },
   { value: "AgenticVideoGenerator", label: "Agentic Video", description: "Concept to screenplay, casting, storyboard, AI scenes, audio, and final platform-ready video" },
   { value: "Luma", label: "Luma AI (Ray 3.2)", description: "All Ray 3.2 capabilities in one mode: T2V, I2V, loop, extend, video edit, reframe + TTS" },
+  { value: "VoxVideo", label: "Vox Collage", description: "Vox-style paper-collage explainer: beat map → collage posters → animated clips + voiceover + captions" },
 ];
 
 // Duration options
@@ -73,6 +74,12 @@ export default function Home() {
   const [lumaLoop, setLumaLoop] = useState(false);
   const [lumaGenerateAudio, setLumaGenerateAudio] = useState(true);
   const [lumaSourceVideo, setLumaSourceVideo] = useState("");
+
+  // Vox state
+  const [voxTheme, setVoxTheme] = useState("american-retro");
+  const [voxArc, setVoxArc] = useState("hook_payoff");
+  const [voxMusic, setVoxMusic] = useState(true);
+  const [voxGenerateAudio, setVoxGenerateAudio] = useState(true);
 
   // Generation state
   const [isGenerating, setIsGenerating] = useState(false);
@@ -170,6 +177,15 @@ export default function Home() {
           generateAudio: lumaGenerateAudio,
           sourceVideoUrl: lumaSourceVideo.trim() || undefined,
           explicitOperation: lumaOperation === "auto" ? undefined : lumaOperation,
+        } : videoType === "VoxVideo" ? {
+          videoType,
+          prompt: prompt.trim(),
+          title: prompt.trim().slice(0, 200),
+          theme: voxTheme,
+          arc: voxArc,
+          targetDurationSeconds: duration,
+          generateAudio: voxGenerateAudio,
+          music: voxMusic,
         } : {
           prompt: prompt.trim(),
           videoType,
@@ -403,6 +419,63 @@ export default function Home() {
                         className="rounded border-gray-300"
                       />
                       <span>Generate TTS Voiceover</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {videoType === "VoxVideo" && (
+                <div className="space-y-4 rounded-lg border p-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Visual Theme</Label>
+                      <Select value={voxTheme} onValueChange={setVoxTheme} disabled={isGenerating}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="american-retro">American Retro</SelectItem>
+                          <SelectItem value="swiss-modern">Swiss Modern</SelectItem>
+                          <SelectItem value="punk-zine">Punk Zine</SelectItem>
+                          <SelectItem value="chinese-ink">Chinese Ink</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Narrative Arc</Label>
+                      <Select value={voxArc} onValueChange={setVoxArc} disabled={isGenerating}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="hook_payoff">Hook & Payoff</SelectItem>
+                          <SelectItem value="timeline">Timeline</SelectItem>
+                          <SelectItem value="how_it_works">How It Works</SelectItem>
+                          <SelectItem value="pas">Problem-Agitate-Solve</SelectItem>
+                          <SelectItem value="bab">Before / After / Bridge</SelectItem>
+                          <SelectItem value="man_in_hole">Man in Hole</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-4 pt-2">
+                    <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={voxGenerateAudio}
+                        onChange={(e) => setVoxGenerateAudio(e.target.checked)}
+                        disabled={isGenerating}
+                        className="rounded border-gray-300"
+                      />
+                      <span>Generate TTS Voiceover</span>
+                    </label>
+
+                    <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={voxMusic}
+                        onChange={(e) => setVoxMusic(e.target.checked)}
+                        disabled={isGenerating}
+                        className="rounded border-gray-300"
+                      />
+                      <span>Background Music</span>
                     </label>
                   </div>
                 </div>
