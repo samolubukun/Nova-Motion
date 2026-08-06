@@ -944,3 +944,7 @@ Contributions are welcome. Please open an issue first to discuss what you would 
 - Star the repository if you find it useful.
 - Report bugs or request features via [GitHub Issues](https://github.com/samolubukun/Nova-Motion/issues).
 
+## License
+
+Distributed under the [MIT License](LICENSE). Copyright (c) 2026 Samuel Olubukun.
+
