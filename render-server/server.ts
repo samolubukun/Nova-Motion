@@ -9,7 +9,7 @@ import cors from "cors";
 import { createJob, getJob, setRenderCallback, getQueueStats, enqueueExistingJob } from "./queue";
 import { renderVideo } from "./renderer";
 import { getVideosDirectory, cleanupOldVideos, ensureVideosDir } from "./storage";
-import { AgenticVideoRequestSchema, RenderRequestSchema, TextToVideoRequestSchema, MicroDramaRequestSchema, UGCRequestSchema, LumaRequestSchema } from "../shared/video-schema";
+import { AgenticVideoRequestSchema, RenderRequestSchema, TextToVideoRequestSchema, MicroDramaRequestSchema, UGCRequestSchema, LumaRequestSchema, VoxRequestSchema } from "../shared/video-schema";
 import { listAgenticCheckpoints } from "../src/lib/agentic-checkpoints";
 
 const app = express();
@@ -266,6 +266,42 @@ app.post("/render/luma", authenticate, (req: Request, res: Response) => {
     });
   } catch (err) {
     console.error("Error creating Luma job:", err);
+    res.status(500).json({
+      error: err instanceof Error ? err.message : "Internal server error",
+    });
+  }
+});
+
+app.post("/render/vox", authenticate, (req: Request, res: Response) => {
+  try {
+    const validation = VoxRequestSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        error: "Invalid request",
+        details: validation.error.issues.map((e) => ({
+          path: e.path.join("."),
+          message: e.message,
+        })),
+      });
+    }
+
+    const { webhookUrl, ...pipeline } = validation.data;
+    const job = createJob(
+      "VoxVideo",
+      undefined,
+      undefined,
+      webhookUrl,
+      pipeline as never
+    );
+
+    console.log(`VoxVideo job created: ${job.id}`);
+    res.status(201).json({
+      jobId: job.id,
+      status: job.status,
+      createdAt: job.createdAt.toISOString(),
+    });
+  } catch (err) {
+    console.error("Error creating VoxVideo job:", err);
     res.status(500).json({
       error: err instanceof Error ? err.message : "Internal server error",
     });
