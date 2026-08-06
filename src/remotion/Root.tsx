@@ -281,7 +281,7 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
       <Composition
-        id="AIVideo"
+        id="AIStoryboardVideo"
         component={AIVideo}
         durationInFrames={300}
         fps={30}
