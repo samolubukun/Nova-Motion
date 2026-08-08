@@ -97,6 +97,10 @@ See Nova Motion in action - watch a sample video from each mode:
 - [Watch: Stock Video](https://ucarecdn.com/3ac78886-9bac-4197-8a8d-2d2d24261bd0/novamotionstockvideo.mp4)
 - [Watch: Stock Image](https://ucarecdn.com/cf070cef-cce8-4b4d-a00a-2f3a4de9488b/novamotionstockimage.mp4)
 
+## Studio Preview
+
+<img src="./public/novamotion.jpg" alt="Nova Motion studio interface" />
+
 ### Project Structure
 
 ```text
