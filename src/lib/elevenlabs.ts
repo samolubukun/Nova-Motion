@@ -1,4 +1,4 @@
-import * as fs from "fs";
+// ElevenLabs Voice Integration Module
 
 /**
  * Curated list of ElevenLabs default voice IDs confirmed to work on the free tier.
@@ -135,8 +135,13 @@ export async function generateSpeechWithElevenLabs(
   }
 
   const audioBuffer = Buffer.from(audioBase64, "base64");
-  fs.writeFileSync(outputPath, audioBuffer);
-  console.log(`[ElevenLabs] Audio saved to ${outputPath} (${audioBuffer.length} bytes)`);
+
+  if (typeof window === "undefined") {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fs = require("fs");
+    fs.writeFileSync(outputPath, audioBuffer);
+    console.log(`[ElevenLabs] Audio saved to ${outputPath} (${audioBuffer.length} bytes)`);
+  }
 
   const alignment: ElevenLabsAlignment = data.alignment || data.normalized_alignment;
   if (!alignment) {

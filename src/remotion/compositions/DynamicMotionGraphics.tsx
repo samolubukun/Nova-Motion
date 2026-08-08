@@ -513,6 +513,7 @@ const PieChartEl: React.FC<{ el: DynamicElement; frame: number; fps: number; bas
   el,
   frame,
   fps,
+  base,
 }) => {
   const data = el.data ?? [];
   const delay = el.delay ?? 0;
@@ -632,6 +633,7 @@ const CounterEl: React.FC<{ el: DynamicElement; frame: number; fps: number; base
   el,
   frame,
   fps,
+  base,
 }) => {
   const delay = el.delay ?? 0;
   const color = el.color ?? "#6366f1";
@@ -695,37 +697,38 @@ const DividerEl: React.FC<{ el: DynamicElement; frame: number; base: number }> =
 
 // ─── Element Dispatcher ──────────────────────────────────────────────────────
 
-const DynamicElement: React.FC<{ el: DynamicElement; frame: number; fps: number; videoWidth: number }> = ({
+const DynamicElementRenderer: React.FC<{ el: DynamicElement; frame: number; fps: number; videoWidth: number }> = ({
   el,
   frame,
   fps,
   videoWidth,
 }) => {
+  const base = videoWidth / 100;
   switch (el.type) {
     case "title":
-      return <TitleEl el={el} frame={frame} videoWidth={videoWidth} />;
+      return <TitleEl el={el} frame={frame} base={base} />;
     case "subtitle":
-      return <SubtitleEl el={el} frame={frame} />;
+      return <SubtitleEl el={el} frame={frame} base={base} />;
     case "body":
-      return <BodyEl el={el} frame={frame} />;
+      return <BodyEl el={el} frame={frame} base={base} />;
     case "label":
-      return <LabelEl el={el} frame={frame} />;
+      return <LabelEl el={el} frame={frame} base={base} />;
     case "badge":
-      return <BadgeEl el={el} frame={frame} />;
+      return <BadgeEl el={el} frame={frame} base={base} />;
     case "highlight":
-      return <HighlightEl el={el} frame={frame} />;
+      return <HighlightEl el={el} frame={frame} base={base} />;
     case "list":
-      return <ListEl el={el} frame={frame} />;
+      return <ListEl el={el} frame={frame} base={base} />;
     case "barChart":
-      return <BarChartEl el={el} frame={frame} fps={fps} />;
+      return <BarChartEl el={el} frame={frame} fps={fps} base={base} />;
     case "pieChart":
-      return <PieChartEl el={el} frame={frame} fps={fps} />;
+      return <PieChartEl el={el} frame={frame} fps={fps} base={base} />;
     case "stat":
-      return <StatEl el={el} frame={frame} />;
+      return <StatEl el={el} frame={frame} base={base} />;
     case "counter":
-      return <CounterEl el={el} frame={frame} fps={fps} />;
+      return <CounterEl el={el} frame={frame} fps={fps} base={base} />;
     case "divider":
-      return <DividerEl el={el} frame={frame} />;
+      return <DividerEl el={el} frame={frame} base={base} />;
     default:
       return null;
   }
@@ -755,7 +758,7 @@ const DynamicSlide: React.FC<{ slide: DynamicSlideDescriptor }> = ({ slide }) =>
         }}
       >
         {elements.map((el, i) => (
-          <DynamicElement key={`el-${i}`} el={el} frame={frame} fps={fps} videoWidth={width} videoHeight={height} />
+          <DynamicElementRenderer key={`el-${i}`} el={el} frame={frame} fps={fps} videoWidth={width} />
         ))}
       </AbsoluteFill>
     </AbsoluteFill>
