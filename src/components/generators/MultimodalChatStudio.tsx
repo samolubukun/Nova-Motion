@@ -143,7 +143,7 @@ export function MultimodalChatStudio({ modeId = 'text-to-video' }: MultimodalCha
   };
 
   return (
-    <div className="h-[calc(100vh-8rem)] flex gap-6 overflow-hidden">
+    <div className="h-[calc(125vh-7rem)] min-h-[calc(125vh-7rem)] flex gap-6 overflow-hidden">
       {/* Left Chat & Multimodal Canvas Studio */}
       <div className="flex-1 flex flex-col bg-slate-900/60 border border-white/10 rounded-3xl overflow-hidden glass-panel">
         {/* Top Header */}
@@ -177,69 +177,75 @@ export function MultimodalChatStudio({ modeId = 'text-to-video' }: MultimodalCha
 
         {/* Canvas Workspace & Attached Assets */}
         <div className="flex-1 p-6 overflow-y-auto space-y-6">
-          {/* Asset Dropzone / Preview Strip */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs text-slate-400">
-              <span className="font-semibold uppercase tracking-wider text-[10px]">Attached Media Assets ({attachedImages.length})</span>
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1"
-              >
-                <Paperclip className="w-3.5 h-3.5" />
-                <span>Add Image</span>
-              </button>
-            </div>
-
-            <div className="flex items-center gap-4 overflow-x-auto pb-2">
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-28 h-28 rounded-2xl border-2 border-dashed border-white/15 hover:border-cyan-500/50 bg-white/[0.02] hover:bg-cyan-500/5 flex flex-col items-center justify-center gap-2 text-slate-400 hover:text-cyan-300 transition-all shrink-0"
-              >
-                <ImageIcon className="w-6 h-6" />
-                <span className="text-[10px] font-bold">Upload Image</span>
-              </button>
-
-              {attachedImages.map((img, idx) => (
-                <div key={idx} className="relative w-28 h-28 rounded-2xl overflow-hidden border border-white/15 group shrink-0 shadow-lg">
-                  <Image src={img} alt="Attached asset" fill className="object-cover" />
-                  <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-cyan-300">
-                    @image{idx + 1}
-                  </div>
+          {/* Asset Dropzone / Preview Strip (Only for modes that support image attachments: ugc, luma, agentic-video) */}
+          {modeId !== 'text-to-video' && (
+            <>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs text-slate-400">
+                  <span className="font-semibold uppercase tracking-wider text-[10px]">Attached Media Assets ({attachedImages.length})</span>
                   <button
-                    onClick={() => handleRemoveImage(idx)}
-                    className="absolute top-1 right-1 p-1 rounded-lg bg-black/80 text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <Paperclip className="w-3.5 h-3.5" />
+                    <span>Add Image</span>
                   </button>
                 </div>
-              ))}
-            </div>
 
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileUpload}
-              accept="image/*"
-              className="hidden"
-            />
-          </div>
+                <div className="flex items-center gap-4 overflow-x-auto pb-2">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-28 h-28 rounded-2xl border-2 border-dashed border-white/15 hover:border-cyan-500/50 bg-white/[0.02] hover:bg-cyan-500/5 flex flex-col items-center justify-center gap-2 text-slate-400 hover:text-cyan-300 transition-all shrink-0"
+                  >
+                    <ImageIcon className="w-6 h-6" />
+                    <span className="text-[10px] font-bold">Upload Image</span>
+                  </button>
 
-          {/* Quick Tag Pill Bar */}
-          <div className="space-y-2">
-            <p className="text-[10px] uppercase font-semibold tracking-wider text-slate-400">Quick Mention Tags</p>
-            <div className="flex flex-wrap gap-2">
-              {availableTags.map((t) => (
-                <button
-                  key={t.tag}
-                  type="button"
-                  onClick={() => handleInsertTag(t.tag)}
-                  className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-amber-500/20 border border-white/10 hover:border-amber-500/40 text-xs font-mono text-amber-300 transition-all"
-                >
-                  {t.tag}
-                </button>
-              ))}
-            </div>
-          </div>
+                  {attachedImages.map((img, idx) => (
+                    <div key={idx} className="relative w-28 h-28 rounded-2xl overflow-hidden border border-white/15 group shrink-0 shadow-lg">
+                      <Image src={img} alt="Attached asset" fill className="object-cover" />
+                      <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-cyan-300">
+                        @image{idx + 1}
+                      </div>
+                      <button
+                        onClick={() => handleRemoveImage(idx)}
+                        className="absolute top-1 right-1 p-1 rounded-lg bg-black/80 text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+              </div>
+
+              {/* Quick Tag Pill Bar */}
+              {availableTags.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-[10px] uppercase font-semibold tracking-wider text-slate-400">Quick Mention Tags</p>
+                  <div className="flex flex-wrap gap-2">
+                    {availableTags.map((t) => (
+                      <button
+                        key={t.tag}
+                        type="button"
+                        onClick={() => handleInsertTag(t.tag)}
+                        className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-amber-500/20 border border-white/10 hover:border-amber-500/40 text-xs font-mono text-amber-300 transition-all"
+                      >
+                        {t.tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
 
         {/* Prompt Input Form */}
@@ -291,20 +297,22 @@ export function MultimodalChatStudio({ modeId = 'text-to-video' }: MultimodalCha
           </div>
 
           {/* UGC Specific Controls */}
+          {/* TextToVideo Engine Info */}
+          {modeId === 'text-to-video' && (
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 text-xs space-y-1">
+              <span className="text-slate-400 font-semibold block">AI Video Model Engine</span>
+              <span className="text-amber-300 font-bold font-mono text-xs block">ByteDance Seedance T2V (WaveSpeed)</span>
+              <p className="text-[11px] text-slate-400 pt-1">Automated prompt $\rightarrow$ script $\rightarrow$ narration $\rightarrow$ Seedance B-roll timeline.</p>
+            </div>
+          )}
+
+          {/* UGC Specific Controls */}
           {modeId === 'ugc' && (
             <>
-              <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-semibold">UGC AI Video Model</label>
-                <select
-                  value={ugcModel}
-                  onChange={(e) => setUgcModel(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-white/10 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
-                >
-                  <option value="bytedance/seedance-2.0">ByteDance Seedance 2.0</option>
-                  <option value="google/veo3.1">Google Veo 3.1</option>
-                  <option value="x-ai/grok-imagine-video">xAI Grok Imagine Video</option>
-                  <option value="alibaba/happyhorse-1.0">Alibaba Happy Horse 1.0</option>
-                </select>
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 text-xs space-y-1">
+                <span className="text-slate-400 font-semibold block">UGC AI Video Engine</span>
+                <span className="text-amber-300 font-bold font-mono text-xs block">ByteDance Seedance I2V (WaveSpeed)</span>
+                <p className="text-[11px] text-slate-400 pt-1">Multimodal avatar & product image references with native lip-sync.</p>
               </div>
 
               <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">

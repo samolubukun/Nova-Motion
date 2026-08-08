@@ -38,6 +38,20 @@ interface ChatMessage {
   suggestedParams?: Record<string, any>;
 }
 
+function renderFormattedText(text: string) {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <strong key={i} className="font-extrabold text-white">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
+}
+
 export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
   const { startTask, startVideoJob, setIsDrawerOpen } = useStudio();
   const [prompt, setPrompt] = useState('');
@@ -200,7 +214,7 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
   };
 
   return (
-    <div className="h-[calc(100vh-8rem)] flex gap-6 overflow-hidden">
+    <div className="h-[calc(125vh-7rem)] min-h-[calc(125vh-7rem)] flex gap-6 overflow-hidden">
       {/* Left Column: Interactive Chat Interface & Prompt Builder */}
       <div className="flex-1 flex flex-col bg-slate-900/60 border border-white/10 rounded-3xl overflow-hidden glass-panel">
         {/* Header */}
@@ -268,7 +282,7 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
                     : 'bg-slate-950/80 border border-white/10 text-slate-200 rounded-tl-none'
                 }`}
               >
-                <p className="leading-relaxed">{msg.text}</p>
+                <p className="leading-relaxed">{renderFormattedText(msg.text)}</p>
                 <span className="text-[10px] text-slate-400 block text-right">{msg.timestamp}</span>
               </div>
             </div>
@@ -328,32 +342,35 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
           </span>
         </div>
 
-        {/* Video Type Selector */}
-        <div className="space-y-1.5">
+        {/* Pipeline Engine Status Badge */}
+        <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1">
           <label className="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
-            <Film className="w-3.5 h-3.5 text-slate-400" />
+            <Film className="w-3.5 h-3.5 text-cyan-400" />
             <span>Pipeline Engine</span>
           </label>
-          <select
-            value={videoType}
-            onChange={(e) => setVideoType(e.target.value)}
-            className="w-full p-2.5 rounded-xl bg-slate-950 border border-white/10 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
-          >
-            <option value="TextToVideo">TextToVideo AI (WaveSpeed Seedance)</option>
-            <option value="MicroDrama">MicroDrama Agentic Engine</option>
-            <option value="UGC">UGC AI Studio (Veo / Grok / Seedance)</option>
-            <option value="AgenticVideoGenerator">Agentic AI Pipeline</option>
-            <option value="Luma">Luma Ray 3.2 Studio</option>
-            <option value="VoxVideo">Vox Paper-Collage Studio</option>
-            <option value="MotionGraphics">Motion Graphics & Charts</option>
-            <option value="Explainer">Explainer Slide Layout</option>
-            <option value="General">General Slide Layout</option>
-            <option value="SocialMedia">Social Media Reel</option>
-            <option value="TextAnimation">Text Kinetic Highlight</option>
-            <option value="AIStoryboardVideo">AI Storyboard Video</option>
-            <option value="StockVideo">Stock Video Engine</option>
-            <option value="StockImage">Stock Image Engine</option>
-          </select>
+          <div className="font-mono text-xs font-bold text-cyan-300">
+            {videoType === 'StockVideo'
+              ? 'Pexels API + Deepgram Voiceover'
+              : videoType === 'StockImage'
+              ? 'Pixabay API + Animated Ken Burns Motion'
+              : videoType === 'AIStoryboardVideo'
+              ? 'GPT-4o Script + gpt-image-2 Shots'
+              : videoType === 'MicroDrama'
+              ? 'Agentic Screenwriter + Seedance I2V'
+              : videoType === 'VoxVideo'
+              ? 'Vox Beatmap + Seedream Poster Collages'
+              : videoType === 'MotionGraphics'
+              ? 'Dynamic 3D Remotion Charts & Infographics'
+              : videoType === 'Explainer'
+              ? 'Explainer Slide Layout (Step Numbers)'
+              : videoType === 'SocialMedia'
+              ? 'Social Media Reel (Quotes & Captions)'
+              : videoType === 'General'
+              ? 'General Clean Slide Layout'
+              : videoType === 'TextAnimation'
+              ? 'Text Kinetic Active Word Highlight'
+              : videoType}
+          </div>
         </div>
 
         {/* Aspect Ratio & Resolution */}
