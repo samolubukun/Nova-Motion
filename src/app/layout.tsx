@@ -1,20 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { StudioProvider } from "@/lib/studio-store";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const geistSans = { variable: "--font-geist-sans" };
+const geistMono = { variable: "--font-geist-mono" };
 
 export const metadata: Metadata = {
-  title: "AI Video Generator",
-  description: "Generate videos with AI using Claude and Remotion",
+  title: "Novamotion - AI Video Generation Studio",
+  description: "Next-gen AI Storyboards, Motion Graphics, Explainer & Stock Video Engine",
+  icons: {
+    icon: "/novamotion.png",
+    shortcut: "/novamotion.png",
+    apple: "/novamotion.png",
+  },
 };
 
 export default function RootLayout({
@@ -23,12 +21,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#080b11] text-slate-100 min-h-screen`}
       >
-        {children}
+        <StudioProvider>
+          {children}
+        </StudioProvider>
       </body>
     </html>
   );
 }
+
