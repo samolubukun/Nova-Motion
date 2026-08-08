@@ -94,21 +94,29 @@ Media assets, voiceover tracks, and final rendered MP4 videos are managed throug
   <tr>
     <td align="center">
       <strong>AI Storyboard</strong><br />
-      <video src="https://ucarecdn.com/a90fdcb0-4296-4b51-b55f-ba4bbf48bd35/novamotionAIStoryboard.mp4" controls muted playsinline width="320"></video>
+      <a href="https://ucarecdn.com/a90fdcb0-4296-4b51-b55f-ba4bbf48bd35/novamotionAIStoryboard.mp4">
+        <img src="https://ucarecdn.com/a90fdcb0-4296-4b51-b55f-ba4bbf48bd35/novamotionAIStoryboard.mp4" alt="AI Storyboard sample" width="320" />
+      </a>
     </td>
     <td align="center">
       <strong>Text to Video</strong><br />
-      <video src="https://ucarecdn.com/b682ae8f-e0d9-4cc3-b19b-940cb826625e/novamotiontexttovideo.mp4" controls muted playsinline width="320"></video>
+      <a href="https://ucarecdn.com/b682ae8f-e0d9-4cc3-b19b-940cb826625e/novamotiontexttovideo.mp4">
+        <img src="https://ucarecdn.com/b682ae8f-e0d9-4cc3-b19b-940cb826625e/novamotiontexttovideo.mp4" alt="Text to Video sample" width="320" />
+      </a>
     </td>
   </tr>
   <tr>
     <td align="center">
       <strong>Stock Video</strong><br />
-      <video src="https://ucarecdn.com/3ac78886-9bac-4197-8a8d-2d2d24261bd0/novamotionstockvideo.mp4" controls muted playsinline width="320"></video>
+      <a href="https://ucarecdn.com/3ac78886-9bac-4197-8a8d-2d2d24261bd0/novamotionstockvideo.mp4">
+        <img src="https://ucarecdn.com/3ac78886-9bac-4197-8a8d-2d2d24261bd0/novamotionstockvideo.mp4" alt="Stock Video sample" width="320" />
+      </a>
     </td>
     <td align="center">
       <strong>Stock Image</strong><br />
-      <video src="https://ucarecdn.com/cf070cef-cce8-4b4d-a00a-2f3a4de9488b/novamotionstockimage.mp4" controls muted playsinline width="320"></video>
+      <a href="https://ucarecdn.com/cf070cef-cce8-4b4d-a00a-2f3a4de9488b/novamotionstockimage.mp4">
+        <img src="https://ucarecdn.com/cf070cef-cce8-4b4d-a00a-2f3a4de9488b/novamotionstockimage.mp4" alt="Stock Image sample" width="320" />
+      </a>
     </td>
   </tr>
 </table>
