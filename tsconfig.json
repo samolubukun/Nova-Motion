@@ -32,6 +32,7 @@
   ],
   "exclude": [
     "node_modules",
+    "scratch",
     "src/remotion-scenes-main",
     "src/remotion/scenes/ThemeAnimations/Theme3DGlassThreeJS.tsx"
   ]
