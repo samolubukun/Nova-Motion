@@ -92,10 +92,10 @@ Media assets, voiceover tracks, and final rendered MP4 videos are managed throug
 
 See Nova Motion in action - watch a sample video from each mode:
 
-- <a href="https://ucarecdn.com/a90fdcb0-4296-4b51-b55f-ba4bbf48bd35/novamotionAIStoryboard.mp4" target="_blank" rel="noopener">Watch: AI Storyboard</a>
-- <a href="https://ucarecdn.com/b682ae8f-e0d9-4cc3-b19b-940cb826625e/novamotiontexttovideo.mp4" target="_blank" rel="noopener">Watch: Text to Video</a>
-- <a href="https://ucarecdn.com/3ac78886-9bac-4197-8a8d-2d2d24261bd0/novamotionstockvideo.mp4" target="_blank" rel="noopener">Watch: Stock Video</a>
-- <a href="https://ucarecdn.com/cf070cef-cce8-4b4d-a00a-2f3a4de9488b/novamotionstockimage.mp4" target="_blank" rel="noopener">Watch: Stock Image</a>
+- [Watch: AI Storyboard](https://ucarecdn.com/a90fdcb0-4296-4b51-b55f-ba4bbf48bd35/novamotionAIStoryboard.mp4)
+- [Watch: Text to Video](https://ucarecdn.com/b682ae8f-e0d9-4cc3-b19b-940cb826625e/novamotiontexttovideo.mp4)
+- [Watch: Stock Video](https://ucarecdn.com/3ac78886-9bac-4197-8a8d-2d2d24261bd0/novamotionstockvideo.mp4)
+- [Watch: Stock Image](https://ucarecdn.com/cf070cef-cce8-4b4d-a00a-2f3a4de9488b/novamotionstockimage.mp4)
 
 ### Project Structure
 
