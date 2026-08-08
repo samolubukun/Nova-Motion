@@ -951,7 +951,7 @@ Nova Motion builds on the work of several open projects and APIs:
 
 ## Contributing
 
-Contributions are welcome. Please open an issue first to discuss what you would like to change, then submit a pull request.
+Contributions are welcome. Please read the [Contributing Guide](CONTRIBUTING.md) first - it covers setup, how to verify a mode end to end, and how to add a new one. Then open an issue to discuss what you would like to change before submitting a pull request.
 
 ## Support
 
