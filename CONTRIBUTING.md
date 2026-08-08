@@ -25,7 +25,9 @@ Each verification is: run the mode end to end, confirm the output, and either re
 
 ### 2. Harden the pipeline and workflow
 
-Make the generation workflow more reliable: better error messages, retries on transient provider failures, graceful fallbacks for every sub-step, accurate progress reporting, and a smoother submit-to-poll-to-download loop.
+Every mode is a production pipeline made of ordered steps: the request is validated at the gateway, the job is queued on the render server, an LLM writes the script or beat map, media is generated (images, clips, music), narration is synthesized with word timestamps, and Remotion assembles everything into the final mp4. Understanding these steps - which are parallelizable, which depend on earlier output, which can fail independently - is the key to improving the whole system.
+
+Make the generation workflow more reliable: better error messages, retries on transient provider failures, graceful fallbacks for every sub-step, accurate progress reporting, and a smoother submit-to-poll-to-download loop. Structural workflow improvements - splitting long jobs into smaller stages, reusing generated assets, caching repeated API calls, or streaming progress between the servers - are especially valuable.
 
 ### 3. Improve the studio / frontend
 
