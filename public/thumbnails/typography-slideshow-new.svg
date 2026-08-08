@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle Grid Overlay -->
+  <g opacity="0.05" stroke="#ffffff" stroke-width="1">
+    <line x1="0" y1="90" x2="800" y2="90"/>
+    <line x1="0" y1="180" x2="800" y2="180"/>
+    <line x1="0" y1="270" x2="800" y2="270"/>
+    <line x1="0" y1="360" x2="800" y2="360"/>
+    <line x1="160" y1="0" x2="160" y2="450"/>
+    <line x1="320" y1="0" x2="320" y2="450"/>
+    <line x1="480" y1="0" x2="480" y2="450"/>
+    <line x1="640" y1="0" x2="640" y2="450"/>
+  </g>
+
+  <!-- Slide Card 1 (Back Left) -->
+  <g transform="translate(60, 80) scale(0.85)" opacity="0.4" filter="url(#shadow)">
+    <rect width="500" height="300" rx="16" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+    <rect x="40" y="40" width="40" height="40" rx="8" fill="#334155"/>
+    <rect x="100" y="50" width="240" height="20" rx="4" fill="#475569"/>
+    <rect x="40" y="110" width="380" height="12" rx="3" fill="#334155"/>
+    <rect x="40" y="135" width="300" height="12" rx="3" fill="#334155"/>
+  </g>
+
+  <!-- Main Slide Card (Front Center) -->
+  <g transform="translate(160, 65)" filter="url(#shadow)">
+    <rect width="520" height="320" rx="20" fill="#090d16" stroke="url(#accentGrad)" stroke-width="2.5"/>
+    
+    <!-- Step Badge -->
+    <rect x="44" y="44" width="48" height="48" rx="12" fill="url(#accentGrad)"/>
+    <text x="68" y="75" font-family="system-ui, sans-serif" font-weight="900" font-size="22" fill="#000000" text-anchor="middle">01</text>
+    
+    <!-- Title Lines -->
+    <text x="112" y="75" font-family="system-ui, sans-serif" font-weight="800" font-size="20" fill="#ffffff" letter-spacing="1">SLIDE &amp; TYPOGRAPHY</text>
+    
+    <line x1="44" y1="115" x2="476" y2="115" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1.5"/>
+    
+    <!-- Kinetic Highlight Quote Box -->
+    <rect x="44" y="135" width="432" height="75" rx="12" fill="#1e293b" fill-opacity="0.6" stroke="#334155" stroke-width="1"/>
+    
+    <!-- Highlighting Text Simulation -->
+    <rect x="60" y="152" width="165" height="22" rx="6" fill="url(#goldGrad)"/>
+    <text x="66" y="168" font-family="system-ui, sans-serif" font-weight="800" font-size="14" fill="#000000">KINETIC TEXT HIGHLIGHT</text>
+    <text x="235" y="168" font-family="system-ui, sans-serif" font-weight="600" font-size="14" fill="#e2e8f0">explainer slides</text>
+    <text x="60" y="193" font-family="system-ui, sans-serif" font-weight="500" font-size="13" fill="#94a3b8">Clean transitions, step numbers &amp; active quotes</text>
+
+    <!-- Sub-variant Badges -->
+    <g transform="translate(44, 235)">
+      <rect x="0" y="0" width="95" height="28" rx="8" fill="#0f172a" stroke="#06b6d4" stroke-opacity="0.5"/>
+      <text x="47" y="18" font-family="system-ui, sans-serif" font-weight="700" font-size="11" fill="#22d3ee" text-anchor="middle">Explainer</text>
+      
+      <rect x="105" y="0" width="105" height="28" rx="8" fill="#0f172a" stroke="#3b82f6" stroke-opacity="0.5"/>
+      <text x="157" y="18" font-family="system-ui, sans-serif" font-weight="700" font-size="11" fill="#60a5fa" text-anchor="middle">SocialMedia</text>
+      
+      <rect x="220" y="0" width="90" height="28" rx="8" fill="#0f172a" stroke="#f59e0b" stroke-opacity="0.5"/>
+      <text x="265" y="18" font-family="system-ui, sans-serif" font-weight="700" font-size="11" fill="#fbbf24" text-anchor="middle">General</text>
+      
+      <rect x="320" y="0" width="112" height="28" rx="8" fill="#0f172a" stroke="#a855f7" stroke-opacity="0.5"/>
+      <text x="376" y="18" font-family="system-ui, sans-serif" font-weight="700" font-size="11" fill="#c084fc" text-anchor="middle">TextAnimation</text>
+    </g>
+  </g>
+
+  <!-- Accent Glow Dot -->
+  <circle cx="680" cy="65" r="4" fill="#22d3ee"/>
+</svg>
