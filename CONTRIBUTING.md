@@ -13,6 +13,38 @@ This guide walks you through the setup, how to test a mode end to end, and how t
 
 ---
 
+## Priority Areas
+
+These are the areas that move the project forward, roughly in order of importance.
+
+### 1. Verify and fix the untested modes (highest priority)
+
+Only four modes are confirmed working today: **AI Storyboard**, **Text to Video**, **Stock Video**, and **Stock Image**. The rest need to be confirmed against the live APIs and fixed where they break: **Vox**, **UGC**, **Motion Graphics**, **MicroDrama**, **Agentic Video**, **Luma**, and the typography slide modes.
+
+Each verification is: run the mode end to end, confirm the output, and either report a clean pass or fix what broke. Verification PRs are the single most valuable contribution right now.
+
+### 2. Harden the pipeline and workflow
+
+Make the generation workflow more reliable: better error messages, retries on transient provider failures, graceful fallbacks for every sub-step, accurate progress reporting, and a smoother submit-to-poll-to-download loop.
+
+### 3. Improve the studio / frontend
+
+Polish the web UI, the `/ugc` studio, and the prompt-to-video experience - communication surfaces such as progress feedback, job history, and any chat-driven generation flow. Anything that makes creating a video from the browser easier is welcome.
+
+### 4. Improve the existing modes
+
+Better scripts and narratives, stronger visuals, tighter captions, and richer music for every mode already shipped.
+
+### 5. Add new modes
+
+New formats, new models, and new explainer styles, following the add-a-mode pattern below.
+
+### General housekeeping
+
+Bug fixes, performance, documentation, and anything that keeps the codebase clean are always welcome at any priority level.
+
+---
+
 ## Table of Contents
 
 1. [Repository Layout](#repository-layout)
