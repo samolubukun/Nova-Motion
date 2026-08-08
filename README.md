@@ -99,7 +99,7 @@ See Nova Motion in action - watch a sample video from each mode:
 
 ## Studio Preview
 
-<img src="./public/novamotion.jpg" alt="Nova Motion studio interface" />
+<img src="./public/novamotiondemo.jpg" alt="Nova Motion studio interface" />
 
 ### Project Structure
 
