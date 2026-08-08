@@ -266,7 +266,7 @@ export default function LandingPage() {
           href="/studio"
           className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-white text-black hover:bg-slate-200 font-extrabold text-xs shadow-xl shadow-cyan-500/20 transition-all transform hover:-translate-y-0.5"
         >
-          <span>Get Started</span>
+          <span>Open Studio</span>
           <ArrowUpRight className="w-4 h-4 text-black" />
         </Link>
       </header>
@@ -291,7 +291,7 @@ export default function LandingPage() {
               href="/studio"
               className="px-7 py-3.5 rounded-full bg-white text-black font-extrabold text-xs hover:bg-slate-200 transition-all shadow-xl shadow-cyan-500/20"
             >
-              Get Started
+              Open Studio
             </Link>
 
             <a
