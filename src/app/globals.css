@@ -32,9 +32,9 @@ body {
   overflow-x: hidden;
 }
 
-/* Desktop 20% Zoom Out (80% Scale) */
+/* Desktop 20% Zoom Out (80% Scale) for Studio Pages only */
 @media (min-width: 1024px) {
-  body {
+  .studio-layout-wrapper {
     zoom: 0.8;
   }
 }

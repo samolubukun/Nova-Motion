@@ -6,7 +6,7 @@ import { BacklogDrawer } from '@/components/studio/BacklogDrawer';
 
 export default function StudioLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-[125vh] bg-[#080b11] text-slate-100 flex">
+    <div className="studio-layout-wrapper min-h-[125vh] bg-[#080b11] text-slate-100 flex">
       {/* Fixed Sidebar */}
       <Sidebar />
 
