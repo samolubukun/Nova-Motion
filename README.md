@@ -34,11 +34,12 @@
 
 ## What is Nova Motion?
 
-Nova Motion is an AI video generation engine. Post a prompt and a mode to `POST /api/videos`, and the pipeline writes the script, generates the visuals, narrates the voiceover, and renders a finished mp4 with Remotion - asynchronously, through a dedicated Express render queue.
+Nova Motion is an end-to-end AI video generation engine designed to transform simple text prompts and concepts into production-grade, platform-ready videos. Built on Next.js, Remotion, and an asynchronous Express render pipeline, Nova Motion orchestrates story writing, visual generation, voiceover synthesis, kinetic captioning, and final video rendering into one continuous automated workflow.
 
-Thirteen creation engines sit behind that one endpoint: AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, and Vox collage explainers. Every mode shares the same flow - submit, poll `GET /api/videos/{jobId}`, download the render.
+The platform provides a suite of creation engines tailored for distinct video formats, including AI storyboards, stock footage shorts, typography slides, 3D motion graphics, text-to-video B-rolls, micro drama narratives, UGC video ads, concept-to-video campaigns, Luma Ray 3.2 cinematic clips, and Vox-style paper-collage explainers.
 
-Voiceovers, images, and finished videos are uploaded to DigitalOcean Spaces or Cloudflare R2 and returned as public URLs.
+Media assets, voiceover tracks, and final rendered MP4 videos are managed through a unified storage pipeline, with support for local disk storage as well as cloud-native object storage such as DigitalOcean Spaces and Cloudflare R2.
+
 
 ### Highlights
 
@@ -141,7 +142,7 @@ Produces premium, highly animated visual components using a dynamic, unified JSO
 * **Deepgram & Background Music**: Synthesizes custom TTS narration for each slide and overlays background audio tracks.
 
 ### 6. AI Text-to-Video (`videoType: "TextToVideo"`)
-Replicates the Text-To-Video-AI pipeline: generates the script, narrates it, then creates each B-roll segment with WaveSpeed's Seedance text-to-video model.
+Generates a full AI B-roll video: creates the script, narrates it, then generates each B-roll segment with WaveSpeed's Seedance text-to-video model.
 * **OpenAI (GPT-4o-mini)**: Writes a short facts-style script from the topic.
 * **Deepgram/ElevenLabs TTS**: Narrates the script and returns native word-level timestamps.
 * **WaveSpeed Seedance**: Generates an AI video clip per timed B-roll segment using the segment's visual keywords. Resolution via `WAVESPEED_VIDEO_RESOLUTION` (default `480p`), clip length via `WAVESPEED_VIDEO_DURATION` (default `5s`, 3–10s); segments are sized to match the clip length so nothing is wasted.
@@ -150,7 +151,7 @@ Replicates the Text-To-Video-AI pipeline: generates the script, narrates it, the
 * **Kinetic Captions**: The narration words are highlighted in sync with the voiceover.
 
 ### 7. Micro Drama (`videoType: "MicroDrama"`)
-Replicates the Open-AI-Micro-Drama-Generator pipeline: a full agentic story-to-video workflow where the AI acts as screenwriter, casting director, storyboard artist, and cinematographer.
+A full agentic story-to-video workflow where the AI acts as screenwriter, casting director, storyboard artist, and cinematographer.
 * **WaveSpeed LLM** (`WAVESPEED_LLM_MODEL`, default `deepseek/deepseek-v4-flash`): Writes the story from an idea (or consumes a supplied script), extracts consistent characters, writes per-scene scripts, and designs a shot-by-shot storyboard (visual + motion + audio descriptions).
 * **WaveSpeed Seedream T2I**: Generates character portraits (`WAVESPEED_PORTRAIT_MODEL`) and a scene first-frame image per shot (`WAVESPEED_FRAME_MODEL`).
 * **WaveSpeed Seedance I2V** (`WAVESPEED_I2V_MODEL`): Animates each shot's first-frame into a clip (default 5s, 720p) with **native audio** (ambient SFX — no TTS voiceover).
@@ -158,17 +159,17 @@ Replicates the Open-AI-Micro-Drama-Generator pipeline: a full agentic story-to-v
 * **Async**: the request returns a `jobId` immediately; the whole pipeline runs inside the render job and is polled via `GET /api/videos/{jobId}`.
 
 ### 8. AI UGC Ad (`videoType: "UGC"`)
-Replicates the Open-AI-UGC studio (an Arcads / MakeUGC alternative) using the **WaveSpeed** API already configured in this project — no separate MuAPI key needed.
+An AI UGC video ad studio utilizing high-performance image-to-video and text-to-video models with custom reference avatar inputs.
 * **Model picker**: Veo 3.1 (`google/veo3.1/*`), Seedance 2 (`bytedance/seedance-2.0/*`), Grok Video (`x-ai/grok-imagine-video/*`), and Happy Horse 1 (`alibaba/happyhorse-1.0/*`), each with text-to-video and image-to-video endpoints. Default model via `UGC_DEFAULT_MODEL` (default `seedance-2`).
 * **T2V vs I2V**: with no reference images, the model's text-to-video endpoint is used; with reference image(s), the image-to-video endpoint animates the image (e.g. an actor face) with **native audio** from the script.
 * **Reference images**: upload up to 7 images via `POST /api/upload` (returns a hosted URL) and reference them inline in the script as `@image1`, `@image2`, etc.
 * **Per-model controls**: aspect ratio, duration, and resolution (Grok clips are 6 or 10s and limited to 16:9 / 1:1 / 9:16 per WaveSpeed's contract; no mode presets are available).
-* **Multi-scene (Arcads-style)**: with `multiScene: true` the script is broken into 2-6 scenes by the WaveSpeed LLM following the UGC beat structure (**Hook → Problem → Product → Demo → Outcome → CTA**, kept honest — no fake testimonials/guarantees invented), a single TTS voiceover (ElevenLabs preferred, Deepgram fallback) is generated for the whole ad, each scene is generated as its own clip (I2V with a reference image to keep the same actor, T2V otherwise), and the clips are cut together into one timeline with kinetic captions — played by the `UGC` Remotion composition. `voice` selects the voiceover, `targetDurationSec` (10-60) hints the total length. **Lip-sync** (`lipSync`, default on) re-animates each clip's mouth to match the TTS via WaveSpeed `sync/lipsync-2` (~$0.05/run + ~2 min per scene, non-fatal fallback; requires the TTS audio to be publicly reachable via `RENDER_SERVER_BASE_URL`). Requires `ELEVENLABS_API_KEY` or `DEEPGRAM_API_KEY`.
+* **Multi-scene UGC**: with `multiScene: true` the script is broken into 2-6 scenes by the WaveSpeed LLM following the UGC beat structure (**Hook → Problem → Product → Demo → Outcome → CTA**, kept honest — no fake testimonials/guarantees invented), a single TTS voiceover (ElevenLabs preferred, Deepgram fallback) is generated for the whole ad, each scene is generated as its own clip (I2V with a reference image to keep the same actor, T2V otherwise), and the clips are cut together into one timeline with kinetic captions — played by the `UGC` Remotion composition. `voice` selects the voiceover, `targetDurationSec` (10-60) hints the total length. **Lip-sync** (`lipSync`, default on) re-animates each clip's mouth to match the TTS via WaveSpeed `sync/lipsync-2` (~$0.05/run + ~2 min per scene, non-fatal fallback; requires the TTS audio to be publicly reachable via `RENDER_SERVER_BASE_URL`). Requires `ELEVENLABS_API_KEY` or `DEEPGRAM_API_KEY`.
 * **Async**: the request returns a `jobId` immediately; the WaveSpeed generation runs inside the render job, the finished mp4 is downloaded into `rendered-videos/`, uploaded to S3/R2/Spaces when configured, and polled via `GET /api/videos/{jobId}`.
 * **UI**: a full studio lives at `/ugc` (model cards, image upload with previews, **template library** with 18 proven UGC scripts — meal planning, beauty, SaaS, pet, local service, etc. — that load into the script box, param pickers, generation-style toggle, live polling player).
 
 ### 9. Agentic Video Generator (`videoType: "AgenticVideoGenerator"`)
-Implements the end-to-end workflow described by the AI Video Generation Pipeline reference project, replacing its placeholder clients and fake output paths with the working services in this repository.
+Executes an end-to-end concept-to-video production pipeline, combining agentic scripting, character casting, and high-resolution video models.
 * **Production agents**: WaveSpeed LLM develops a screenplay, extracts characters, plans scenes, and writes visual, camera, and sound direction.
 * **Character and scene generation**: WaveSpeed `bytedance/seedream-v5.0-pro` generates shot keyframes; verified video options are Seedance 2.0 (`bytedance/seedance-2.0/image-to-video`), Seedance 2.0 Fast (`bytedance/seedance-2.0-fast/image-to-video`), Veo 3.1 Fast Reference (`google/veo3.1-fast/reference-to-video`), MiniMax H3 Image-to-Video (`minimax/h3/image-to-video`), and MiniMax H3 Reference-to-Video (`minimax/h3/reference-to-video`).
 * **Strict model execution**: this mode has no Pexels, stock, or alternate-provider fallback. It validates the selected model's ratios, duration, resolution, and reference-image limits before submission. A provider failure fails the job with the provider error.
@@ -223,7 +224,7 @@ Implements every core capability of Luma's Ray 3.2 model in a single unified mod
 ```
 
 ### 11. Vox Collage Explainer (`videoType: "VoxVideo"`)
-Replicates the Vox-style paper-collage explainer generator using the APIs already in this project.
+A Vox-style paper-collage explainer generator producing torn-paper collage posters and animated clips.
 * **Beat map**: A hook-led, arc-driven narrative structure (6 arcs) is written by the WaveSpeed LLM, with per-beat headlines, narration, scene specs, and element motion.
 * **Collage posters**: Each beat is generated as a finished torn-paper collage poster by Seedream using a strict 5-part Vox prompt formula (style block, scene, background, headline banner, technical) across 4 visual themes (American Retro, Swiss Modern, Punk Zine, Chinese Ink).
 * **Motion**: Each poster is animated into a clip by Seedance image-to-video using the beat's camera move + element-motion prompt.

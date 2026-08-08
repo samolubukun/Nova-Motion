@@ -1,694 +1,452 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { VideoScript, VideoType } from "../../shared/video-schema";
+import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import {
+  Film,
+  Zap,
+  Layers,
+  Cpu,
+  Tv,
+  BarChart3,
+  Video,
+  Bot,
+  Clapperboard,
+  ArrowUpRight,
+  ShieldCheck
+} from 'lucide-react';
 
-// Types for API responses
-interface GenerateResponse {
-  success: boolean;
-  jobId?: string;
-  status?: string;
-  script?: VideoScript;
-  error?: string;
+interface ShowcaseMode {
+  id: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  badge: string;
+  accentColor: string;
+  paramsSummary: string;
 }
 
-interface JobStatusResponse {
-  success: boolean;
-  jobId?: string;
-  status?: "queued" | "rendering" | "completed" | "failed";
-  progress?: number;
-  videoUrl?: string;
-  error?: string;
-}
+export default function LandingPage() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
 
-// Video type options with descriptions
-const VIDEO_TYPES: { value: VideoType; label: string; description: string }[] = [
-  { value: "General", label: "General", description: "Flexible template for any content" },
-  { value: "TextAnimation", label: "Text Animation", description: "Kinetic typography with word-by-word animations" },
-  { value: "SocialMedia", label: "Social Media", description: "Vertical 9:16 format for TikTok, Reels, Shorts" },
-  { value: "Explainer", label: "Explainer", description: "Educational content with step indicators" },
-  { value: "AIStoryboardVideo", label: "AI Storyboard (Generated)", description: "Generated story with AI images and voiceover" },
-  { value: "StockVideo", label: "Stock Video", description: "Generated story with Pexels videos and voiceover" },
-  { value: "StockImage", label: "Stock Image", description: "Generated story with Pixabay images and voiceover" },
-  { value: "MicroDrama", label: "Micro Drama", description: "Full agentic pipeline: AI story, characters, storyboard, and Seedance clips" },
-  { value: "UGC", label: "UGC Ad", description: "AI UGC ad studio: script + reference images → Veo/Grok/Seedance/Happy Horse clip. Full studio at /ugc" },
-  { value: "AgenticVideoGenerator", label: "Agentic Video", description: "Concept to screenplay, casting, storyboard, AI scenes, audio, and final platform-ready video" },
-  { value: "Luma", label: "Luma AI (Ray 3.2)", description: "All Ray 3.2 capabilities in one mode: T2V, I2V, loop, extend, video edit, reframe + TTS" },
-  { value: "VoxVideo", label: "Vox Collage", description: "Vox-style paper-collage explainer: beat map → collage posters → animated clips + voiceover + captions" },
-];
+  const showcaseModes: ShowcaseMode[] = [
+    {
+      id: 'stock-video',
+      title: 'Stock Video Studio',
+      subtitle: 'Context-matched Pexels stock video loops, ambient music, and narration.',
+      image: '/thumbnails/stock-video.png',
+      badge: 'Pexels API',
+      accentColor: 'from-amber-500 to-yellow-400',
+      paramsSummary: 'Stock Clips • Voiceover • Aspect Ratio',
+    },
+    {
+      id: 'stock-image',
+      title: 'Stock Image Studio',
+      subtitle: 'Pixabay stock imagery with animated Ken Burns pan/zoom motion.',
+      image: '/thumbnails/stock-image.png',
+      badge: 'Pixabay Motion',
+      accentColor: 'from-cyan-500 to-teal-400',
+      paramsSummary: 'Ken Burns Motion • Pixabay Images • Voice',
+    },
+    {
+      id: 'ai-storyboard',
+      title: 'AI Storyboard Studio',
+      subtitle: 'Multi-scene narrative scripts, gpt-image-2 visual illustrations & narration.',
+      image: '/thumbnails/ai-storyboard.png',
+      badge: 'GPT-4o + Image-2',
+      accentColor: 'from-blue-600 to-cyan-500',
+      paramsSummary: 'Multi-Scene Story • Shot Descriptions • Voice',
+    },
+    {
+      id: 'text-to-video',
+      title: 'AI Text-to-Video Engine',
+      subtitle: 'WaveSpeed Seedance B-roll generation with TTS narration.',
+      image: '/thumbnails/text-to-video-new.png',
+      badge: 'Seedance AI',
+      accentColor: 'from-cyan-400 to-blue-600',
+      paramsSummary: 'Seedance B-Roll • Multimodal @Tags • Kinetic Captions',
+    },
+    {
+      id: 'microdrama',
+      title: 'MicroDrama Story Engine',
+      subtitle: 'Agentic screenplay, character casting, storyboard, and Seedance narrative clips.',
+      image: '/thumbnails/microdrama.png',
+      badge: 'Agentic Screenwriter',
+      accentColor: 'from-amber-500 to-yellow-400',
+      paramsSummary: 'Idea / Script Mode • Character Sync • Native Audio',
+    },
+    {
+      id: 'ugc',
+      title: 'AI UGC Studio',
+      subtitle: 'AI UGC ad studio with up to 7 reference images (@image1) and WaveSpeed lip-sync.',
+      image: '/thumbnails/ugc-ad.png',
+      badge: 'UGC Ad Studio',
+      accentColor: 'from-cyan-500 to-blue-500',
+      paramsSummary: 'Veo 3.1 / Seedance 2 / Grok • Lip-Sync • Avatars',
+    },
+    {
+      id: 'agentic-video',
+      title: 'Agentic Concept-to-Video',
+      subtitle: 'End-to-end campaign brief to screenplay, casting, storyboard, and export.',
+      image: '/thumbnails/agentic-video.png',
+      badge: 'Full Campaign Agent',
+      accentColor: 'from-amber-400 to-cyan-500',
+      paramsSummary: 'Brief • Platform Presets • Character Casting',
+    },
+    {
+      id: 'luma',
+      title: 'Luma AI Ray 3.2 Studio',
+      subtitle: 'Unified Ray 3.2 pipeline — text-to-video, image-to-video, extend, and reframing.',
+      image: '/thumbnails/luma-ray.png',
+      badge: 'Luma Ray 3.2',
+      accentColor: 'from-cyan-400 to-amber-400',
+      paramsSummary: 'T2V / I2V • Keyframes • Edit Strength • HDR',
+    },
+    {
+      id: 'vox-video',
+      title: 'Vox Paper-Collage Studio',
+      subtitle: 'Vox-style paper-collage explainer posters, Seedance motion, and TTS narration.',
+      image: '/thumbnails/vox-explainer.png',
+      badge: 'Paper Collage',
+      accentColor: 'from-amber-500 to-yellow-300',
+      paramsSummary: 'Vox Theme • Story Arc • Poster Animation',
+    },
+    {
+      id: 'motion-graphics',
+      title: 'Motion Graphics Studio',
+      subtitle: 'Dynamic motion graphics, 3D animated bar/pie/line charts, and growth metrics.',
+      image: '/thumbnails/motion-graphics.png',
+      badge: '3D Chart Engine',
+      accentColor: 'from-blue-500 to-cyan-400',
+      paramsSummary: '3D Charts • Growth Metrics • Palette Picker',
+    },
+    {
+      id: 'typography-slideshow',
+      title: 'Typography & Slideshow Studio',
+      subtitle: 'Grouped studio for Explainer, Social Media Reels, General, and Text Animation.',
+      image: '/thumbnails/typography-slideshow-new.svg',
+      badge: 'Typography Slides',
+      accentColor: 'from-teal-400 to-cyan-500',
+      paramsSummary: 'Step Numbers • Quotes • Kinetic Highlighting',
+    },
+  ];
 
-// Duration options
-const DURATION_OPTIONS = [
-  { value: 10, label: "10 seconds" },
-  { value: 15, label: "15 seconds" },
-  { value: 30, label: "30 seconds" },
-  { value: 45, label: "45 seconds" },
-  { value: 60, label: "60 seconds" },
-];
+  const isLockedRef = useRef(false);
 
-export default function Home() {
-  // Form state
-  const [prompt, setPrompt] = useState("");
-  const [videoType, setVideoType] = useState<VideoType>("General");
-  const [duration, setDuration] = useState(30);
-  const [primaryColor, setPrimaryColor] = useState("#1a1a2e");
-  const [textColor, setTextColor] = useState("#ffffff");
-  const [targetAudience, setTargetAudience] = useState("General audience");
-  const [language, setLanguage] = useState("English");
-  const [tone, setTone] = useState("Professional and cinematic");
-  const [platform, setPlatform] = useState("standard");
-  const [agenticModel, setAgenticModel] = useState("seedanceStandard");
-
-  // Luma state
-  const [lumaUseCase, setLumaUseCase] = useState("custom");
-  const [lumaOperation, setLumaOperation] = useState("auto");
-  const [lumaResolution, setLumaResolution] = useState("720p");
-  const [lumaHdr, setLumaHdr] = useState(false);
-  const [lumaLoop, setLumaLoop] = useState(false);
-  const [lumaGenerateAudio, setLumaGenerateAudio] = useState(true);
-  const [lumaSourceVideo, setLumaSourceVideo] = useState("");
-
-  // Vox state
-  const [voxTheme, setVoxTheme] = useState("american-retro");
-  const [voxArc, setVoxArc] = useState("hook_payoff");
-  const [voxMusic, setVoxMusic] = useState(true);
-  const [voxGenerateAudio, setVoxGenerateAudio] = useState(true);
-
-  // Generation state
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [currentJobId, setCurrentJobId] = useState<string | null>(null);
-  const [jobStatus, setJobStatus] = useState<JobStatusResponse | null>(null);
-  const [script, setScript] = useState<VideoScript | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  // Ref to track polling
-  const pollingRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Poll for job status using useEffect
+  // Scroll Lock UX Flow for Carousel (Discrete 1-card step per gesture)
   useEffect(() => {
-    if (!currentJobId || !isGenerating) {
-      if (pollingRef.current) {
-        clearTimeout(pollingRef.current);
-        pollingRef.current = null;
-      }
-      return;
-    }
+    const handleGlobalWheel = (e: WheelEvent) => {
+      if (!sectionRef.current) return;
+      const rect = sectionRef.current.getBoundingClientRect();
 
-    const checkStatus = async () => {
-      try {
-        const response = await fetch(`/api/videos/${currentJobId}`);
-        const data: JobStatusResponse = await response.json();
+      // Section must be centered in main viewport (-100px to 150px top offset)
+      const isCenteredInView = rect.top >= -100 && rect.top <= 150;
 
-        if (data.success) {
-          setJobStatus(data);
-
-          // Continue polling if still in progress
-          if (data.status === "queued" || data.status === "rendering") {
-            pollingRef.current = setTimeout(checkStatus, 1500);
-          } else if (data.status === "failed") {
-            setError(data.error || "Video rendering failed");
-            setIsGenerating(false);
-          } else if (data.status === "completed") {
-            setIsGenerating(false);
+      if (isCenteredInView) {
+        if (e.deltaY > 0) {
+          // Scrolling DOWN
+          if (activeIndex < showcaseModes.length - 1) {
+            e.preventDefault();
+            if (!isLockedRef.current) {
+              isLockedRef.current = true;
+              setActiveIndex((prev) => Math.min(prev + 1, showcaseModes.length - 1));
+              setTimeout(() => {
+                isLockedRef.current = false;
+              }, 700);
+            }
           }
-        } else {
-          setError(data.error || "Failed to get job status");
-          setIsGenerating(false);
+          // When at last card, scroll unlocks naturally down the page
+        } else if (e.deltaY < 0) {
+          // Scrolling UP
+          if (activeIndex > 0) {
+            e.preventDefault();
+            if (!isLockedRef.current) {
+              isLockedRef.current = true;
+              setActiveIndex((prev) => Math.max(prev - 1, 0));
+              setTimeout(() => {
+                isLockedRef.current = false;
+              }, 700);
+            }
+          }
+          // When at first card, scroll unlocks naturally up the page
         }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to check job status");
-        setIsGenerating(false);
       }
     };
 
-    checkStatus();
+    window.addEventListener('wheel', handleGlobalWheel, { passive: false });
+    return () => window.removeEventListener('wheel', handleGlobalWheel);
+  }, [activeIndex, showcaseModes.length]);
 
-    return () => {
-      if (pollingRef.current) {
-        clearTimeout(pollingRef.current);
-        pollingRef.current = null;
-      }
-    };
-  }, [currentJobId, isGenerating]);
+  const handleMouseDown = (e: React.MouseEvent) => {
+    isDragging.current = true;
+    startX.current = e.clientX;
+  };
 
-  // Handle form submission
-  const handleGenerate = async () => {
-    if (!prompt.trim()) {
-      setError("Please enter a prompt");
-      return;
-    }
-
-    setIsGenerating(true);
-    setError(null);
-    setCurrentJobId(null);
-    setJobStatus(null);
-    setScript(null);
-
-    try {
-      const response = await fetch("/api/videos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(videoType === "AgenticVideoGenerator" ? {
-          videoType,
-          title: prompt.trim().slice(0, 200),
-          brief: prompt.trim(),
-          targetAudience,
-          durationSeconds: duration,
-          language,
-          tone,
-          platform,
-          videoModel: agenticModel,
-        } : videoType === "Luma" ? {
-          videoType,
-          prompt: prompt.trim(),
-          title: prompt.trim().slice(0, 200),
-          useCase: lumaUseCase,
-          resolution: lumaResolution,
-          duration: `${duration <= 5 ? 5 : 10}s`,
-          hdr: lumaHdr,
-          loop: lumaLoop,
-          generateAudio: lumaGenerateAudio,
-          sourceVideoUrl: lumaSourceVideo.trim() || undefined,
-          explicitOperation: lumaOperation === "auto" ? undefined : lumaOperation,
-        } : videoType === "VoxVideo" ? {
-          videoType,
-          prompt: prompt.trim(),
-          title: prompt.trim().slice(0, 200),
-          theme: voxTheme,
-          arc: voxArc,
-          targetDurationSeconds: duration,
-          generateAudio: voxGenerateAudio,
-          music: voxMusic,
-        } : {
-          prompt: prompt.trim(),
-          videoType,
-          durationSec: duration,
-          style: {
-            primaryColor,
-            textColor,
-          },
-        }),
-      });
-
-      const data: GenerateResponse = await response.json();
-
-      if (data.success && data.jobId) {
-        setCurrentJobId(data.jobId);
-        setScript(data.script || null);
-        setJobStatus({ success: true, status: "queued", progress: 0 });
-        // Polling will start automatically via useEffect
-      } else {
-        setError(data.error || "Failed to start video generation");
-        setIsGenerating(false);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to generate video");
-      setIsGenerating(false);
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current) return;
+    const diff = startX.current - e.clientX;
+    if (diff > 50 && activeIndex < showcaseModes.length - 1) {
+      setActiveIndex((prev) => prev + 1);
+      isDragging.current = false;
+    } else if (diff < -50 && activeIndex > 0) {
+      setActiveIndex((prev) => prev - 1);
+      isDragging.current = false;
     }
   };
 
-  // Reset form
-  const handleReset = () => {
-    setIsGenerating(false);
-    setCurrentJobId(null);
-    setJobStatus(null);
-    setScript(null);
-    setError(null);
+  const handleMouseUp = () => {
+    isDragging.current = false;
   };
 
-  // Get status text
-  const getStatusText = () => {
-    if (!jobStatus) return "";
-    switch (jobStatus.status) {
-      case "queued":
-        return "Waiting in queue...";
-      case "rendering":
-        return `Rendering: ${jobStatus.progress || 0}%`;
-      case "completed":
-        return "Video ready!";
-      case "failed":
-        return "Rendering failed";
-      default:
-        return "";
-    }
-  };
-
-  // Get progress value
-  const getProgress = () => {
-    if (!jobStatus) return 0;
-    if (jobStatus.status === "completed") return 100;
-    return jobStatus.progress || 0;
-  };
+  const features = [
+    {
+      icon: Clapperboard,
+      title: 'Studio Creation Engines',
+      description: 'AI storyboards, stock shorts, typography slides, 3D motion graphics, micro drama, UGC ads, Luma Ray 3.2, and Vox collage explainers.',
+    },
+    {
+      icon: Bot,
+      title: 'Agentic Scriptwriting',
+      description: 'Autonomous LLMs write screenplays, cast consistent characters, plan storyboards, and direct camera motion.',
+    },
+    {
+      icon: Zap,
+      title: 'Kinetic Audio Captions',
+      description: 'ElevenLabs and Deepgram TTS narration with precise word-level subtitle timing synced to speech.',
+    },
+    {
+      icon: Cpu,
+      title: 'Asynchronous Express Queue',
+      description: 'Submit video jobs, track real-time 4-step rendering progress, and export HD MP4 outputs.',
+    },
+  ];
 
   return (
-    <main className="min-h-screen bg-background p-4 md:p-8">
-      <div className="mx-auto max-w-4xl space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">AI Video Generator</h1>
-          <p className="text-muted-foreground">
-            Generate professional videos with AI. Enter a prompt and let Claude create your video script.
-          </p>
-        </div>
-
-        <div className="grid gap-8 md:grid-cols-2">
-          {/* Input Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Create Video</CardTitle>
-              <CardDescription>
-                Describe the video you want to create
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Prompt */}
-              <div className="space-y-2">
-                <Label htmlFor="prompt">Prompt</Label>
-                <Textarea
-                  id="prompt"
-                  placeholder="E.g., Create an inspiring video about the importance of daily exercise with motivational quotes"
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  disabled={isGenerating}
-                  rows={4}
-                />
-              </div>
-
-              {videoType === "AgenticVideoGenerator" && (
-                <div className="space-y-4 rounded-lg border p-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="agentic-audience">Target Audience</Label>
-                    <Input id="agentic-audience" value={targetAudience} onChange={(e) => setTargetAudience(e.target.value)} disabled={isGenerating} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="agentic-language">Language</Label>
-                      <Input id="agentic-language" value={language} onChange={(e) => setLanguage(e.target.value)} disabled={isGenerating} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="agentic-tone">Tone</Label>
-                      <Input id="agentic-tone" value={tone} onChange={(e) => setTone(e.target.value)} disabled={isGenerating} />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Platform</Label>
-                      <Select value={platform} onValueChange={setPlatform} disabled={isGenerating}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="standard">Standard 16:9</SelectItem>
-                          <SelectItem value="youtube">YouTube</SelectItem>
-                          <SelectItem value="linkedin">LinkedIn</SelectItem>
-                          <SelectItem value="instagram_reels">Instagram Reels</SelectItem>
-                          <SelectItem value="tiktok">TikTok</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Video Model</Label>
-                      <Select value={agenticModel} onValueChange={setAgenticModel} disabled={isGenerating}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="seedanceStandard">Seedance 2.0</SelectItem>
-                          <SelectItem value="seedanceFast">Seedance 2.0 Fast</SelectItem>
-                          <SelectItem value="veoFastReference">Veo 3.1 Fast Reference</SelectItem>
-                          <SelectItem value="minimaxImage">MiniMax H3 Image</SelectItem>
-                          <SelectItem value="minimaxReference">MiniMax H3 Reference</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {videoType === "Luma" && (
-                <div className="space-y-4 rounded-lg border p-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Use Case Scenario</Label>
-                      <Select value={lumaUseCase} onValueChange={setLumaUseCase} disabled={isGenerating}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="custom">Custom / General</SelectItem>
-                          <SelectItem value="ugc_post">UGC Product Post</SelectItem>
-                          <SelectItem value="product_ad">Product Showcase Ad</SelectItem>
-                          <SelectItem value="product_launch">Product Reveal</SelectItem>
-                          <SelectItem value="real_estate">Real Estate Tour</SelectItem>
-                          <SelectItem value="event_promo">Event Promo</SelectItem>
-                          <SelectItem value="education">Educational / Tutorial</SelectItem>
-                          <SelectItem value="nonprofit">Nonprofit / Awareness</SelectItem>
-                          <SelectItem value="social_generic">Social Media Reel</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Operation Mode</Label>
-                      <Select value={lumaOperation} onValueChange={setLumaOperation} disabled={isGenerating}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="auto">Auto (Detect from inputs)</SelectItem>
-                          <SelectItem value="image_to_video">Image-to-Video</SelectItem>
-                          <SelectItem value="edit">Video Edit (Restyle Footage)</SelectItem>
-                          <SelectItem value="reframe">Video Reframe (Outpaint Crop)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Resolution</Label>
-                      <Select value={lumaResolution} onValueChange={setLumaResolution} disabled={isGenerating}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="360p">360p (Fast Draft)</SelectItem>
-                          <SelectItem value="540p">540p</SelectItem>
-                          <SelectItem value="720p">720p (HD Default)</SelectItem>
-                          <SelectItem value="1080p">1080p (Full HD)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="luma-source-video">Source Video URL (Edit/Reframe)</Label>
-                      <Input
-                        id="luma-source-video"
-                        placeholder="https://... (Optional)"
-                        value={lumaSourceVideo}
-                        onChange={(e) => setLumaSourceVideo(e.target.value)}
-                        disabled={isGenerating}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-4 pt-2">
-                    <label className="flex items-center space-x-2 text-sm cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={lumaHdr}
-                        onChange={(e) => setLumaHdr(e.target.checked)}
-                        disabled={isGenerating}
-                        className="rounded border-gray-300"
-                      />
-                      <span>HDR Output</span>
-                    </label>
-
-                    <label className="flex items-center space-x-2 text-sm cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={lumaLoop}
-                        onChange={(e) => setLumaLoop(e.target.checked)}
-                        disabled={isGenerating}
-                        className="rounded border-gray-300"
-                      />
-                      <span>Seamless Loop</span>
-                    </label>
-
-                    <label className="flex items-center space-x-2 text-sm cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={lumaGenerateAudio}
-                        onChange={(e) => setLumaGenerateAudio(e.target.checked)}
-                        disabled={isGenerating}
-                        className="rounded border-gray-300"
-                      />
-                      <span>Generate TTS Voiceover</span>
-                    </label>
-                  </div>
-                </div>
-              )}
-
-              {videoType === "VoxVideo" && (
-                <div className="space-y-4 rounded-lg border p-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Visual Theme</Label>
-                      <Select value={voxTheme} onValueChange={setVoxTheme} disabled={isGenerating}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="american-retro">American Retro</SelectItem>
-                          <SelectItem value="swiss-modern">Swiss Modern</SelectItem>
-                          <SelectItem value="punk-zine">Punk Zine</SelectItem>
-                          <SelectItem value="chinese-ink">Chinese Ink</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Narrative Arc</Label>
-                      <Select value={voxArc} onValueChange={setVoxArc} disabled={isGenerating}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="hook_payoff">Hook & Payoff</SelectItem>
-                          <SelectItem value="timeline">Timeline</SelectItem>
-                          <SelectItem value="how_it_works">How It Works</SelectItem>
-                          <SelectItem value="pas">Problem-Agitate-Solve</SelectItem>
-                          <SelectItem value="bab">Before / After / Bridge</SelectItem>
-                          <SelectItem value="man_in_hole">Man in Hole</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-4 pt-2">
-                    <label className="flex items-center space-x-2 text-sm cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={voxGenerateAudio}
-                        onChange={(e) => setVoxGenerateAudio(e.target.checked)}
-                        disabled={isGenerating}
-                        className="rounded border-gray-300"
-                      />
-                      <span>Generate TTS Voiceover</span>
-                    </label>
-
-                    <label className="flex items-center space-x-2 text-sm cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={voxMusic}
-                        onChange={(e) => setVoxMusic(e.target.checked)}
-                        disabled={isGenerating}
-                        className="rounded border-gray-300"
-                      />
-                      <span>Background Music</span>
-                    </label>
-                  </div>
-                </div>
-              )}
-
-              {/* Video Type */}
-              <div className="space-y-2">
-                <Label htmlFor="video-type">Video Type</Label>
-                <Select
-                  value={videoType}
-                  onValueChange={(value: VideoType) => setVideoType(value)}
-                  disabled={isGenerating}
-                >
-                  <SelectTrigger id="video-type">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {VIDEO_TYPES.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        <div className="flex flex-col">
-                          <span>{type.label}</span>
-                          <span className="text-xs text-muted-foreground">{type.description}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Duration */}
-              <div className="space-y-2">
-                <Label htmlFor="duration">Duration</Label>
-                <Select
-                  value={duration.toString()}
-                  onValueChange={(value) => setDuration(parseInt(value))}
-                  disabled={isGenerating}
-                >
-                  <SelectTrigger id="duration">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DURATION_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value.toString()}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Colors */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="primary-color">Background Color</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="primary-color"
-                      type="color"
-                      value={primaryColor}
-                      onChange={(e) => setPrimaryColor(e.target.value)}
-                      disabled={isGenerating}
-                      className="w-12 h-10 p-1 cursor-pointer"
-                    />
-                    <Input
-                      type="text"
-                      value={primaryColor}
-                      onChange={(e) => setPrimaryColor(e.target.value)}
-                      disabled={isGenerating}
-                      className="flex-1 font-mono text-sm"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="text-color">Text Color</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="text-color"
-                      type="color"
-                      value={textColor}
-                      onChange={(e) => setTextColor(e.target.value)}
-                      disabled={isGenerating}
-                      className="w-12 h-10 p-1 cursor-pointer"
-                    />
-                    <Input
-                      type="text"
-                      value={textColor}
-                      onChange={(e) => setTextColor(e.target.value)}
-                      disabled={isGenerating}
-                      className="flex-1 font-mono text-sm"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Error */}
-              {error && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 dark:bg-red-950/20 dark:text-red-400 rounded-md">
-                  {error}
-                </div>
-              )}
-
-              {/* Generate Button */}
-              <Button
-                onClick={handleGenerate}
-                disabled={isGenerating || !prompt.trim()}
-                className="w-full"
-                size="lg"
-              >
-                {isGenerating ? "Generating..." : "Generate Video"}
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Output / Preview */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Preview</CardTitle>
-              <CardDescription>
-                {jobStatus?.status === "completed"
-                  ? "Your video is ready"
-                  : isGenerating
-                  ? "Processing your video..."
-                  : "Your generated video will appear here"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Progress */}
-              {isGenerating && (
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>{getStatusText()}</span>
-                    <span>{getProgress()}%</span>
-                  </div>
-                  <Progress value={getProgress()} />
-                </div>
-              )}
-
-              {/* Video Player */}
-              {jobStatus?.status === "completed" && jobStatus.videoUrl && (
-                <div className="space-y-4">
-                  <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-                    <video
-                      src={jobStatus.videoUrl}
-                      controls
-                      className="w-full h-full"
-                      autoPlay
-                      loop
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button asChild className="flex-1">
-                      <a href={jobStatus.videoUrl} download>
-                        Download Video
-                      </a>
-                    </Button>
-                    <Button variant="outline" onClick={handleReset}>
-                      Create Another
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {/* Script Preview */}
-              {script && !jobStatus?.videoUrl && (
-                <div className="space-y-2">
-                  <Label>Generated Script</Label>
-                  <div className="p-3 bg-muted rounded-md text-sm space-y-2 max-h-64 overflow-auto">
-                    <p><strong>Title:</strong> {script.title}</p>
-                    <p><strong>Duration:</strong> {script.durationSec}s</p>
-                    <p><strong>Scenes:</strong> {script.scenes.length}</p>
-                    <div className="border-t pt-2 mt-2">
-                      {script.scenes.map((scene, idx) => (
-                        <div key={idx} className="py-1">
-                          <span className="text-muted-foreground">Scene {idx + 1}:</span>{" "}
-                          {scene.text.slice(0, 100)}
-                          {scene.text.length > 100 && "..."}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Empty State */}
-              {!isGenerating && !jobStatus?.videoUrl && !script && (
-                <div className="flex flex-col items-center justify-center h-64 text-center text-muted-foreground">
-                  <svg
-                    className="w-16 h-16 mb-4 opacity-50"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <p>Enter a prompt and click Generate to create your video</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Footer */}
-        <footer className="text-center text-sm text-muted-foreground">
-          <p>
-            Powered by Claude AI and Remotion
-          </p>
-        </footer>
+    <div className="min-h-screen bg-[#07090e] text-slate-100 overflow-x-hidden selection:bg-cyan-500 selection:text-black">
+      {/* Our Brand Theme Cyan / Amber Glow Backdrop */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-gradient-to-b from-blue-600/15 via-cyan-500/10 to-transparent blur-[140px]" />
+        <div className="absolute top-1/3 left-10 w-[500px] h-[500px] bg-amber-500/10 blur-[160px]" />
+        <div className="absolute bottom-10 right-10 w-[600px] h-[600px] bg-cyan-600/10 blur-[180px]" />
+        
+        {/* Subtle Diagonal Accent Lines Grid */}
+        <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:32px_32px] opacity-15" />
       </div>
-    </main>
+
+      {/* Navigation Header */}
+      <header className="relative z-20 max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-cyan-500/20 shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform duration-300">
+            <Image
+              src="/novamotion.png"
+              alt="Novamotion Logo"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <span className="font-extrabold text-xl tracking-wider text-white">
+            NOVA<span className="text-gradient-gold">MOTION</span>
+          </span>
+        </Link>
+
+        {/* Center Nav Links */}
+        <nav className="hidden md:flex items-center gap-8 text-xs font-medium text-slate-400">
+          <a href="#engines" className="hover:text-cyan-300 transition-colors">Studio Engines</a>
+          <a href="#architecture" className="hover:text-cyan-300 transition-colors">Architecture</a>
+          <Link href="/studio/history" className="hover:text-cyan-300 transition-colors">Media Library</Link>
+        </nav>
+
+        {/* Right White Pill CTA Button */}
+        <Link
+          href="/studio"
+          className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-white text-black hover:bg-slate-200 font-extrabold text-xs shadow-xl shadow-cyan-500/20 transition-all transform hover:-translate-y-0.5"
+        >
+          <span>Get Started</span>
+          <ArrowUpRight className="w-4 h-4 text-black" />
+        </Link>
+      </header>
+
+      {/* Syngri-Style Hero Section (Our Cyan/Gold Brand Theme) */}
+      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-12 pb-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        {/* Left Side Hero Content */}
+        <div className="lg:col-span-7 space-y-6 text-left lg:pl-16">
+          <h1 className="text-2xl sm:text-4xl lg:text-[38px] xl:text-[42px] font-extrabold tracking-tight leading-tight text-white">
+            <span className="block whitespace-nowrap">Bring Your Ideas To Life With</span>
+            <span className="block whitespace-nowrap text-gradient-hero">
+              NovaMotion AI Video Engine
+            </span>
+          </h1>
+
+          <p className="max-w-xl text-base text-slate-300 leading-relaxed font-normal">
+            One prompt. One automated pipeline. Scripted, generated, narrated, and rendered into a finished, platform-ready video.
+          </p>
+
+          <div className="flex items-center gap-4 pt-4">
+            <Link
+              href="/studio"
+              className="px-7 py-3.5 rounded-full bg-white text-black font-extrabold text-xs hover:bg-slate-200 transition-all shadow-xl shadow-cyan-500/20"
+            >
+              Get Started
+            </Link>
+
+            <a
+              href="#engines"
+              className="px-7 py-3.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-slate-200 font-bold text-xs backdrop-blur-md transition-all"
+            >
+              Explore Engines
+            </a>
+          </div>
+        </div>
+
+        {/* Right Side 3D Glass Sculpture Art */}
+        <div className="lg:col-span-5 relative flex items-center justify-center min-h-[380px]">
+          {/* Glass Torus Ambient Glow Backdrop */}
+          <div className="absolute w-72 h-72 rounded-full bg-cyan-500/15 blur-[100px] animate-pulse" />
+
+          {/* 3D Glass Torus Sculpture Graphic (Cyan/Amber Accent Light) */}
+          <div className="relative w-72 h-72 sm:w-80 sm:h-80 rounded-full border border-cyan-500/20 glass-panel shadow-2xl shadow-cyan-500/20 flex items-center justify-center transform hover:rotate-6 transition-transform duration-700">
+            <div className="w-60 h-60 rounded-full border-4 border-cyan-400/30 border-t-cyan-400 border-r-amber-400 border-b-blue-500 border-l-teal-300 animate-[spin_16s_linear_infinite] shadow-inner" />
+            <div className="absolute w-44 h-44 rounded-full border-2 border-amber-400/30 border-t-amber-400 border-b-cyan-400 animate-[spin_10s_linear_infinite_reverse]" />
+            <div className="absolute w-28 h-28 rounded-full bg-gradient-to-tr from-cyan-600/30 via-amber-500/30 to-blue-500/30 backdrop-blur-xl border border-white/20 shadow-2xl flex items-center justify-center">
+              <Film className="w-10 h-10 text-cyan-200" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Scroll Lock Carousel Section */}
+      <section ref={sectionRef} id="engines" className="relative z-10 max-w-7xl mx-auto px-6 py-16 space-y-8">
+        <div className="text-center space-y-2 max-w-xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Studio Creation Engines
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400">
+            Scroll vertically to step through studio engines. Click any card to launch immediately.
+          </p>
+        </div>
+
+        {/* 3D Carousel Stage */}
+        <div
+          ref={containerRef}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          className="relative h-[420px] sm:h-[460px] flex items-center justify-center perspective-[1200px] overflow-hidden cursor-grab active:cursor-grabbing select-none"
+        >
+          {showcaseModes.map((mode, idx) => {
+            const offset = idx - activeIndex;
+            const absOffset = Math.abs(offset);
+            const isVisible = absOffset <= 3;
+
+            if (!isVisible) return null;
+
+            const rotateY = offset * -18;
+            const translateX = offset * 240;
+            const translateZ = -absOffset * 150;
+            const scale = 1 - absOffset * 0.12;
+            const opacity = 1 - absOffset * 0.25;
+            const zIndex = 20 - absOffset;
+
+            return (
+              <Link
+                key={mode.id}
+                href={`/studio/mode/${mode.id}`}
+                style={{
+                  transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
+                  opacity,
+                  zIndex,
+                }}
+                className={`absolute w-[270px] sm:w-[320px] h-[360px] sm:h-[400px] rounded-3xl overflow-hidden border transition-all duration-500 ease-out glass-card flex flex-col justify-between p-6 group ${
+                  offset === 0
+                    ? 'border-cyan-500/80 shadow-2xl shadow-cyan-500/30'
+                    : 'border-white/10 hover:border-white/30'
+                }`}
+              >
+                {/* Background Thumbnail Image */}
+                <div className="absolute inset-0 z-0">
+                  <Image
+                    src={mode.image}
+                    alt={mode.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-60 group-hover:opacity-85"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#080b12] via-[#080b12]/60 to-transparent" />
+                </div>
+
+                {/* Top Badge */}
+                <div className="relative z-10 flex items-center justify-between">
+                  <span
+                    className={`px-3 py-1 rounded-full text-[10px] font-extrabold text-black uppercase tracking-wider bg-gradient-to-r ${mode.accentColor}`}
+                  >
+                    {mode.badge}
+                  </span>
+                </div>
+
+                {/* Card Bottom Content */}
+                <div className="relative z-10 space-y-2">
+                  <h3 className="text-lg font-extrabold text-white group-hover:text-cyan-300 transition-colors">
+                    {mode.title}
+                  </h3>
+                  <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                    {mode.subtitle}
+                  </p>
+
+                  <div className="pt-2 border-t border-white/10 text-[10px] font-mono text-cyan-400 font-semibold tracking-wider uppercase">
+                    {mode.paramsSummary}
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Carousel Pagination Dots */}
+        <div className="flex items-center justify-center gap-2 pt-2">
+          {showcaseModes.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIndex(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === activeIndex ? 'w-8 bg-cyan-400' : 'w-2 bg-white/20 hover:bg-white/40'
+              }`}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Feature Highlights Grid */}
+      <section id="architecture" className="relative z-10 max-w-7xl mx-auto px-6 py-20 border-t border-white/10 space-y-12">
+        <div className="text-center space-y-3 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-extrabold text-white">Production-Grade Video Architecture</h2>
+          <p className="text-sm text-slate-400">Complete studio workflow engineered for standalone execution, async job processing, and cloud storage resilience.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {features.map((feat, i) => {
+            const Icon = feat.icon;
+            return (
+              <div key={i} className="p-6 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-cyan-500/40 transition-all space-y-3 glass-panel">
+                <div className="p-3 w-fit rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  <Icon className="w-6 h-6" />
+                </div>
+                <h3 className="font-bold text-base text-white">{feat.title}</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">{feat.description}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Minimal Clean Footer */}
+      <footer className="relative z-10 border-t border-white/10 py-8 text-center text-xs text-slate-500">
+        <p>© 2026 Novamotion AI Video Studio. All rights reserved.</p>
+      </footer>
+    </div>
   );
 }
