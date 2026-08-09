@@ -90,12 +90,42 @@ Media assets, voiceover tracks, and final rendered MP4 videos are managed throug
 
 ## Current Outputs
 
-See Nova Motion in action - watch a sample video from each mode:
+See Nova Motion in action - click a preview to watch the full video.
 
-- [Watch: AI Storyboard](https://ucarecdn.com/a90fdcb0-4296-4b51-b55f-ba4bbf48bd35/novamotionAIStoryboard.mp4)
-- [Watch: Text to Video](https://ucarecdn.com/b682ae8f-e0d9-4cc3-b19b-940cb826625e/novamotiontexttovideo.mp4)
-- [Watch: Stock Video](https://ucarecdn.com/3ac78886-9bac-4197-8a8d-2d2d24261bd0/novamotionstockvideo.mp4)
-- [Watch: Stock Image](https://ucarecdn.com/cf070cef-cce8-4b4d-a00a-2f3a4de9488b/novamotionstockimage.mp4)
+<table align="center">
+  <tr>
+    <td align="center">
+      <a href="https://ucarecdn.com/a90fdcb0-4296-4b51-b55f-ba4bbf48bd35/novamotionAIStoryboard.mp4">
+        <img src="./public/screenshots/AIStoryboard.png" alt="AI Storyboard" width="320" />
+      </a>
+      <br />
+      <strong>AI Storyboard</strong>
+    </td>
+    <td align="center">
+      <a href="https://ucarecdn.com/b682ae8f-e0d9-4cc3-b19b-940cb826625e/novamotiontexttovideo.mp4">
+        <img src="./public/screenshots/TexttoVideo.png" alt="Text to Video" width="320" />
+      </a>
+      <br />
+      <strong>Text to Video</strong>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://ucarecdn.com/3ac78886-9bac-4197-8a8d-2d2d24261bd0/novamotionstockvideo.mp4">
+        <img src="./public/screenshots/StockVideo.png" alt="Stock Video" width="320" />
+      </a>
+      <br />
+      <strong>Stock Video</strong>
+    </td>
+    <td align="center">
+      <a href="https://ucarecdn.com/cf070cef-cce8-4b4d-a00a-2f3a4de9488b/novamotionstockimage.mp4">
+        <img src="./public/screenshots/StockImage.png" alt="Stock Image" width="320" />
+      </a>
+      <br />
+      <strong>Stock Image</strong>
+    </td>
+  </tr>
+</table>
 
 ## Studio Preview
 
