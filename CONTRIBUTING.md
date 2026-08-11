@@ -246,6 +246,8 @@ Good candidates for a new mode: another explainer format, a new video model, or 
 
 Maintainers will review, suggest changes, and merge once the checks pass.
 
+All contributors are expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md). Security vulnerabilities should be reported privately per the [Security Policy](SECURITY.md), not as public issues.
+
 ---
 
 ## Troubleshooting
