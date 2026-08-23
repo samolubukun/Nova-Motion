@@ -25,6 +25,7 @@ export function Sidebar() {
     { name: 'Agentic AI Video', href: '/studio/mode/agentic-video', icon: Flame },
     { name: 'Luma Ray 3.2', href: '/studio/mode/luma', icon: Flame },
     { name: 'Vox Paper Explainer', href: '/studio/mode/vox-video', icon: Sparkles },
+    { name: 'Zack D 3D Shorts', href: '/studio/mode/zack-d', icon: Film },
     { name: 'Motion Graphics', href: '/studio/mode/motion-graphics', icon: Cpu },
     { name: 'Typography Slideshow', href: '/studio/mode/typography-slideshow', icon: LayoutGrid },
   ];
