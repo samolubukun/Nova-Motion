@@ -75,6 +75,8 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
       ? 'VoxVideo'
       : modeId === 'zack-d'
       ? 'ZackDVideo'
+      : modeId === 'comic-drama'
+      ? 'ComicDramaVideo'
       : modeId === 'microdrama'
       ? 'MicroDrama'
       : modeId === 'agentic-video'
@@ -101,6 +103,8 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
   const [voxTheme, setVoxTheme] = useState<string>('american-retro');
   const [voxArc, setVoxArc] = useState<string>('hook_payoff');
   const [zackDBeats, setZackDBeats] = useState<number>(4);
+  const [comicShots, setComicShots] = useState<number>(6);
+  const [comicArtStyle, setComicArtStyle] = useState<string>('auto');
   const [agenticPlatform, setAgenticPlatform] = useState<string>('youtube');
   const [lumaUseCase, setLumaUseCase] = useState<string>('text_to_video');
   const [brandColor, setBrandColor] = useState('#0088ff');
@@ -202,16 +206,27 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
         voice,
       });
     } else if (modeId === 'zack-d') {
-      startVideoJob({
-        videoType: 'ZackDVideo',
-        prompt: finalPrompt,
-        targetDurationSeconds: duration,
-        sceneCount: zackDBeats,
-        tone,
-        aspectRatio,
-        voice,
-      });
-    } else {
+        startVideoJob({
+          videoType: 'ZackDVideo',
+          prompt: finalPrompt,
+          targetDurationSeconds: duration,
+          sceneCount: zackDBeats,
+          tone,
+          aspectRatio,
+          voice,
+        });
+    } else if (modeId === 'comic-drama') {
+        startVideoJob({
+          videoType: 'ComicDramaVideo',
+          prompt: finalPrompt,
+          targetDurationSeconds: duration,
+          sceneCount: comicShots,
+          artStyle: comicArtStyle,
+          tone,
+          aspectRatio,
+          voice,
+        });
+      } else {
       startVideoJob({
         prompt: finalPrompt,
         videoType: videoType as any,
@@ -373,8 +388,10 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
               : videoType === 'VoxVideo'
               ? 'Vox Beatmap + Seedream Poster Collages'
               : videoType === 'ZackDVideo'
-              ? 'Curiosity-Loop Script + Character Sheets + Seedance I2V'
-              : videoType === 'MotionGraphics'
+                ? 'Curiosity-Loop Script + Character Sheets + Seedance I2V'
+                : videoType === 'ComicDramaVideo'
+                ? 'Story Plan + 4-View Sheets + First/Last Frame Interpolation'
+                : videoType === 'MotionGraphics'
               ? 'Dynamic 3D Remotion Charts & Infographics'
               : videoType === 'Explainer'
               ? 'Explainer Slide Layout (Step Numbers)'
@@ -584,19 +601,52 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
 
               {/* ZackD Controls */}
               {videoType === 'ZackDVideo' && (
-                <div className="space-y-1">
-                  <label className="text-[10px] text-slate-400">Curiosity-Loop Beats (2 shots each)</label>
-                  <select
-                    value={zackDBeats}
-                    onChange={(e) => setZackDBeats(Number(e.target.value))}
-                    className="w-full p-2 rounded-lg bg-slate-950 border border-white/10 text-xs text-slate-200"
-                  >
-                    {[3, 4, 5, 6, 8].map((n) => (
-                      <option key={n} value={n}>{n} beats (~{n * 6}s)</option>
-                    ))}
-                  </select>
-                </div>
-              )}
+                  <div className="space-y-1">
+                    <label className="text-[10px] text-slate-400">Curiosity-Loop Beats (2 shots each)</label>
+                    <select
+                      value={zackDBeats}
+                      onChange={(e) => setZackDBeats(Number(e.target.value))}
+                      className="w-full p-2 rounded-lg bg-slate-950 border border-white/10 text-xs text-slate-200"
+                    >
+                      {[3, 4, 5, 6, 8].map((n) => (
+                        <option key={n} value={n}>{n} beats (~{n * 6}s)</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Comic Drama Controls */}
+                {videoType === 'ComicDramaVideo' && (
+                  <>
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-slate-400">Art Style</label>
+                      <select
+                        value={comicArtStyle}
+                        onChange={(e) => setComicArtStyle(e.target.value)}
+                        className="w-full p-2 rounded-lg bg-slate-950 border border-white/10 text-xs text-slate-200"
+                      >
+                        <option value="auto">Auto-detect from story</option>
+                        <option value="anime">Anime</option>
+                        <option value="manga">Manga (B&amp;W)</option>
+                        <option value="comic_book">Comic Book</option>
+                        <option value="3d_pixar">3D Animated</option>
+                        <option value="realistic_cinematic">Realistic Cinematic</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-slate-400">Storyboard Shots (keyframe pairs)</label>
+                      <select
+                        value={comicShots}
+                        onChange={(e) => setComicShots(Number(e.target.value))}
+                        className="w-full p-2 rounded-lg bg-slate-950 border border-white/10 text-xs text-slate-200"
+                      >
+                        {[3, 4, 5, 6, 8, 10].map((n) => (
+                          <option key={n} value={n}>{n} shots (~{n * 5}s)</option>
+                        ))}
+                      </select>
+                    </div>
+                  </>
+                )}
 
               {/* Tone & Audience */}
               <div className="space-y-1">
