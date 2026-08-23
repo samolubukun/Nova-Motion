@@ -6,6 +6,7 @@ import { Explainer, explainerSchema } from "./compositions/Explainer";
 import { AIVideo } from "./compositions/AIVideo";
 import { StockVideo } from "./compositions/StockVideo";
 import { WavespeedVideo } from "./compositions/WavespeedVideo";
+import { ZackDVideo } from "./compositions/ZackDVideo";
 import { DynamicMotionGraphics } from "./compositions/DynamicMotionGraphics";
 import { z } from "zod";
 
@@ -270,6 +271,33 @@ export const RemotionRoot: React.FC = () => {
             fps: 30,
             width: timeline.width || 1920,
             height: timeline.height || 1080,
+          };
+        }}
+      />
+      <Composition
+        id="ZackDVideo"
+        component={ZackDVideo}
+        durationInFrames={300}
+        fps={30}
+        width={1080}
+        height={1920}
+        schema={wavespeedVideoPropsSchema}
+        defaultProps={{
+          timeline: {
+            shortTitle: "Default Zack D Short",
+            elements: [], text: [], words: [], audio: [], music: [], width: 1080, height: 1920,
+          },
+        }}
+        calculateMetadata={({ props }) => {
+          const { timeline } = props;
+          const lastElement = timeline.elements[timeline.elements.length - 1];
+          const lastAudio = timeline.audio[timeline.audio.length - 1];
+          const contentEndMs = Math.max(lastElement?.endMs || 0, lastAudio?.endMs || 0);
+          return {
+            durationInFrames: contentEndMs ? Math.floor((contentEndMs * 30) / 1000) + 30 : 150,
+            fps: 30,
+            width: timeline.width || 1080,
+            height: timeline.height || 1920,
           };
         }}
       />
