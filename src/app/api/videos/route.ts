@@ -21,6 +21,7 @@ import {
   AgenticVideoRequestSchema,
   LumaRequestSchema,
   VoxRequestSchema,
+  ZackDRequestSchema,
 } from "../../../../shared/video-schema";
 import * as path from "path";
 import * as fs from "fs";
@@ -238,6 +239,25 @@ async function submitVoxToRenderServer(
   return response.json();
 }
 
+async function submitZackDToRenderServer(
+  payload: Record<string, unknown>
+): Promise<{ jobId: string; status: string; createdAt: string }> {
+  const { url, secret } = getRenderServerConfig();
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (secret) headers["X-Render-Secret"] = secret;
+
+  const response = await fetch(`${url}/render/zack-d`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: "Unknown error" }));
+    throw new Error(error.error || `Render server returned ${response.status}`);
+  }
+  return response.json();
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -359,6 +379,44 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true, ...renderResult });
       } catch (renderErr) {
         console.error("[API Gateway] Vox render submission failed:", renderErr);
+        return NextResponse.json({
+          success: false,
+          error: "Unable to connect to render server. Please try again later.",
+        }, { status: 503 });
+      }
+    }
+
+    // ZackD (Zack D Films-style 3D curiosity short) mode submission — topic →
+    // curiosity-loop beat map → character sheets → keyframes → I2V clips →
+    // TTS + captions + music, all generated inside the render job, then
+    // rendered by the ZackDVideo composition.
+    if (body?.videoType === "ZackDVideo" && typeof body.prompt === "string") {
+      const candidate: Record<string, unknown> = { prompt: body.prompt };
+      const zackDFields = [
+        "title", "targetDurationSeconds", "language", "tone",
+        "aspectRatio", "voice", "generateAudio", "music", "sceneCount", "webhookUrl",
+      ] as const;
+      for (const field of zackDFields) {
+        if (body[field] !== undefined) candidate[field] = body[field];
+      }
+
+      const validation = ZackDRequestSchema.safeParse(candidate);
+      if (!validation.success) {
+        return NextResponse.json({
+          success: false,
+          error: "Invalid ZackDVideo request",
+          details: validation.error.issues.map((e) => ({
+            path: e.path.join("."),
+            message: e.message,
+          })),
+        }, { status: 400 });
+      }
+
+      try {
+        const renderResult = await submitZackDToRenderServer(validation.data);
+        return NextResponse.json({ success: true, ...renderResult });
+      } catch (renderErr) {
+        console.error("[API Gateway] ZackD render submission failed:", renderErr);
         return NextResponse.json({
           success: false,
           error: "Unable to connect to render server. Please try again later.",
