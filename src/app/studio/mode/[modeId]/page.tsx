@@ -37,6 +37,10 @@ const modeConfigs: Record<string, { title: string; subtitle: string }> = {
     title: 'Zack D Films 3D Shorts',
     subtitle: 'Zack D-style 3D curiosity shorts — curiosity-loop script, character turnaround sheets, keyframes, animated clips, impact zooms & transitions.',
   },
+  'comic-drama': {
+    title: 'AI Comic Drama Studio',
+    subtitle: 'Comic & anime drama episodes — story plan, 4-view character sheets, first/last keyframe interpolation, dialogue TTS & comic subtitles.',
+  },
   'motion-graphics': {
     title: 'Motion Graphics Studio',
     subtitle: 'Dynamic motion graphics, animated 3D bar/pie charts, infographics, and interactive UI component simulations.',
