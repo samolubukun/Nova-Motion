@@ -33,6 +33,10 @@ const modeConfigs: Record<string, { title: string; subtitle: string }> = {
     title: 'Vox Paper-Collage Studio',
     subtitle: 'Vox-style paper-collage explainer — LLM beat map → Seedream collage posters → Seedance animated clips + TTS & music.',
   },
+  'zack-d': {
+    title: 'Zack D Films 3D Shorts',
+    subtitle: 'Zack D-style 3D curiosity shorts — curiosity-loop script, character turnaround sheets, keyframes, animated clips, impact zooms & transitions.',
+  },
   'motion-graphics': {
     title: 'Motion Graphics Studio',
     subtitle: 'Dynamic motion graphics, animated 3D bar/pie charts, infographics, and interactive UI component simulations.',
