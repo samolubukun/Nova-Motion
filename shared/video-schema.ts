@@ -30,6 +30,7 @@ export const VideoType = z.enum([
   "AgenticVideoGenerator",
   "Luma",
   "VoxVideo",
+  "ZackDVideo",
 ]);
 export type VideoType = z.infer<typeof VideoType>;
 
@@ -282,6 +283,26 @@ export const VoxRequestSchema = z.object({
   webhookUrl: z.string().url().optional(),
 });
 export type VoxRequest = z.infer<typeof VoxRequestSchema>;
+
+// === ZackD (Zack D Films-style 3D curiosity short) Request Schema ===
+// Replicates the zackd-director skill pipeline on the WaveSpeed stack:
+// curiosity-loop beat map → character turnaround sheets → 3D keyframes →
+// I2V motion clips → cloned-style voiceover → impact zooms + transitions.
+export const ZackDRequestSchema = z.object({
+  prompt: z.string().min(1).max(6000),
+  title: z.string().max(200).optional(),
+  targetDurationSeconds: z.number().min(10).max(120).optional(),
+  language: z.string().max(80).optional(),
+  tone: z.string().max(100).optional(),
+  aspectRatio: z.enum(ASPECT_RATIOS).default("9:16").optional(),
+  voice: z.string().max(100).optional(),
+  generateAudio: z.boolean().default(true).optional(),
+  music: z.boolean().default(true).optional(),
+  // Number of curiosity-loop beats (each beat ≈ one narration line + 2 shots)
+  sceneCount: z.number().min(2).max(8).optional(),
+  webhookUrl: z.string().url().optional(),
+});
+export type ZackDRequest = z.infer<typeof ZackDRequestSchema>;
 
 // === Job Status Types ===
 export const JobStatus = z.enum([
