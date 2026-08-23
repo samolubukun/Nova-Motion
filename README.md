@@ -36,7 +36,7 @@
 
 Nova Motion is an end-to-end AI video generation engine designed to transform simple text prompts and concepts into production-grade, platform-ready videos. Built on Next.js, Remotion, and an asynchronous Express render pipeline, Nova Motion orchestrates story writing, visual generation, voiceover synthesis, kinetic captioning, and final video rendering into one continuous automated workflow.
 
-The platform provides a suite of creation engines tailored for distinct video formats, including AI storyboards, stock footage shorts, typography slides, 3D motion graphics, text-to-video B-rolls, micro drama narratives, UGC video ads, concept-to-video campaigns, Luma Ray 3.2 cinematic clips, Vox-style paper-collage explainers, and Zack D Films-style 3D curiosity shorts.
+The platform provides a suite of creation engines tailored for distinct video formats, including AI storyboards, stock footage shorts, typography slides, 3D motion graphics, text-to-video B-rolls, micro drama narratives, UGC video ads, concept-to-video campaigns, Luma Ray 3.2 cinematic clips, Vox-style paper-collage explainers, Zack D Films-style 3D curiosity shorts, and AI comic / anime drama episodes.
 
 Media assets, voiceover tracks, and final rendered MP4 videos are managed through a unified storage pipeline, with support for local disk storage as well as cloud-native object storage such as DigitalOcean Spaces and Cloudflare R2.
 
@@ -46,8 +46,8 @@ Media assets, voiceover tracks, and final rendered MP4 videos are managed throug
 <table align="center" style="border-collapse: separate; border-spacing: 12px 12px;">
   <tr>
     <td align="center" style="border: 1px solid #d0d7de; border-radius: 12px; padding: 20px 16px; background: #f6f8fa; width: 33%; vertical-align: top;">
-      <strong>14 Modes, One API</strong><br />
-      <span style="font-size: 14px; color: #57606a;">AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, Vox collage explainers, and Zack D-style 3D curiosity shorts - all behind a single endpoint.</span>
+      <strong>15 Modes, One API</strong><br />
+      <span style="font-size: 14px; color: #57606a;">AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, Vox collage explainers, Zack D-style 3D curiosity shorts, and comic drama episodes - all behind a single endpoint.</span>
     </td>
     <td align="center" style="border: 1px solid #d0d7de; border-radius: 12px; padding: 20px 16px; background: #f6f8fa; width: 33%; vertical-align: top;">
       <strong>Agentic Pipelines</strong><br />
@@ -308,6 +308,30 @@ A Zack D Films-style stylized 3D curiosity short — one topic in, a scroll-stop
 }
 ```
 
+### 13. AI Comic Drama Episode (`videoType: "ComicDramaVideo"`)
+An AI comic / anime drama generator (AIComicBuilder replication) — one premise or raw script in, a fully animated story episode out.
+* **Story plan**: The WaveSpeed LLM parses any premise or raw script into a short episode: it extracts recurring characters with vivid visual descriptions, auto-detects the art style (anime / manga / comic book / 3D / realistic), and writes a continuity-chained shot list where each shot carries a FIRST and LAST keyframe description, camera direction, and 0-2 dialogue lines.
+* **4-view character sheets**: Each character gets an orthographic reference sheet (front / ¾ / side / back) rendered by Seedream in the detected style, with the character's name printed on the sheet for identity anchoring.
+* **Reference-locked keyframes**: The sheets are attached as real reference images to Seedream v4 Edit ($0.027/image, up to 10 refs) — and each shot's LAST keyframe receives its own FIRST frame as the primary visual reference — so identity, outfits and environments are visually locked instead of merely described (falls back to text-to-image if the edit model fails; override via `COMIC_KEYFRAME_EDIT_MODEL`).
+* **First/last keyframe pairs**: Every shot is generated twice — an opening frame anchored on the character sheets (and chained from the previous shot's end state) plus a closing frame locked to the opening frame's environment, lighting and outfits, with only pose/expression/position changed.
+* **Start/end interpolation clips**: The keyframe pair is animated by Wan 2.2 image-to-video using its `last_image` parameter ($0.10/5s; switch to `wavespeed-ai/wan-flf2v` via `COMIC_I2V_MODEL` for the dedicated first-last-frame model).
+* **Dialogue & subtitles**: Per-shot dialogue is voiced by ElevenLabs (preferred) / Deepgram TTS with word-level timestamps, rendered as comic-style caption strips; optional Lyria background music.
+* **Comic assembly**: Hard cuts with white panel-flash transitions and a slamming title card are rendered natively by the `ComicDramaVideo` Remotion composition — no ffmpeg required.
+* **Async**: Returns a `jobId` immediately. Poll `GET /api/videos/{jobId}` for render status.
+
+```json
+{
+  "videoType": "ComicDramaVideo",
+  "prompt": "A shy ramen shop cat secretly defends the neighborhood from spirits at night",
+  "targetDurationSeconds": 30,
+  "sceneCount": 6,
+  "artStyle": "anime",
+  "aspectRatio": "9:16",
+  "generateAudio": true,
+  "music": true
+}
+```
+
 ---
 
 ## Quick Start (Local Development)
@@ -415,6 +439,7 @@ All endpoints support the following root payload fields:
   * `"Luma"`: Unified Luma Ray 3.2 mode — text-to-video, image-to-video, loop, extend, video edit, reframe + TTS voiceover & kinetic captions.
   * `"VoxVideo"`: Vox-style paper-collage explainer — LLM beat map → Seedream collage posters → Seedance animated clips + TTS voiceover, captions & music.
   * `"ZackDVideo"`: Zack D Films-style 3D curiosity short — curiosity-loop script → character turnaround sheets → keyframes → I2V clips + impact zooms, transitions, captions & music.
+  * `"ComicDramaVideo"`: AI comic / anime drama episode — story plan → 4-view character sheets → first/last keyframe pairs → interpolated I2V clips + dialogue TTS & comic subtitles.
 * **`aspectRatio`** (string, optional): Target video layout format. Must be one of:
   * `"9:16"`: Portrait (mobile vertical) - defaults to `1080x1920`.
   * `"16:9"`: Landscape (widescreen desktop) - defaults to `1920x1080`.
@@ -877,6 +902,38 @@ Replicates the zackd-director skill (Zack D Films-style curiosity shorts) entire
 
 * **Fields**: `sceneCount` = number of curiosity-loop beats (2-8, each ≈ one narration line + 2 shots). `prompt` accepts a full script or facts dump — the LLM restructures it into the curiosity-loop format.
 * **Requires** `WAVESPEED_API_KEY` (sheets + keyframes + clips + music) and a TTS key (`ELEVENLABS_API_KEY` preferred or `DEEPGRAM_API_KEY`). The beat-map LLM uses `ZACK_D_LLM_URL`/`ZACK_D_LLM_MODEL` (defaults to the WaveSpeed LLM); set `ZACK_D_I2V_MODEL=google/veo3.1/image-to-video` to animate keyframes with Veo 3.1 instead of Seedance.
+* **Async** — returns a `jobId` immediately; poll `GET /api/videos/{jobId}` until completed.
+
+* **Response**:
+  ```json
+  {
+    "success": true,
+    "jobId": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
+    "status": "queued",
+    "createdAt": "2026-07-01T18:00:00.000Z"
+  }
+  ```
+
+#### 15. AI Comic Drama Episode (`ComicDramaVideo`)
+Replicates the AIComicBuilder pipeline entirely on the WaveSpeed stack. A single premise or raw script flows through: **LLM story plan** (character extraction, art-style auto-detection, continuity-chained shot list with first/last frame descriptions, camera directions and dialogue) → **Seedream 4-view character sheets** (front / ¾ / side / back grids with the name printed on the sheet) → per shot a **first keyframe + last keyframe pair** (the closing frame is locked to the opening frame's style/environment — only pose/expression/position changes; shot N+1 chains from shot N's end state) → **start/end-frame interpolated I2V clip** via Wan 2.2 `last_image` (or the dedicated `wan-flf2v` model) → per-shot **dialogue TTS** with word timestamps → optional **Lyria** music → assembled by the `ComicDramaVideo` Remotion composition with hard cuts, white panel-flash transitions and comic dialogue strips.
+
+```json
+{
+  "videoType": "ComicDramaVideo",
+  "prompt": "A shy ramen shop cat secretly defends the neighborhood from spirits at night",
+  "targetDurationSeconds": 30,
+  "sceneCount": 6,
+  "artStyle": "anime",
+  "tone": "dramatic",
+  "language": "English",
+  "aspectRatio": "9:16",
+  "generateAudio": true,
+  "music": true
+}
+```
+
+* **Fields**: `sceneCount` = number of storyboard shots (2-10; each ≈ one keyframe pair + one 5s or 8s clip). `artStyle`: `auto` · `anime` · `manga` · `comic_book` · `3d_pixar` · `realistic_cinematic`. `prompt` accepts a full raw script — the LLM parses characters and shots from it directly.
+* **Requires** `WAVESPEED_API_KEY` (sheets + keyframes + interpolation clips + music) and a TTS key (`ELEVENLABS_API_KEY` preferred or `DEEPGRAM_API_KEY`). The story-plan LLM uses `COMIC_LLM_URL`/`COMIC_LLM_MODEL` (defaults to the WaveSpeed LLM); keyframes are reference-locked via `COMIC_KEYFRAME_EDIT_MODEL` (default `bytedance/seedream-v4/edit`); set `COMIC_I2V_MODEL=wavespeed-ai/wan-flf2v` for the dedicated first-last-frame model.
 * **Async** — returns a `jobId` immediately; poll `GET /api/videos/{jobId}` until completed.
 
 * **Response**:
