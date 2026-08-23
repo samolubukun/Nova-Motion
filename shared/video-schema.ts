@@ -31,6 +31,7 @@ export const VideoType = z.enum([
   "Luma",
   "VoxVideo",
   "ZackDVideo",
+  "ComicDramaVideo",
 ]);
 export type VideoType = z.infer<typeof VideoType>;
 
@@ -303,6 +304,41 @@ export const ZackDRequestSchema = z.object({
   webhookUrl: z.string().url().optional(),
 });
 export type ZackDRequest = z.infer<typeof ZackDRequestSchema>;
+
+// === ComicDrama (AI comic / anime drama episode) Request Schema ===
+// Replicates the AIComicBuilder pipeline on the WaveSpeed stack:
+// script → character extraction → 4-view character sheets → shot list with
+// first/last keyframe pairs → start/end-frame interpolated I2V clips →
+// voiced dialogue + burned-in comic subtitles → hard-cut assembly.
+export const ComicArtStyle = z.enum([
+  "auto",
+  "anime",
+  "manga",
+  "comic_book",
+  "3d_pixar",
+  "realistic_cinematic",
+]);
+export type ComicArtStyle = z.infer<typeof ComicArtStyle>;
+
+export const ComicDramaRequestSchema = z.object({
+  // Story premise, synopsis, or a full raw script — the LLM structures it
+  // into characters + a shot list either way.
+  prompt: z.string().min(1).max(6000),
+  title: z.string().max(200).optional(),
+  targetDurationSeconds: z.number().min(10).max(120).optional(),
+  language: z.string().max(80).optional(),
+  tone: z.string().max(100).optional(),
+  // Visual style; "auto" detects from the story (anime/manga/realistic...).
+  artStyle: ComicArtStyle.default("auto").optional(),
+  aspectRatio: z.enum(ASPECT_RATIOS).default("9:16").optional(),
+  voice: z.string().max(100).optional(),
+  generateAudio: z.boolean().default(true).optional(),
+  music: z.boolean().default(true).optional(),
+  // Number of storyboard shots (each = one keyframe pair + one clip)
+  sceneCount: z.number().min(2).max(10).optional(),
+  webhookUrl: z.string().url().optional(),
+});
+export type ComicDramaRequest = z.infer<typeof ComicDramaRequestSchema>;
 
 // === Job Status Types ===
 export const JobStatus = z.enum([
