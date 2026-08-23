@@ -9,7 +9,7 @@ import cors from "cors";
 import { createJob, getJob, setRenderCallback, getQueueStats, enqueueExistingJob } from "./queue";
 import { renderVideo } from "./renderer";
 import { getVideosDirectory, cleanupOldVideos, ensureVideosDir } from "./storage";
-import { AgenticVideoRequestSchema, RenderRequestSchema, TextToVideoRequestSchema, MicroDramaRequestSchema, UGCRequestSchema, LumaRequestSchema, VoxRequestSchema } from "../shared/video-schema";
+import { AgenticVideoRequestSchema, RenderRequestSchema, TextToVideoRequestSchema, MicroDramaRequestSchema, UGCRequestSchema, LumaRequestSchema, VoxRequestSchema, ZackDRequestSchema } from "../shared/video-schema";
 import { listAgenticCheckpoints } from "../src/lib/agentic-checkpoints";
 
 const app = express();
@@ -308,6 +308,42 @@ app.post("/render/vox", authenticate, (req: Request, res: Response) => {
   }
 });
 
+app.post("/render/zack-d", authenticate, (req: Request, res: Response) => {
+  try {
+    const validation = ZackDRequestSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        error: "Invalid request",
+        details: validation.error.issues.map((e) => ({
+          path: e.path.join("."),
+          message: e.message,
+        })),
+      });
+    }
+
+    const { webhookUrl, ...pipeline } = validation.data;
+    const job = createJob(
+      "ZackDVideo",
+      undefined,
+      undefined,
+      webhookUrl,
+      pipeline as never
+    );
+
+    console.log(`ZackDVideo job created: ${job.id}`);
+    res.status(201).json({
+      jobId: job.id,
+      status: job.status,
+      createdAt: job.createdAt.toISOString(),
+    });
+  } catch (err) {
+    console.error("Error creating ZackDVideo job:", err);
+    res.status(500).json({
+      error: err instanceof Error ? err.message : "Internal server error",
+    });
+  }
+});
+
 // Get job status
 app.get("/render/:jobId", authenticate, (req: Request, res: Response) => {
   const jobId = req.params.jobId as string;
@@ -406,8 +442,9 @@ Endpoints:
   POST /render/micro-drama  - Submit an async MicroDrama pipeline job
   POST /render/ugc          - Submit an async UGC pipeline job
   POST /render/agentic-video - Submit an end-to-end agentic video job
-  POST /render/luma        - Submit a Luma Ray 3.2 (all use-cases) video job
-  GET  /render/:id          - Get job status
+   POST /render/luma        - Submit a Luma Ray 3.2 (all use-cases) video job
+   POST /render/zack-d      - Submit a Zack D Films-style 3D curiosity short job
+   GET  /render/:id          - Get job status
   GET  /videos/:file        - Serve rendered videos
   GET  /health              - Health check
   GET  /stats               - Queue statistics
