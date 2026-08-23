@@ -8,7 +8,7 @@ import { Sparkles, Zap, Film, Flame, Image as ImageIcon, Video, Layers, ArrowRig
 interface StudioMode {
   id: string;
   title: string;
-  category: 'text-to-video' | 'microdrama' | 'ugc' | 'agentic' | 'luma' | 'vox' | 'zackd' | 'motion-graphics' | 'storyboard' | 'stock' | 'slideshow';
+  category: 'text-to-video' | 'microdrama' | 'ugc' | 'agentic' | 'luma' | 'vox' | 'zackd' | 'comic' | 'motion-graphics' | 'storyboard' | 'stock' | 'slideshow';
   type: 'form' | 'chat';
   description: string;
   thumbnail: string;
@@ -28,6 +28,7 @@ export default function StudioHubPage() {
     { id: 'luma', label: 'Luma Ray 3.2' },
     { id: 'vox', label: 'Vox Paper' },
     { id: 'zackd', label: 'Zack D 3D Shorts' },
+    { id: 'comic', label: 'Comic Drama' },
     { id: 'motion-graphics', label: 'Motion Graphics' },
     { id: 'storyboard', label: 'AI Storyboards' },
     { id: 'stock', label: 'Stock Media' },
@@ -134,6 +135,16 @@ export default function StudioHubPage() {
       thumbnail: '/thumbnails/zack-d.png',
       badge: '3D Curiosity Short',
       paramsSummary: 'Curiosity Loop • Character Sheets • Impact Zooms • ElevenLabs Voice',
+    },
+    {
+      id: 'comic-drama',
+      title: 'AI Comic Drama Studio',
+      category: 'comic',
+      type: 'form',
+      description: 'Comic & anime drama episodes — story plan → 4-view character sheets → first/last keyframe pairs → interpolated motion clips with dialogue subtitles.',
+      thumbnail: '/thumbnails/comic-drama.png',
+      badge: 'Comic Drama',
+      paramsSummary: 'Art Style • Storyboard Shots • Dialogue TTS • Comic Subtitles',
     },
     {
       id: 'motion-graphics',
