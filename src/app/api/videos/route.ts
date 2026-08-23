@@ -21,8 +21,9 @@ import {
   AgenticVideoRequestSchema,
   LumaRequestSchema,
   VoxRequestSchema,
-  ZackDRequestSchema,
-} from "../../../../shared/video-schema";
+    ZackDRequestSchema,
+    ComicDramaRequestSchema,
+  } from "../../../../shared/video-schema";
 import * as path from "path";
 import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
@@ -258,6 +259,25 @@ async function submitZackDToRenderServer(
   return response.json();
 }
 
+async function submitComicDramaToRenderServer(
+  payload: Record<string, unknown>
+): Promise<{ jobId: string; status: string; createdAt: string }> {
+  const { url, secret } = getRenderServerConfig();
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (secret) headers["X-Render-Secret"] = secret;
+
+  const response = await fetch(`${url}/render/comic-drama`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: "Unknown error" }));
+    throw new Error(error.error || `Render server returned ${response.status}`);
+  }
+  return response.json();
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -412,17 +432,56 @@ export async function POST(req: NextRequest) {
         }, { status: 400 });
       }
 
-      try {
-        const renderResult = await submitZackDToRenderServer(validation.data);
-        return NextResponse.json({ success: true, ...renderResult });
-      } catch (renderErr) {
-        console.error("[API Gateway] ZackD render submission failed:", renderErr);
-        return NextResponse.json({
-          success: false,
-          error: "Unable to connect to render server. Please try again later.",
-        }, { status: 503 });
+        try {
+          const renderResult = await submitZackDToRenderServer(validation.data);
+          return NextResponse.json({ success: true, ...renderResult });
+        } catch (renderErr) {
+          console.error("[API Gateway] ZackD render submission failed:", renderErr);
+          return NextResponse.json({
+            success: false,
+            error: "Unable to connect to render server. Please try again later.",
+          }, { status: 503 });
+        }
       }
-    }
+
+      // ComicDrama (AI comic / anime drama episode) mode submission — script →
+      // story plan → character sheets → first/last keyframes → interpolated
+      // I2V clips → dialogue TTS + comic subtitles + music, all generated
+      // inside the render job, then rendered by the ComicDramaVideo composition.
+      if (body?.videoType === "ComicDramaVideo" && typeof body.prompt === "string") {
+        const candidate: Record<string, unknown> = { prompt: body.prompt };
+        const comicFields = [
+          "title", "targetDurationSeconds", "language", "tone",
+          "artStyle", "aspectRatio", "voice", "generateAudio", "music",
+          "sceneCount", "webhookUrl",
+        ] as const;
+        for (const field of comicFields) {
+          if (body[field] !== undefined) candidate[field] = body[field];
+        }
+
+        const validation = ComicDramaRequestSchema.safeParse(candidate);
+        if (!validation.success) {
+          return NextResponse.json({
+            success: false,
+            error: "Invalid ComicDramaVideo request",
+            details: validation.error.issues.map((e) => ({
+              path: e.path.join("."),
+              message: e.message,
+            })),
+          }, { status: 400 });
+        }
+
+        try {
+          const renderResult = await submitComicDramaToRenderServer(validation.data);
+          return NextResponse.json({ success: true, ...renderResult });
+        } catch (renderErr) {
+          console.error("[API Gateway] ComicDrama render submission failed:", renderErr);
+          return NextResponse.json({
+            success: false,
+            error: "Unable to connect to render server. Please try again later.",
+          }, { status: 503 });
+        }
+      }
 
     // MicroDrama async pipeline submission (idea → story → scenes → I2V clips,
     // all generated inside the render job, then rendered).
