@@ -73,6 +73,8 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
       ? 'Luma'
       : modeId === 'vox-video'
       ? 'VoxVideo'
+      : modeId === 'zack-d'
+      ? 'ZackDVideo'
       : modeId === 'microdrama'
       ? 'MicroDrama'
       : modeId === 'agentic-video'
@@ -98,6 +100,7 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
   // API Advanced Drawer State
   const [voxTheme, setVoxTheme] = useState<string>('american-retro');
   const [voxArc, setVoxArc] = useState<string>('hook_payoff');
+  const [zackDBeats, setZackDBeats] = useState<number>(4);
   const [agenticPlatform, setAgenticPlatform] = useState<string>('youtube');
   const [lumaUseCase, setLumaUseCase] = useState<string>('text_to_video');
   const [brandColor, setBrandColor] = useState('#0088ff');
@@ -195,6 +198,16 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
         prompt: finalPrompt,
         theme: voxTheme,
         arc: voxArc,
+        aspectRatio,
+        voice,
+      });
+    } else if (modeId === 'zack-d') {
+      startVideoJob({
+        videoType: 'ZackDVideo',
+        prompt: finalPrompt,
+        targetDurationSeconds: duration,
+        sceneCount: zackDBeats,
+        tone,
         aspectRatio,
         voice,
       });
@@ -359,6 +372,8 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
               ? 'Agentic Screenwriter + Seedance I2V'
               : videoType === 'VoxVideo'
               ? 'Vox Beatmap + Seedream Poster Collages'
+              : videoType === 'ZackDVideo'
+              ? 'Curiosity-Loop Script + Character Sheets + Seedance I2V'
               : videoType === 'MotionGraphics'
               ? 'Dynamic 3D Remotion Charts & Infographics'
               : videoType === 'Explainer'
@@ -565,6 +580,22 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
                     </select>
                   </div>
                 </>
+              )}
+
+              {/* ZackD Controls */}
+              {videoType === 'ZackDVideo' && (
+                <div className="space-y-1">
+                  <label className="text-[10px] text-slate-400">Curiosity-Loop Beats (2 shots each)</label>
+                  <select
+                    value={zackDBeats}
+                    onChange={(e) => setZackDBeats(Number(e.target.value))}
+                    className="w-full p-2 rounded-lg bg-slate-950 border border-white/10 text-xs text-slate-200"
+                  >
+                    {[3, 4, 5, 6, 8].map((n) => (
+                      <option key={n} value={n}>{n} beats (~{n * 6}s)</option>
+                    ))}
+                  </select>
+                </div>
               )}
 
               {/* Tone & Audience */}
