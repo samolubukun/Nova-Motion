@@ -36,7 +36,7 @@
 
 Nova Motion is an end-to-end AI video generation engine designed to transform simple text prompts and concepts into production-grade, platform-ready videos. Built on Next.js, Remotion, and an asynchronous Express render pipeline, Nova Motion orchestrates story writing, visual generation, voiceover synthesis, kinetic captioning, and final video rendering into one continuous automated workflow.
 
-The platform provides a suite of creation engines tailored for distinct video formats, including AI storyboards, stock footage shorts, typography slides, 3D motion graphics, text-to-video B-rolls, micro drama narratives, UGC video ads, concept-to-video campaigns, Luma Ray 3.2 cinematic clips, and Vox-style paper-collage explainers.
+The platform provides a suite of creation engines tailored for distinct video formats, including AI storyboards, stock footage shorts, typography slides, 3D motion graphics, text-to-video B-rolls, micro drama narratives, UGC video ads, concept-to-video campaigns, Luma Ray 3.2 cinematic clips, Vox-style paper-collage explainers, and Zack D Films-style 3D curiosity shorts.
 
 Media assets, voiceover tracks, and final rendered MP4 videos are managed through a unified storage pipeline, with support for local disk storage as well as cloud-native object storage such as DigitalOcean Spaces and Cloudflare R2.
 
@@ -46,8 +46,8 @@ Media assets, voiceover tracks, and final rendered MP4 videos are managed throug
 <table align="center" style="border-collapse: separate; border-spacing: 12px 12px;">
   <tr>
     <td align="center" style="border: 1px solid #d0d7de; border-radius: 12px; padding: 20px 16px; background: #f6f8fa; width: 33%; vertical-align: top;">
-      <strong>13 Modes, One API</strong><br />
-      <span style="font-size: 14px; color: #57606a;">AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, and Vox collage explainers - all behind a single endpoint.</span>
+      <strong>14 Modes, One API</strong><br />
+      <span style="font-size: 14px; color: #57606a;">AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, Vox collage explainers, and Zack D-style 3D curiosity shorts - all behind a single endpoint.</span>
     </td>
     <td align="center" style="border: 1px solid #d0d7de; border-radius: 12px; padding: 20px 16px; background: #f6f8fa; width: 33%; vertical-align: top;">
       <strong>Agentic Pipelines</strong><br />
@@ -287,6 +287,27 @@ A Vox-style paper-collage explainer generator producing torn-paper collage poste
 }
 ```
 
+### 12. Zack D Films 3D Short (`videoType: "ZackDVideo"`)
+A Zack D Films-style stylized 3D curiosity short — one topic in, a scroll-stopping animated explainer out.
+* **Curiosity-loop script**: The WaveSpeed LLM writes a hook-led beat map where every beat opens a question the viewer needs answered (myth-buster and "what if" formulas), with 2 shots per beat (wide establishing + macro cross-section cutaway) and alternating camera moves.
+* **Character consistency sheets**: Orthographic turnaround sheets (Seedream, front/side/¾ views for characters; cross-section cutaways for organs/assets) are generated first and anchored into every keyframe prompt so identity stays locked across shots.
+* **Keyframes → motion clips**: Each shot is rendered as a 3D keyframe (plasticine clay subsurface-scattering style block, macro 85mm lighting formula) then animated by image-to-video (Seedance 2.0 by default, `ZACK_D_I2V_MODEL=google/veo3.1/image-to-video` to switch).
+* **Signature editing**: Impact zooms (slow push-in on every "B" shot) and the fade / wipe / slide / circle-open transition cycle are rendered natively by the `ZackDVideo` Remotion composition — no ffmpeg required.
+* **Voice & captions & music**: ElevenLabs (preferred) / Deepgram TTS with word-level kinetic captions, plus optional Lyria background music.
+* **Async**: Returns a `jobId` immediately. Poll `GET /api/videos/{jobId}` for render status.
+
+```json
+{
+  "videoType": "ZackDVideo",
+  "prompt": "What happens when you swallow gum?",
+  "targetDurationSeconds": 30,
+  "sceneCount": 4,
+  "aspectRatio": "9:16",
+  "generateAudio": true,
+  "music": true
+}
+```
+
 ---
 
 ## Quick Start (Local Development)
@@ -393,6 +414,7 @@ All endpoints support the following root payload fields:
   * `"AgenticVideoGenerator"`: Concept to screenplay, casting, storyboard, AI scenes, audio, and platform-ready video.
   * `"Luma"`: Unified Luma Ray 3.2 mode — text-to-video, image-to-video, loop, extend, video edit, reframe + TTS voiceover & kinetic captions.
   * `"VoxVideo"`: Vox-style paper-collage explainer — LLM beat map → Seedream collage posters → Seedance animated clips + TTS voiceover, captions & music.
+  * `"ZackDVideo"`: Zack D Films-style 3D curiosity short — curiosity-loop script → character turnaround sheets → keyframes → I2V clips + impact zooms, transitions, captions & music.
 * **`aspectRatio`** (string, optional): Target video layout format. Must be one of:
   * `"9:16"`: Portrait (mobile vertical) - defaults to `1080x1920`.
   * `"16:9"`: Landscape (widescreen desktop) - defaults to `1920x1080`.
@@ -824,6 +846,37 @@ Replicates the Vox-style paper-collage explainer generator on top of the APIs th
 * **Themes** (`theme`): `swiss-modern` · `american-retro` · `punk-zine` · `chinese-ink` (default `american-retro`).
 * **Arcs** (`arc`): `hook_payoff` · `timeline` · `how_it_works` · `pas` · `bab` · `man_in_hole` (default `hook_payoff`).
 * **Requires** `WAVESPEED_API_KEY` (posters + clips + music) and a TTS key (`ELEVENLABS_API_KEY` preferred or `DEEPGRAM_API_KEY`). The beat-map LLM uses `VOX_LLM_URL`/`VOX_LLM_MODEL` (defaults to the WaveSpeed LLM, fallback key `OPENAI_API_KEY`).
+* **Async** — returns a `jobId` immediately; poll `GET /api/videos/{jobId}` until completed.
+
+* **Response**:
+  ```json
+  {
+    "success": true,
+    "jobId": "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
+    "status": "queued",
+    "createdAt": "2026-07-01T18:00:00.000Z"
+  }
+  ```
+
+#### 14. Zack D Films 3D Short (`ZackDVideo`)
+Replicates the zackd-director skill (Zack D Films-style curiosity shorts) entirely on the WaveSpeed stack. A single topic flows through: **LLM curiosity-loop beat map** (hook opens the loop in <3s, every beat opens a new question, final beat resolves it; 2 shots per beat with camera-move rotation) → **Seedream character turnaround sheets** (orthographic front/side/¾ views for characters, cross-section cutaways for organs/assets) → per-shot **keyframe** anchored on the sheet descriptions (5-part prompt formula: subject & action + character anchor + clay/SSS style block + macro lighting + dark studio background) → **image-to-video clip** (Seedance 2.0 by default) → **ElevenLabs/Deepgram TTS** voiceover with kinetic word captions → optional **Lyria** music → assembled by the `ZackDVideo` Remotion composition with impact zooms (`zoom_impact` shots get a slow push-in) and the fade/wipe/slide/circle-open transition cycle.
+
+```json
+{
+  "videoType": "ZackDVideo",
+  "prompt": "What happens when you swallow gum?",
+  "targetDurationSeconds": 30,
+  "sceneCount": 4,
+  "tone": "energetic",
+  "language": "English",
+  "aspectRatio": "9:16",
+  "generateAudio": true,
+  "music": true
+}
+```
+
+* **Fields**: `sceneCount` = number of curiosity-loop beats (2-8, each ≈ one narration line + 2 shots). `prompt` accepts a full script or facts dump — the LLM restructures it into the curiosity-loop format.
+* **Requires** `WAVESPEED_API_KEY` (sheets + keyframes + clips + music) and a TTS key (`ELEVENLABS_API_KEY` preferred or `DEEPGRAM_API_KEY`). The beat-map LLM uses `ZACK_D_LLM_URL`/`ZACK_D_LLM_MODEL` (defaults to the WaveSpeed LLM); set `ZACK_D_I2V_MODEL=google/veo3.1/image-to-video` to animate keyframes with Veo 3.1 instead of Seedance.
 * **Async** — returns a `jobId` immediately; poll `GET /api/videos/{jobId}` until completed.
 
 * **Response**:
