@@ -18,6 +18,8 @@ import { generateVoxVideoTimeline } from "../src/lib/vox-pipeline";
 import type { VoxVideoInput } from "../src/lib/vox-pipeline";
 import { generateZackDVideoTimeline } from "../src/lib/zack-d-pipeline";
 import type { ZackDVideoInput } from "../src/lib/zack-d-pipeline";
+import { generateComicDramaVideoTimeline } from "../src/lib/comic-pipeline";
+import type { ComicDramaVideoInput } from "../src/lib/comic-pipeline";
 
 // Cache the bundle URL to avoid rebundling on every render
 let cachedBundleUrl: string | null = null;
@@ -318,6 +320,31 @@ if (job.videoType === "AgenticVideoGenerator" && job.pipeline) {
       console.log(`[ZackDVideo] Timeline ready for job ${job.id}.`);
     }
 
+    if (job.videoType === "ComicDramaVideo" && job.pipeline) {
+      console.log(`[ComicDramaVideo] Running comic-drama pipeline for job ${job.id}...`);
+      const pipeline = job.pipeline;
+      const input: ComicDramaVideoInput = {
+        prompt: pipeline.prompt || "",
+        title: pipeline.title,
+        targetDurationSeconds: pipeline.targetDurationSeconds,
+        language: pipeline.language,
+        tone: pipeline.tone,
+        artStyle: pipeline.style,
+        aspectRatio: pipeline.aspectRatio,
+        voice: pipeline.voice,
+        generateAudio: pipeline.generateAudio,
+        music: pipeline.music,
+        sceneCount: pipeline.sceneCount,
+      };
+      job.timeline = await generateComicDramaVideoTimeline(input, {
+        jobId: job.id,
+        assetBaseUrl: baseUrl,
+        onProgress: (progress) => updateJobStatus(job.id, { progress: Math.round(progress * 25) }),
+        onStage: (stage: string) => updateJobStatus(job.id, { currentStage: stage }),
+      });
+      console.log(`[ComicDramaVideo] Timeline ready for job ${job.id}.`);
+    }
+
     // Get the bundle URL (cached or create new)
     const bundleUrl = await getBundleUrl();
 
@@ -327,7 +354,7 @@ if (job.videoType === "AgenticVideoGenerator" && job.pipeline) {
 
     // Prepare input props
     let inputProps: any = {};
-    if (job.videoType === "AIStoryboardVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama" || job.videoType === "UGC" || job.videoType === "AgenticVideoGenerator" || job.videoType === "Luma" || job.videoType === "VoxVideo" || job.videoType === "ZackDVideo") {
+    if (job.videoType === "AIStoryboardVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama" || job.videoType === "UGC" || job.videoType === "AgenticVideoGenerator" || job.videoType === "Luma" || job.videoType === "VoxVideo" || job.videoType === "ZackDVideo" || job.videoType === "ComicDramaVideo") {
       inputProps = { timeline: job.timeline };
     } else if (job.videoType === "MotionGraphics") {
       inputProps = { storyboard: job.timeline };
