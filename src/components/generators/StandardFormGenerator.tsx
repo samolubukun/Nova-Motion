@@ -77,6 +77,8 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
       ? 'ZackDVideo'
       : modeId === 'comic-drama'
       ? 'ComicDramaVideo'
+      : modeId === 'stickman-explainer'
+      ? 'StickmanExplainerVideo'
       : modeId === 'microdrama'
       ? 'MicroDrama'
       : modeId === 'agentic-video'
@@ -105,6 +107,8 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
   const [zackDBeats, setZackDBeats] = useState<number>(4);
   const [comicShots, setComicShots] = useState<number>(6);
   const [comicArtStyle, setComicArtStyle] = useState<string>('auto');
+  const [stickmanScenes, setStickmanScenes] = useState<number>(5);
+  const [stickmanAnimation, setStickmanAnimation] = useState<string>('slideshow');
   const [agenticPlatform, setAgenticPlatform] = useState<string>('youtube');
   const [lumaUseCase, setLumaUseCase] = useState<string>('text_to_video');
   const [brandColor, setBrandColor] = useState('#0088ff');
@@ -222,6 +226,17 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
           targetDurationSeconds: duration,
           sceneCount: comicShots,
           artStyle: comicArtStyle,
+          tone,
+          aspectRatio,
+          voice,
+        });
+    } else if (modeId === 'stickman-explainer') {
+        startVideoJob({
+          videoType: 'StickmanExplainerVideo',
+          prompt: finalPrompt,
+          targetDurationSeconds: duration,
+          sceneCount: stickmanScenes,
+          animation: stickmanAnimation,
           tone,
           aspectRatio,
           voice,
@@ -391,6 +406,8 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
                 ? 'Curiosity-Loop Script + Character Sheets + Seedance I2V'
                 : videoType === 'ComicDramaVideo'
                 ? 'Story Plan + 4-View Sheets + First/Last Frame Interpolation'
+                : videoType === 'StickmanExplainerVideo'
+                ? 'Hook Storyboard + Stickman Ref-Locked Scenes + Ken Burns / I2V'
                 : videoType === 'MotionGraphics'
               ? 'Dynamic 3D Remotion Charts & Infographics'
               : videoType === 'Explainer'
@@ -642,6 +659,35 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
                       >
                         {[3, 4, 5, 6, 8, 10].map((n) => (
                           <option key={n} value={n}>{n} shots (~{n * 5}s)</option>
+                        ))}
+                      </select>
+                    </div>
+                  </>
+                )}
+
+                {/* Stickman Explainer Controls */}
+                {videoType === 'StickmanExplainerVideo' && (
+                  <>
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-slate-400">Animation Style</label>
+                      <select
+                        value={stickmanAnimation}
+                        onChange={(e) => setStickmanAnimation(e.target.value)}
+                        className="w-full p-2 rounded-lg bg-slate-950 border border-white/10 text-xs text-slate-200"
+                      >
+                        <option value="slideshow">Slideshow — Ken Burns zoom (near-free)</option>
+                        <option value="animated">Animated — AI motion clips per scene</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-slate-400">Scenes</label>
+                      <select
+                        value={stickmanScenes}
+                        onChange={(e) => setStickmanScenes(Number(e.target.value))}
+                        className="w-full p-2 rounded-lg bg-slate-950 border border-white/10 text-xs text-slate-200"
+                      >
+                        {[3, 4, 5, 6, 8, 10].map((n) => (
+                          <option key={n} value={n}>{n} scenes (~{n * 7}s)</option>
                         ))}
                       </select>
                     </div>
