@@ -32,6 +32,7 @@ export const VideoType = z.enum([
   "VoxVideo",
   "ZackDVideo",
   "ComicDramaVideo",
+  "StickmanExplainerVideo",
 ]);
 export type VideoType = z.infer<typeof VideoType>;
 
@@ -339,6 +340,34 @@ export const ComicDramaRequestSchema = z.object({
   webhookUrl: z.string().url().optional(),
 });
 export type ComicDramaRequest = z.infer<typeof ComicDramaRequestSchema>;
+
+// === StickmanExplainer (Stickman-Studio-style educational short) Request
+// Schema === Replicates the Stickman Studio pipeline on the WaveSpeed stack:
+// topic → LLM storyboard (hook scene + punchy narration per scene) → one
+// stickman character reference → reference-locked scene images → Ken Burns
+// slideshow (free) or Wan I2V animated clips → narrated voiceover + captions.
+export const StickmanAnimation = z.enum(["slideshow", "animated"]);
+export type StickmanAnimation = z.infer<typeof StickmanAnimation>;
+
+export const StickmanExplainerRequestSchema = z.object({
+  // Topic, question, or raw explainer script — the LLM structures it either way.
+  prompt: z.string().min(1).max(6000),
+  title: z.string().max(200).optional(),
+  targetDurationSeconds: z.number().min(10).max(120).optional(),
+  language: z.string().max(80).optional(),
+  tone: z.string().max(100).optional(),
+  // "slideshow" animates stills with a Remotion Ken Burns zoom (no video-gen
+  // cost); "animated" generates one Wan I2V clip per scene.
+  animation: StickmanAnimation.default("slideshow").optional(),
+  aspectRatio: z.enum(ASPECT_RATIOS).default("9:16").optional(),
+  voice: z.string().max(100).optional(),
+  generateAudio: z.boolean().default(true).optional(),
+  music: z.boolean().default(true).optional(),
+  // Number of scenes in the storyboard (scene 1 doubles as the hook)
+  sceneCount: z.number().min(2).max(10).optional(),
+  webhookUrl: z.string().url().optional(),
+});
+export type StickmanExplainerRequest = z.infer<typeof StickmanExplainerRequestSchema>;
 
 // === Job Status Types ===
 export const JobStatus = z.enum([
