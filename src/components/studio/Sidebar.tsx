@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { LayoutGrid, Sparkles, FolderOpen, Cpu, Zap, Film, Image as ImageIcon, Flame, BookOpen } from 'lucide-react';
+import { LayoutGrid, Sparkles, FolderOpen, Cpu, Zap, Film, Image as ImageIcon, Flame, BookOpen, PencilRuler } from 'lucide-react';
 import { useStudio } from '@/lib/studio-store';
 
 export function Sidebar() {
@@ -27,6 +27,7 @@ export function Sidebar() {
     { name: 'Vox Paper Explainer', href: '/studio/mode/vox-video', icon: Sparkles },
     { name: 'Zack D 3D Shorts', href: '/studio/mode/zack-d', icon: Film },
     { name: 'Comic Drama', href: '/studio/mode/comic-drama', icon: BookOpen },
+    { name: 'Stickman Explainer', href: '/studio/mode/stickman-explainer', icon: PencilRuler },
     { name: 'Motion Graphics', href: '/studio/mode/motion-graphics', icon: Cpu },
     { name: 'Typography Slideshow', href: '/studio/mode/typography-slideshow', icon: LayoutGrid },
   ];
