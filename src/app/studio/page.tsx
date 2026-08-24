@@ -8,7 +8,7 @@ import { Sparkles, Zap, Film, Flame, Image as ImageIcon, Video, Layers, ArrowRig
 interface StudioMode {
   id: string;
   title: string;
-  category: 'text-to-video' | 'microdrama' | 'ugc' | 'agentic' | 'luma' | 'vox' | 'zackd' | 'comic' | 'motion-graphics' | 'storyboard' | 'stock' | 'slideshow';
+  category: 'text-to-video' | 'microdrama' | 'ugc' | 'agentic' | 'luma' | 'vox' | 'zackd' | 'comic' | 'stickman' | 'motion-graphics' | 'storyboard' | 'stock' | 'slideshow';
   type: 'form' | 'chat';
   description: string;
   thumbnail: string;
@@ -29,6 +29,7 @@ export default function StudioHubPage() {
     { id: 'vox', label: 'Vox Paper' },
     { id: 'zackd', label: 'Zack D 3D Shorts' },
     { id: 'comic', label: 'Comic Drama' },
+    { id: 'stickman', label: 'Stickman Explainer' },
     { id: 'motion-graphics', label: 'Motion Graphics' },
     { id: 'storyboard', label: 'AI Storyboards' },
     { id: 'stock', label: 'Stock Media' },
@@ -145,6 +146,16 @@ export default function StudioHubPage() {
       thumbnail: '/thumbnails/comic-drama.png',
       badge: 'Comic Drama',
       paramsSummary: 'Art Style • Storyboard Shots • Dialogue TTS • Comic Subtitles',
+    },
+    {
+      id: 'stickman-explainer',
+      title: 'Stickman Explainer Shorts',
+      category: 'stickman',
+      type: 'form',
+      description: 'Stickman-Studio-style educational shorts — viral hook storyboard → one stickman reference → reference-locked scene images → Ken Burns slideshow or animated clips.',
+      thumbnail: '/thumbnails/stickman-explainer.png',
+      badge: 'Stickman Explainer',
+      paramsSummary: 'Hook Script • Character Ref • Slideshow / Animated • Narrator TTS',
     },
     {
       id: 'motion-graphics',
