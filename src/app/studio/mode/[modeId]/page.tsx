@@ -41,6 +41,10 @@ const modeConfigs: Record<string, { title: string; subtitle: string }> = {
     title: 'AI Comic Drama Studio',
     subtitle: 'Comic & anime drama episodes — story plan, 4-view character sheets, first/last keyframe interpolation, dialogue TTS & comic subtitles.',
   },
+  'stickman-explainer': {
+    title: 'Stickman Explainer Shorts',
+    subtitle: 'Stickman-Studio-style educational shorts — viral hook storyboard, one stickman character reference, reference-locked scene images, Ken Burns slideshow or animated clips & narrator TTS.',
+  },
   'motion-graphics': {
     title: 'Motion Graphics Studio',
     subtitle: 'Dynamic motion graphics, animated 3D bar/pie charts, infographics, and interactive UI component simulations.',
