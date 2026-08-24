@@ -60,7 +60,10 @@ export interface RenderJob {
     editStrength?: string;
     multiKeyframes?: boolean;
     generateAudio?: boolean;
+    // ComicDrama / Stickman params
     sceneCount?: number;
+    // Stickman params
+    animation?: string;
     // Vox (paper-collage explainer) params
     theme?: string;
     arc?: string;
