@@ -9,7 +9,7 @@ import cors from "cors";
 import { createJob, getJob, setRenderCallback, getQueueStats, enqueueExistingJob } from "./queue";
 import { renderVideo } from "./renderer";
 import { getVideosDirectory, cleanupOldVideos, ensureVideosDir } from "./storage";
-import { AgenticVideoRequestSchema, RenderRequestSchema, TextToVideoRequestSchema, MicroDramaRequestSchema, UGCRequestSchema, LumaRequestSchema, VoxRequestSchema, ZackDRequestSchema, ComicDramaRequestSchema } from "../shared/video-schema";
+import { AgenticVideoRequestSchema, RenderRequestSchema, TextToVideoRequestSchema, MicroDramaRequestSchema, UGCRequestSchema, LumaRequestSchema, VoxRequestSchema, ZackDRequestSchema, ComicDramaRequestSchema, StickmanExplainerRequestSchema } from "../shared/video-schema";
 import { listAgenticCheckpoints } from "../src/lib/agentic-checkpoints";
 
 const app = express();
@@ -380,6 +380,42 @@ app.post("/render/comic-drama", authenticate, (req: Request, res: Response) => {
   }
 });
 
+app.post("/render/stickman-explainer", authenticate, (req: Request, res: Response) => {
+  try {
+    const validation = StickmanExplainerRequestSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        error: "Invalid request",
+        details: validation.error.issues.map((e) => ({
+          path: e.path.join("."),
+          message: e.message,
+        })),
+      });
+    }
+
+    const { webhookUrl, ...pipeline } = validation.data;
+    const job = createJob(
+      "StickmanExplainerVideo",
+      undefined,
+      undefined,
+      webhookUrl,
+      pipeline as never
+    );
+
+    console.log(`StickmanExplainerVideo job created: ${job.id}`);
+    res.status(201).json({
+      jobId: job.id,
+      status: job.status,
+      createdAt: job.createdAt.toISOString(),
+    });
+  } catch (err) {
+    console.error("Error creating StickmanExplainerVideo job:", err);
+    res.status(500).json({
+      error: err instanceof Error ? err.message : "Internal server error",
+    });
+  }
+});
+
   // Get job status
   app.get("/render/:jobId", authenticate, (req: Request, res: Response) => {
   const jobId = req.params.jobId as string;
@@ -481,6 +517,7 @@ Endpoints:
    POST /render/luma        - Submit a Luma Ray 3.2 (all use-cases) video job
     POST /render/zack-d      - Submit a Zack D Films-style 3D curiosity short job
     POST /render/comic-drama - Submit an AI comic / anime drama episode job
+    POST /render/stickman-explainer - Submit a stickman educational explainer job
    GET  /render/:id          - Get job status
   GET  /videos/:file        - Serve rendered videos
   GET  /health              - Health check
