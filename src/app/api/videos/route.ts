@@ -24,6 +24,7 @@ import {
     ZackDRequestSchema,
     ComicDramaRequestSchema,
     StickmanExplainerRequestSchema,
+    WhiteboardVideoRequestSchema,
   } from "../../../../shared/video-schema";
 import * as path from "path";
 import * as fs from "fs";
@@ -298,6 +299,25 @@ async function submitStickmanToRenderServer(
   return response.json();
 }
 
+async function submitWhiteboardToRenderServer(
+  payload: Record<string, unknown>
+): Promise<{ jobId: string; status: string; createdAt: string }> {
+  const { url, secret } = getRenderServerConfig();
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (secret) headers["X-Render-Secret"] = secret;
+
+  const response = await fetch(`${url}/render/whiteboard`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: "Unknown error" }));
+    throw new Error(error.error || `Render server returned ${response.status}`);
+  }
+  return response.json();
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -536,6 +556,45 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ success: true, ...renderResult });
         } catch (renderErr) {
           console.error("[API Gateway] StickmanExplainer render submission failed:", renderErr);
+          return NextResponse.json({
+            success: false,
+            error: "Unable to connect to render server. Please try again later.",
+          }, { status: 503 });
+        }
+      }
+
+      // WhiteboardVideo (whiteboard animation explainer) mode submission —
+      // topic → LLM scene breakdown → whiteboard line-art images → optional
+      // SAM3 Video segmentation → TTS voiceover → optional Lyria music, all
+      // generated inside the render job, then rendered by the WavespeedVideo composition.
+      if (body?.videoType === "WhiteboardVideo" && typeof body.prompt === "string") {
+        const candidate: Record<string, unknown> = { prompt: body.prompt };
+        const whiteboardFields = [
+          "title", "targetDurationSeconds", "language", "tone",
+          "animationStyle", "aspectRatio", "voice", "generateAudio", "music",
+          "sceneCount", "webhookUrl",
+        ] as const;
+        for (const field of whiteboardFields) {
+          if (body[field] !== undefined) candidate[field] = body[field];
+        }
+
+        const validation = WhiteboardVideoRequestSchema.safeParse(candidate);
+        if (!validation.success) {
+          return NextResponse.json({
+            success: false,
+            error: "Invalid WhiteboardVideo request",
+            details: validation.error.issues.map((e) => ({
+              path: e.path.join("."),
+              message: e.message,
+            })),
+          }, { status: 400 });
+        }
+
+        try {
+          const renderResult = await submitWhiteboardToRenderServer(validation.data);
+          return NextResponse.json({ success: true, ...renderResult });
+        } catch (renderErr) {
+          console.error("[API Gateway] WhiteboardVideo render submission failed:", renderErr);
           return NextResponse.json({
             success: false,
             error: "Unable to connect to render server. Please try again later.",
