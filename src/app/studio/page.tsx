@@ -8,7 +8,7 @@ import { Sparkles, Zap, Film, Flame, Image as ImageIcon, Video, Layers, ArrowRig
 interface StudioMode {
   id: string;
   title: string;
-  category: 'text-to-video' | 'microdrama' | 'ugc' | 'agentic' | 'luma' | 'vox' | 'zackd' | 'comic' | 'stickman' | 'motion-graphics' | 'storyboard' | 'stock' | 'slideshow';
+  category: 'text-to-video' | 'microdrama' | 'ugc' | 'agentic' | 'luma' | 'vox' | 'zackd' | 'comic' | 'stickman' | 'whiteboard' | 'motion-graphics' | 'storyboard' | 'stock' | 'slideshow';
   type: 'form' | 'chat';
   description: string;
   thumbnail: string;
@@ -30,6 +30,7 @@ export default function StudioHubPage() {
     { id: 'zackd', label: 'Zack D 3D Shorts' },
     { id: 'comic', label: 'Comic Drama' },
     { id: 'stickman', label: 'Stickman Explainer' },
+    { id: 'whiteboard', label: 'Whiteboard' },
     { id: 'motion-graphics', label: 'Motion Graphics' },
     { id: 'storyboard', label: 'AI Storyboards' },
     { id: 'stock', label: 'Stock Media' },
@@ -156,6 +157,16 @@ export default function StudioHubPage() {
       thumbnail: '/thumbnails/stickman-explainer.png',
       badge: 'Stickman Explainer',
       paramsSummary: 'Hook Script • Character Ref • Slideshow / Animated • Narrator TTS',
+    },
+    {
+      id: 'whiteboard',
+      title: 'Whiteboard Animation Studio',
+      category: 'whiteboard',
+      type: 'form',
+      description: 'Storyboard-AI-style whiteboard animations — LLM scene breakdown → whiteboard line-art images → optional SAM3 Video segmentation → narrator TTS & music.',
+      thumbnail: '/thumbnails/stickman-explainer.png',
+      badge: 'Whiteboard',
+      paramsSummary: 'Topic • Director Script • Line-Art Images • SAM3 Segmentation • TTS',
     },
     {
       id: 'motion-graphics',
