@@ -28,6 +28,7 @@ export function Sidebar() {
     { name: 'Zack D 3D Shorts', href: '/studio/mode/zack-d', icon: Film },
     { name: 'Comic Drama', href: '/studio/mode/comic-drama', icon: BookOpen },
     { name: 'Stickman Explainer', href: '/studio/mode/stickman-explainer', icon: PencilRuler },
+    { name: 'Whiteboard Explainer', href: '/studio/mode/whiteboard', icon: PencilRuler },
     { name: 'Motion Graphics', href: '/studio/mode/motion-graphics', icon: Cpu },
     { name: 'Typography Slideshow', href: '/studio/mode/typography-slideshow', icon: LayoutGrid },
   ];
