@@ -45,6 +45,10 @@ const modeConfigs: Record<string, { title: string; subtitle: string }> = {
     title: 'Stickman Explainer Shorts',
     subtitle: 'Stickman-Studio-style educational shorts — viral hook storyboard, one stickman character reference, reference-locked scene images, Ken Burns slideshow or animated clips & narrator TTS.',
   },
+  'whiteboard': {
+    title: 'Whiteboard Animation Studio',
+    subtitle: 'Storyboard-AI-style whiteboard animations — LLM Director Agent scene breakdown, whiteboard line-art images, optional SAM3 Video segmentation, narrator TTS & background music.',
+  },
   'motion-graphics': {
     title: 'Motion Graphics Studio',
     subtitle: 'Dynamic motion graphics, animated 3D bar/pie charts, infographics, and interactive UI component simulations.',
