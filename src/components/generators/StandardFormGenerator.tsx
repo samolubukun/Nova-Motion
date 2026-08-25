@@ -79,6 +79,8 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
       ? 'ComicDramaVideo'
       : modeId === 'stickman-explainer'
       ? 'StickmanExplainerVideo'
+      : modeId === 'whiteboard'
+      ? 'WhiteboardVideo'
       : modeId === 'microdrama'
       ? 'MicroDrama'
       : modeId === 'agentic-video'
@@ -109,6 +111,8 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
   const [comicArtStyle, setComicArtStyle] = useState<string>('auto');
   const [stickmanScenes, setStickmanScenes] = useState<number>(5);
   const [stickmanAnimation, setStickmanAnimation] = useState<string>('slideshow');
+  const [whiteboardScenes, setWhiteboardScenes] = useState<number>(5);
+  const [whiteboardAnimationStyle, setWhiteboardAnimationStyle] = useState<string>('slideshow');
   const [agenticPlatform, setAgenticPlatform] = useState<string>('youtube');
   const [lumaUseCase, setLumaUseCase] = useState<string>('text_to_video');
   const [brandColor, setBrandColor] = useState('#0088ff');
@@ -240,6 +244,20 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
           tone,
           aspectRatio,
           voice,
+        });
+    } else if (modeId === 'whiteboard') {
+        startVideoJob({
+          videoType: 'WhiteboardVideo',
+          prompt: finalPrompt,
+          targetDurationSeconds: duration,
+          sceneCount: whiteboardScenes,
+          animationStyle: whiteboardAnimationStyle,
+          tone,
+          language,
+          aspectRatio,
+          voice,
+          generateAudio,
+          music: true,
         });
       } else {
       startVideoJob({
@@ -684,6 +702,35 @@ export function StandardFormGenerator({ modeId, title, subtitle }: FormProps) {
                       <select
                         value={stickmanScenes}
                         onChange={(e) => setStickmanScenes(Number(e.target.value))}
+                        className="w-full p-2 rounded-lg bg-slate-950 border border-white/10 text-xs text-slate-200"
+                      >
+                        {[3, 4, 5, 6, 8, 10].map((n) => (
+                          <option key={n} value={n}>{n} scenes (~{n * 7}s)</option>
+                        ))}
+                      </select>
+                    </div>
+                  </>
+                )}
+
+                {/* Whiteboard Animation Controls */}
+                {videoType === 'WhiteboardVideo' && (
+                  <>
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-slate-400">Animation Style</label>
+                      <select
+                        value={whiteboardAnimationStyle}
+                        onChange={(e) => setWhiteboardAnimationStyle(e.target.value)}
+                        className="w-full p-2 rounded-lg bg-slate-950 border border-white/10 text-xs text-slate-200"
+                      >
+                        <option value="slideshow">Slideshow — Ken Burns zoom (near-free)</option>
+                        <option value="animated">Animated — I2V clips + optional SAM3 segmentation</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-slate-400">Scenes</label>
+                      <select
+                        value={whiteboardScenes}
+                        onChange={(e) => setWhiteboardScenes(Number(e.target.value))}
                         className="w-full p-2 rounded-lg bg-slate-950 border border-white/10 text-xs text-slate-200"
                       >
                         {[3, 4, 5, 6, 8, 10].map((n) => (
