@@ -33,6 +33,7 @@ export const VideoType = z.enum([
   "ZackDVideo",
   "ComicDramaVideo",
   "StickmanExplainerVideo",
+  "WhiteboardVideo",
 ]);
 export type VideoType = z.infer<typeof VideoType>;
 
@@ -368,6 +369,30 @@ export const StickmanExplainerRequestSchema = z.object({
   webhookUrl: z.string().url().optional(),
 });
 export type StickmanExplainerRequest = z.infer<typeof StickmanExplainerRequestSchema>;
+
+// === WhiteboardVideo (Whiteboard animation explainer) Request Schema ===
+// Replicates the Storyboard-AI whiteboard animation pipeline on the WaveSpeed
+// stack: topic → LLM scene breakdown → whiteboard line-art images (Seedream)
+// → optional SAM3 Video segmentation → narrator TTS → optional Lyria music
+// → Ken Burns slideshow rendered by the WavespeedVideo composition.
+export const WhiteboardAnimationStyle = z.enum(["slideshow", "animated"]);
+export type WhiteboardAnimationStyle = z.infer<typeof WhiteboardAnimationStyle>;
+
+export const WhiteboardVideoRequestSchema = z.object({
+  prompt: z.string().min(1).max(6000),
+  title: z.string().max(200).optional(),
+  targetDurationSeconds: z.number().min(10).max(120).optional(),
+  language: z.string().min(1).max(80).default("English").optional(),
+  tone: z.string().max(100).optional(),
+  animationStyle: WhiteboardAnimationStyle.default("slideshow").optional(),
+  aspectRatio: z.enum(ASPECT_RATIOS).default("16:9").optional(),
+  voice: z.string().max(100).optional(),
+  generateAudio: z.boolean().default(true).optional(),
+  music: z.boolean().default(true).optional(),
+  sceneCount: z.number().min(2).max(10).optional(),
+  webhookUrl: z.string().url().optional(),
+});
+export type WhiteboardVideoRequest = z.infer<typeof WhiteboardVideoRequestSchema>;
 
 // === Job Status Types ===
 export const JobStatus = z.enum([
