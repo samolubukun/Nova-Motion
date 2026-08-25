@@ -22,6 +22,8 @@ import { generateComicDramaVideoTimeline } from "../src/lib/comic-pipeline";
 import type { ComicDramaVideoInput } from "../src/lib/comic-pipeline";
 import { generateStickmanExplainerTimeline } from "../src/lib/stickman-pipeline";
 import type { StickmanExplainerVideoInput } from "../src/lib/stickman-pipeline";
+import { generateWhiteboardVideoTimeline } from "../src/lib/whiteboard-pipeline";
+import type { WhiteboardVideoInput } from "../src/lib/whiteboard-pipeline";
 
 // Cache the bundle URL to avoid rebundling on every render
 let cachedBundleUrl: string | null = null;
@@ -372,6 +374,31 @@ if (job.videoType === "AgenticVideoGenerator" && job.pipeline) {
       console.log(`[StickmanExplainerVideo] Timeline ready for job ${job.id}.`);
     }
 
+    if (job.videoType === "WhiteboardVideo" && job.pipeline) {
+      console.log(`[WhiteboardVideo] Running whiteboard-animation pipeline for job ${job.id}...`);
+      const pipeline = job.pipeline;
+      const input: WhiteboardVideoInput = {
+        prompt: pipeline.prompt || "",
+        title: pipeline.title,
+        targetDurationSeconds: pipeline.targetDurationSeconds,
+        language: pipeline.language,
+        tone: pipeline.tone,
+        animationStyle: pipeline.animation,
+        aspectRatio: pipeline.aspectRatio,
+        voice: pipeline.voice,
+        generateAudio: pipeline.generateAudio,
+        music: pipeline.music,
+        sceneCount: pipeline.sceneCount,
+      };
+      job.timeline = await generateWhiteboardVideoTimeline(input, {
+        jobId: job.id,
+        assetBaseUrl: baseUrl,
+        onProgress: (progress) => updateJobStatus(job.id, { progress: Math.round(progress * 25) }),
+        onStage: (stage: string) => updateJobStatus(job.id, { currentStage: stage }),
+      });
+      console.log(`[WhiteboardVideo] Timeline ready for job ${job.id}.`);
+    }
+
     // Get the bundle URL (cached or create new)
     const bundleUrl = await getBundleUrl();
 
@@ -381,7 +408,7 @@ if (job.videoType === "AgenticVideoGenerator" && job.pipeline) {
 
     // Prepare input props
     let inputProps: any = {};
-    if (job.videoType === "AIStoryboardVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama" || job.videoType === "UGC" || job.videoType === "AgenticVideoGenerator" || job.videoType === "Luma" || job.videoType === "VoxVideo" || job.videoType === "ZackDVideo" || job.videoType === "ComicDramaVideo" || job.videoType === "StickmanExplainerVideo") {
+    if (job.videoType === "AIStoryboardVideo" || job.videoType === "StockVideo" || job.videoType === "StockImage" || job.videoType === "TextToVideo" || job.videoType === "MicroDrama" || job.videoType === "UGC" || job.videoType === "AgenticVideoGenerator" || job.videoType === "Luma" || job.videoType === "VoxVideo" || job.videoType === "ZackDVideo" || job.videoType === "ComicDramaVideo" || job.videoType === "StickmanExplainerVideo" || job.videoType === "WhiteboardVideo") {
       inputProps = { timeline: job.timeline };
     } else if (job.videoType === "MotionGraphics") {
       inputProps = { storyboard: job.timeline };
