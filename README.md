@@ -36,7 +36,7 @@
 
 Nova Motion is an end-to-end AI video generation engine designed to transform simple text prompts and concepts into production-grade, platform-ready videos. Built on Next.js, Remotion, and an asynchronous Express render pipeline, Nova Motion orchestrates story writing, visual generation, voiceover synthesis, kinetic captioning, and final video rendering into one continuous automated workflow.
 
-The platform provides a suite of creation engines tailored for distinct video formats, including AI storyboards, stock footage shorts, typography slides, 3D motion graphics, text-to-video B-rolls, micro drama narratives, UGC video ads, concept-to-video campaigns, Luma Ray 3.2 cinematic clips, Vox-style paper-collage explainers, Zack D Films-style 3D curiosity shorts, and AI comic / anime drama episodes.
+The platform provides a suite of creation engines tailored for distinct video formats, including AI storyboards, stock footage shorts, typography slides, 3D motion graphics, text-to-video B-rolls, micro drama narratives, UGC video ads, concept-to-video campaigns, Luma Ray 3.2 cinematic clips, Vox-style paper-collage explainers, Zack D Films-style 3D curiosity shorts, AI comic / anime drama episodes, stickman explainers, and whiteboard-style drawing explainers.
 
 Media assets, voiceover tracks, and final rendered MP4 videos are managed through a unified storage pipeline, with support for local disk storage as well as cloud-native object storage such as DigitalOcean Spaces and Cloudflare R2.
 
@@ -46,8 +46,8 @@ Media assets, voiceover tracks, and final rendered MP4 videos are managed throug
 <table align="center" style="border-collapse: separate; border-spacing: 12px 12px;">
   <tr>
     <td align="center" style="border: 1px solid #d0d7de; border-radius: 12px; padding: 20px 16px; background: #f6f8fa; width: 33%; vertical-align: top;">
-      <strong>16 Modes, One API</strong><br />
-      <span style="font-size: 14px; color: #57606a;">AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, Vox collage explainers, Zack D-style 3D curiosity shorts, comic drama episodes, and stickman explainers - all behind a single endpoint.</span>
+      <strong>17 Modes, One API</strong><br />
+      <span style="font-size: 14px; color: #57606a;">AI storyboards, stock shorts, typography slides, motion graphics, AI text-to-video, micro drama, UGC ads, agentic video, Luma Ray 3.2, Vox collage explainers, Zack D-style 3D curiosity shorts, comic drama episodes, stickman explainers, and whiteboard animation explainers - all behind a single endpoint.</span>
     </td>
     <td align="center" style="border: 1px solid #d0d7de; border-radius: 12px; padding: 20px 16px; background: #f6f8fa; width: 33%; vertical-align: top;">
       <strong>Agentic Pipelines</strong><br />
@@ -351,6 +351,33 @@ A Stickman-Studio-style educational explainer generator — one topic in, a narr
   "targetDurationSeconds": 40,
   "sceneCount": 5,
   "animation": "slideshow",
+  "aspectRatio": "9:16",
+  "generateAudio": true,
+  "music": true
+}
+```
+
+---
+
+### 15. Whiteboard Animation Explainer (`videoType: "WhiteboardVideo"`)
+A Storyboard-AI-style whiteboard drawing explainer — any topic becomes a narrated whiteboard animation with hand-drawn line-art scenes, optional AI motion clips, and optional SAM3 Video object segmentation. Replicates the full Storyboard-AI pipeline (`director.py` + `image_prompt_tool.py` + SAM3 + OpenCV drawing) entirely on the WaveSpeed stack.
+* **LLM Director Agent**: DeepSeek (via WaveSpeed LLM) turns a topic into a scene-by-scene whiteboard script with narration, image prompts following the Nano Banana formula (whiteboard line-art, thick black outlines, marker strokes, off-white surface), and optional object lists for segmentation.
+* **Seedream whiteboard images**: Each scene gets a unique Seedream-generated whiteboard line-art image (`$0.027/image`; falls back to text-to-image; override via `WHITEBOARD_IMAGE_MODEL`).
+* **Slideshow mode (default, near-free)**: Scene stills are animated natively in Remotion with alternating Ken Burns zoom/pan — zero video-generation cost.
+* **Animated mode**: Each scene becomes a Seedance I2V clip (`$0.06/scene`; override via `WHITEBOARD_I2V_MODEL`) that plays the scene's action with cartoon motion while preserving the whiteboard line-art style.
+* **Optional SAM3 Video segmentation**: When `animation: "animated"`, each clip can be passed through WaveSpeed's SAM3 Video API to isolate key objects — the closest equivalent to Storyboard-AI's multi-pass per-object OpenCV drawing effect (`$0.05/5s billed`).
+* **Narration & captions**: Per-scene narration voiced by ElevenLabs (preferred) / Deepgram TTS with word-level timestamps, rendered as lower-third captions; optional Lyria background music.
+* **Async**: Returns a `jobId` immediately. Poll `GET /api/videos/{jobId}` for render status.
+
+```json
+{
+  "videoType": "WhiteboardVideo",
+  "prompt": "How photosynthesis works",
+  "targetDurationSeconds": 40,
+  "sceneCount": 5,
+  "animationStyle": "slideshow",
+  "tone": "curious and energetic",
+  "language": "English",
   "aspectRatio": "9:16",
   "generateAudio": true,
   "music": true
@@ -1001,6 +1028,38 @@ Replicates the Stickman Studio pipeline entirely on the WaveSpeed stack. A topic
     "jobId": "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e",
     "status": "queued",
     "createdAt": "2026-07-01T19:00:00.000Z"
+  }
+  ```
+
+#### 17. Whiteboard Animation Explainer (`WhiteboardVideo`)
+Replicates the full Storyboard-AI whiteboard animation pipeline entirely on the WaveSpeed stack. A topic flows through: **LLM Director Agent** (DeepSeek via WaveSpeed LLM — generates scene-by-scene whiteboard scripts with narration, image prompts following the Nano Banana formula, and optional object lists) → per scene a **Seedream whiteboard line-art image** ($0.027/image; falls back to text-to-image) → animation via either **slideshow mode** (free alternating Ken Burns zoom/pan in Remotion) or **animated mode** (Seedance I2V clip per scene, ~$0.06/scene) → optional **SAM3 Video** segmentation to isolate key objects per clip ($0.05/5s billed; closest equivalent to Storyboard-AI's multi-pass OpenCV drawing) → per-scene **narrator TTS** with word timestamps → optional **Lyria** background music → assembled by the `WhiteboardVideo` composition (uses `WavespeedVideo` component) with scene chips, lower-third captions and a marker-style title card.
+
+```json
+{
+  "videoType": "WhiteboardVideo",
+  "prompt": "How photosynthesis works",
+  "targetDurationSeconds": 40,
+  "sceneCount": 5,
+  "animationStyle": "slideshow",
+  "tone": "curious and energetic",
+  "language": "English",
+  "aspectRatio": "9:16",
+  "generateAudio": true,
+  "music": true
+}
+```
+
+* **Fields**: `sceneCount` = number of scenes (2-10; scene 1 doubles as the hook). `animationStyle`: `slideshow` (Ken Burns zoom on stills, ~$0.05/video total) or `animated` (Seedance I2V clip per scene, ~$0.42/video + optional SAM3). `prompt` accepts a topic, question, or raw explainer script.
+* **Requires** `WAVESPEED_API_KEY` (Seedream images + animated-mode clips + optional SAM3 Video + music) and a TTS key (`ELEVENLABS_API_KEY` preferred or `DEEPGRAM_API_KEY`). The Director Agent LLM uses `WHITEBOARD_LLM_URL`/`WHITEBOARD_LLM_MODEL` (falling back to the WaveSpeed LLM endpoint); scene images use `WHITEBOARD_IMAGE_MODEL` (default `bytedance/seedream-v5.0-pro`); animated-mode clips use `WHITEBOARD_I2V_MODEL` (default `wavespeed-ai/seedance-1.0-pro`); SAM3 Video uses `wavespeed-ai/sam3-video`.
+* **Async** — returns a `jobId` immediately; poll `GET /api/videos/{jobId}` until completed.
+
+* **Response**:
+  ```json
+  {
+    "success": true,
+    "jobId": "c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f",
+    "status": "queued",
+    "createdAt": "2026-07-01T20:00:00.000Z"
   }
   ```
 
